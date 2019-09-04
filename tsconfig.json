@@ -1,0 +1,16 @@
+{
+    "compilerOptions": {
+        "target": "es6",
+        "removeComments": true, //删除注释
+        "experimentalDecorators": true, //启用实验性的ES装饰器。
+        "emitDecoratorMetadata": true, //给源码里的装饰器声明加上设计类型元数据
+        "preserveConstEnums": true, //保留 const和 enum声明
+        "outFile": "./build/build.js", //编译后输出的文件，输出文件合并成一个指定js，为了方便，集中编译在一起，
+        //"outDir":"./build", //指定编译后文件输出的位置，输出的文件不合并
+        "sourceRoot": "./exsrc/", //源文件路径
+        "rootDir": "./exsrc/", //根目录（跟sourceRoot一致就行）
+        "sourceMap": true,
+        "noImplicitAny": true,
+        "module": "none"  //模块化的风格，默认none
+    }
+}
