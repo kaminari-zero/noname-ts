@@ -1,4 +1,4 @@
-declare interface Lib {
+declare interface Libtest {
     configprefix: string;
     versionOL: number;
     /** 更新地址 */
@@ -1546,13 +1546,13 @@ interface CommonMenuConfigData {
     /** 估计是联机配置，具体要看代码 */
     connect?: {
         update: (config: any, map: any) => void,
-        /** 其余配置(混合两种写法，不知怎么写) */
-        // [key: string]: SelectConfigData,
+        /** 其余配置 */
+        [key: string]: SelectConfigData,
     }
     config: {
         update: (config: any, map: any) => void,
         /** 其余配置 */
-        // [key: string]: SelectConfigData,
+        [key: string]: SelectConfigData,
     }
 }
 
