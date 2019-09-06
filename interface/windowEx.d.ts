@@ -28,4 +28,6 @@ declare interface Window {
     resetGameTimeout:number;
 
     cordovaLoadTimeout:number;
+
+    game:Gamepad
 }

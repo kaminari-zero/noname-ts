@@ -1,16 +1,36 @@
 {
     "compilerOptions": {
-        "target": "es6",
+        "target": "es5", //指定ECMAScript目标版本
         "removeComments": true, //删除注释
         "experimentalDecorators": true, //启用实验性的ES装饰器。
         "emitDecoratorMetadata": true, //给源码里的装饰器声明加上设计类型元数据
-        "preserveConstEnums": true, //保留 const和 enum声明
+        // "preserveConstEnums": true, //保留 const和 enum声明
         "outFile": "./build/build.js", //编译后输出的文件，输出文件合并成一个指定js，为了方便，集中编译在一起，
-        //"outDir":"./build", //指定编译后文件输出的位置，输出的文件不合并
-        "sourceRoot": "./exsrc/", //源文件路径
-        "rootDir": "./exsrc/", //根目录（跟sourceRoot一致就行）
-        "sourceMap": true,
-        "noImplicitAny": true,
-        "module": "none"  //模块化的风格，默认none
-    }
+        // "outDir":"./build", //指定编译后文件输出的位置，输出的文件不合并
+        // "sourceRoot": "./exsrc/", //源文件路径
+        // "sourceMap": true,
+        // "rootDir": "./exsrc/", //根目录（跟sourceRoot一致就行）
+        // "noImplicitAny": true, //在表达式和声明上有隐含的 any类型时报错
+        // "module": "none",  //模块化的风格，none，CommonJS，AMD......
+        //增加这个，即使在es5的情况下，也能调用es6的方法提示（不过不能使用es6新语法，这个用ts代替就行了）
+        "lib": [
+            "es5",
+            "es2015.core",
+			"es2015.collection",
+			"es2015.generator",
+            "es2015.promise",
+			"es2015.iterable",
+			"es2015.proxy",
+			"es2015.reflect",
+			"es2015.symbol",
+			"es2015.symbol.wellknown",
+            "dom",
+			"dom.iterable"
+        ]
+    },
+    //编译目录
+    "include": [ 
+        "exsrc",
+        "interface"
+    ]
 }

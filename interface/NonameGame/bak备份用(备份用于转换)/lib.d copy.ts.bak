@@ -1,4 +1,6 @@
-declare interface Libtest {
+declare var lib:Lib2;
+
+declare interface Lib2 {
     configprefix: string;
     versionOL: number;
     /** 更新地址 */
@@ -1498,16 +1500,16 @@ declare interface Libtest {
             updateWaiting: (map: any) => void,
         }
     },
-    suit: ['club', 'spade', 'diamond', 'heart'],
-    group: ['wei', 'shu', 'wu', 'qun', 'shen'],
-    nature: ['fire', 'thunder', 'poison'],
-    linked: ['fire', 'thunder'],
+    suit: string[],
+    group: string[],
+    nature: string[],
+    linked: string[],
     /** 势力配置 */
     groupnature: SMap<string>,
 }
 
 /** 菜单的选项的配置 */
-interface SelectConfigData {
+export interface SelectConfigData {
     /** 功能名 */
     name: string,
     /** 初始化时默认的选项/配置/模式 */
@@ -1541,23 +1543,23 @@ interface SelectConfigData {
 }
 
 /** 通常菜单的标准配置 */
-interface CommonMenuConfigData {
+export interface CommonMenuConfigData {
     name: string,
     /** 估计是联机配置，具体要看代码 */
     connect?: {
         update: (config: any, map: any) => void,
-        /** 其余配置 */
-        [key: string]: SelectConfigData,
+        /** 其余配置(混合两种写法，不知怎么写) */
+        // [key: string]: SelectConfigData,
     }
     config: {
         update: (config: any, map: any) => void,
         /** 其余配置 */
-        [key: string]: SelectConfigData,
+        // [key: string]: SelectConfigData,
     }
 }
 
 /** 扩展菜单的标准配置 */
-interface ExtensionMenuConfigData {
+export interface ExtensionMenuConfigData {
     /** 开启 */
     enable: SelectConfigData,
     /** 功能描述 */
@@ -1577,4 +1579,3 @@ export interface SMap<V> {
 export interface NMap<V> {
     [key: number]: V
 }
-

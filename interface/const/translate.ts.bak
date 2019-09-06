@@ -100,3 +100,10 @@ const translate = {
     unknown6:'七号位',
     unknown7:'八号位',
 }
+
+
+
+// suit: ['club', 'spade', 'diamond', 'heart'],
+//     group: ['wei', 'shu', 'wu', 'qun', 'shen'],
+//     nature: ['fire', 'thunder', 'poison'],
+//     linked: ['fire', 'thunder'],

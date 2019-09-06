@@ -1,5 +1,7 @@
 "use strict";
-let NonameGame = {}; //需要使用let，let不会暴露到全局window内，var会自动绑定到全局window内
+//需要使用let，let不会暴露到全局window内，var会自动绑定到全局window内
+//游戏内lib.cheat.i();会自动暴露所有对象到全局中方便调试，但是可能会导致污染全局变量
+// let NonameGame = {}; 
 (function(nonameGame){
 	var _status={
 		paused:false,
@@ -49157,82 +49159,16 @@ let NonameGame = {}; //需要使用let，let不会暴露到全局window内，var
 	};
 	lib.init.init();
 
-	//方法1：直接暴露内部成员：（污染全局变量）
-	// var g;
-	// if (typeof window !== "undefined") {
-	// 	g = window
-	// } else if (typeof global !== "undefined") {
-	// 	g = global
-	// } else if (typeof self !== "undefined") {
-	// 	g = self
-	// } else {
-	// 	g = this
-	// }
-	// g.NonameGame = {
-	// 	status:_status,
-	// 	lib:lib,
-	// 	game:game,
-	// 	ui:ui,
-	// 	get:get,
-	// 	ai:ai,
-
-	// 	//==============自定义方法===============
-	// 	refreshGame:function(){
-	// 		this.lib.init.init();
-	// 	}
-	// }
-
 	//方法二：直接赋值于传入的对象内
-	nonameGame.status=_status;
-	nonameGame.lib=lib;
-	nonameGame.game=game;
-	nonameGame.ui=ui;
-	nonameGame.get=get;
-	nonameGame.ai=ai;
-
+	// nonameGame.status=_status;
+	// nonameGame.lib=lib;
+	// nonameGame.game=game;
+	// nonameGame.ui=ui;
+	// nonameGame.get=get;
+	// nonameGame.ai=ai;
 	//==============自定义方法===============
-	nonameGame.refreshGame = function(){
-		this.lib.init.init();
-	}
-})(NonameGame);
-
-console.log("输出nonameGame:",NonameGame);
-
-
-//第二种方式：
-// (function (f) {
-//     // if (typeof exports === "object" && typeof module !== "undefined") {
-//     //     module.exports = f()
-//     // } else if (typeof define === "function" && define.amd) {
-//     //     define([], f)
-//     // } else {
-// 	// }
-// 	var g;
-// 	if (typeof window !== "undefined") {
-// 		g = window
-// 	} else if (typeof global !== "undefined") {
-// 		g = global
-// 	} else if (typeof self !== "undefined") {
-// 		g = self
-// 	} else {
-// 		g = this
-// 	}
-// 	g.NonameGame = f()
-// })(
-// 	function(){
-// 		//暴露内部成员出来
-// 		return {
-// 			status:_status,
-// 			lib:lib,
-// 			game:game,
-// 			ui:ui,
-// 			get:get,
-// 			ai:ai,
-
-// 			//==============自定义暴露===============
-// 			refreshGame:function(){
-// 				this.lib.init.init();
-// 			}
-// 		}
-// 	}
-// );
+	// nonameGame.refreshGame = function(){
+	// 	this.lib.init.init();
+	// }
+})(/*NonameGame*/);
+// console.log("输出nonameGame:",NonameGame);

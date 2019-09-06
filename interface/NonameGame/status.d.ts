@@ -1,0 +1,19 @@
+interface Status {
+    paused:boolean,
+    paused2:boolean,
+    paused3:boolean,
+    over:boolean,
+    clicked:boolean,
+    auto:boolean,
+    event:{
+        finished:boolean,
+        next:any[],
+        after:any[]
+    },
+    ai:any,
+    lastdragchange:any[],
+    skillaudio:any[],
+    dieClose:any[],
+    dragline:any[],
+    dying:any[]
+}

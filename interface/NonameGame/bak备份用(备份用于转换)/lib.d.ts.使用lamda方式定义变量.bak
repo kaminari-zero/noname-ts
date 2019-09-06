@@ -41,8 +41,8 @@ interface Lib {
     hookmap: any;
     imported: any;
     layoutfixed: ['chess', 'tafang', 'stone'];
-    characterDialogGroup: SMap<(name: any, capt: any)=>void>
-    listenEnd(node: any):any;
+    characterDialogGroup: SMap<(name: any, capt: any) => void>;
+    listenEnd: (node: any) => void;
     /** 菜单配置 */
     configMenu: {
         /** 通用 */
@@ -117,7 +117,7 @@ interface Lib {
                 dev: SelectConfigData,
                 /** 出错时停止游戏 */
                 errstop: SelectConfigData,
-                update(config: any, map: any):any;
+                update: (config: any, map: any) => void,
             }
         };
         /** 外观 */
@@ -222,7 +222,7 @@ interface Lib {
                 cardtext_font: SelectConfigData,
                 /** 界面字体 */
                 global_font: SelectConfigData,
-                update(config: any, map: any):any;
+                update: (config: any, map: any) => void,
             }
         },
         /** 显示 */
@@ -325,7 +325,7 @@ interface Lib {
                 show_extensionmaker: SelectConfigData,
                 /** 显示分享扩展 */
                 show_extensionshare: SelectConfigData,
-                update(config: any, map: any):any;
+                update: (config: any, map: any) => void
             }
         },
         /** 音效 */
@@ -346,14 +346,14 @@ interface Lib {
                 volumn_audio: SelectConfigData,
                 /** 音乐音量 */
                 volumn_background: SelectConfigData,
-                update(config: any, map: any):any;
+                update: (config: any, map: any) => void
             }
         },
         /** 技能 */
         skill: {
             name: string,
             config: {
-                update(config: any, map: any):any;
+                update: (config: any, map: any) => void
             }
         },
         /** 其它 */
@@ -374,7 +374,7 @@ interface Lib {
                 export_data: SelectConfigData,
                 /** 重新下载游戏 */
                 redownload_game: SelectConfigData,
-                update(config: any, map: any):any;
+                update: (config: any, map: any) => void
             }
         }
     };
@@ -395,7 +395,7 @@ interface Lib {
         identity: {
             name: string,
             connect: {
-                update(config: any, map: any):any;
+                update: (config: any, map: any) => void,
                 /** 游戏模式 */
                 connect_identity_mode: SelectConfigData,
                 /** 游戏人数 */
@@ -412,7 +412,7 @@ interface Lib {
                 connect_enhance_zhu: SelectConfigData,
             },
             config: {
-                update(config: any, map: any):any;
+                update: (config: any, map: any) => void,
                 /** 游戏模式 */
                 identity_mode: SelectConfigData,
                 /** 游戏人数 */
@@ -473,7 +473,7 @@ interface Lib {
         guozhan: {
             name: string,
             connect: {
-                update(config: any, map: any):any;
+                update: (config: any, map: any) => void,
                 /** 游戏人数 */
                 connect_player_number: SelectConfigData,
                 /** 首亮奖励 */
@@ -492,7 +492,7 @@ interface Lib {
                 connect_junzhu: SelectConfigData,
             },
             config: {
-                update(config: any, map: any):any;
+                update: (config: any, map: any) => void,
                 /** 游戏模式 */
                 guozhan_mode: SelectConfigData,
                 /** 游戏人数 */
@@ -543,7 +543,7 @@ interface Lib {
         versus: {
             name: '对决',
             connect: {
-                update(config: any, map: any):any;
+                update: (config: any, map: any) => void,
                 /** 游戏模式 */
                 connect_versus_mode: SelectConfigData,
                 /** 末位可换牌 */
@@ -554,7 +554,7 @@ interface Lib {
                 connect_replace_number: SelectConfigData,
             },
             config: {
-                update(config: any, map: any):any;
+                update: (config: any, map: any) => void,
                 /** 游戏模式 */
                 versus_mode: SelectConfigData,
                 /** 天梯模式 */
@@ -649,565 +649,565 @@ interface Lib {
         globalId: number,
     };
     help: SMap<string>;
-    setIntro(node: HTMLDivElement, func: any, left: any):any;
-    setPopped(node: HTMLDivElement, func: any, width: any, height: any, forceclick: any, paused2: any):any;
-    placePoppedDialog(dialog: any, e: any):any;
-    setHover(node: HTMLDivElement, func: any, hoveration: any, width: any):any;
-    setScroll(node: HTMLDivElement):any;
-    setMousewheel(node: HTMLDivElement):any;
-    setLongPress(node: HTMLDivElement, func: any):any;
-    updateCanvas(time: any):any;
-    run(time: any):any;
-    getUTC(date: any):any;
-    saveVideo():any;
+    setIntro: (node: HTMLDivElement, func: any, left: any) => void;
+    setPopped: (node: HTMLDivElement, func: any, width: any, height: any, forceclick: any, paused2: any) => void;
+    placePoppedDialog: (dialog: any, e: any) => void;
+    setHover: (node: HTMLDivElement, func: any, hoveration: any, width: any) => HTMLDivElement;
+    setScroll: (node: HTMLDivElement) => HTMLDivElement;
+    setMousewheel: (node: HTMLDivElement) => void;
+    setLongPress: (node: HTMLDivElement, func: any) => HTMLDivElement;
+    updateCanvas: (time: any) => boolean;
+    run: (time: any) => void;
+    getUTC: (date: any) => number;
+    saveVideo: () => void;
     init: {
         /** 游戏初始化 */
-        init():any;
-        reset():any;
-        onload():any;
-        startOnline():any;
-        onfree():any;
-        connection(ws: any):any;
-        sheet():any;
-        css(path: any, file: any, before: any):any;
-        js(path: any, file: any, onload: any, onerror: any):any;
-        req(str: any, onload: any, onerror: any, master: any):any;
-        json(url: any, onload: any, onerror: any):any;
-        cssstyles():any;
-        layout(layout: any, nosave: any):any;
-        background():any;
-        parsex(func: any):any;
-        parse(func: any):any;
-        eval(func: any):any;
-        encode(strUni: any):any;
-        decode(str: any):any;
-        stringify(obj: any):any;
-        stringifySkill(obj: any):any;
+        init: () => void,
+        reset: () => void,
+        onload: () => void,
+        startOnline: () => void,
+        onfree: () => void,
+        connection: (ws: any) => void,
+        sheet: () => HTMLElement,
+        css: (path: any, file: any, before: any) => HTMLElement,
+        js: (path: any, file: any, onload: any, onerror: any) => HTMLElement,
+        req: (str: any, onload: any, onerror: any, master: any) => void,
+        json: (url: any, onload: any, onerror: any) => void,
+        cssstyles: () => void,
+        layout: (layout: any, nosave: any) => void,
+        background: () => void,
+        parsex: (func: any) => string,
+        parse: (func: any) => string,
+        eval: (func: any) => any,
+        encode: (strUni: any) => string,
+        decode: (str: any) => string,
+        stringify: (obj: any) => string,
+        stringifySkill: (obj: any) => string,
     };
     cheat: {
         /** 将游戏内部的对象暴露到全局中 */
-        i():any;
-        dy():any;
-        x():any;
-        cfg():any;
-        o():any;
-        pt():any;
-        q():any;
-        p(name: any, i: any, skin: any):any;
-        e():any;
-        c():any;
-        id():any;
-        b():any;
-        uy(me: any):any;
-        gs(name: any, act: any):any;
-        gc(name: any, act: any):any;
-        a(bool: any):any;
-        as():any;
-        uj():any;
-        u():any;
-        r(bool: any):any;
-        h(player: any):any;
-        g():any;
-        ga(type: any):any;
-        gg():any;
-        gx(name: any, target: any):any;
-        gn(name: any):any;
-        ge(target: any):any;
-        gj():any;
-        gf():any;
-        d(num: any, target: any):any;
-        s():any;
-        t(num: any):any;
-        to():any;
-        tm():any;
-        k(i: any):any;
-        z(name: any):any;
+        i: () => void,
+        dy: () => void,
+        x: () => void,
+        cfg: () => void,
+        o: () => void,
+        pt: () => void,
+        q: () => void,
+        p: (name: any, i: any, skin: any) => void,
+        e: () => void,
+        c: () => void,
+        id: () => void,
+        b: () => void,
+        uy: (me: any) => void,
+        gs: (name: any, act: any) => void,
+        gc: (name: any, act: any) => void,
+        a: (bool: any) => void,
+        as: () => void,
+        uj: () => void,
+        u: () => void,
+        r: (bool: any) => void,
+        h: (player: any) => void,
+        g: () => void,
+        ga: (type: any) => void,
+        gg: () => void,
+        gx: (name: any, target: any) => void,
+        gn: (name: any) => any,
+        ge: (target: any) => void,
+        gj: () => void,
+        gf: () => void,
+        d: (num: any, target: any) => void,
+        s: () => void,
+        t: (num: any) => void,
+        to: () => void,
+        tm: () => void,
+        k: (i: any) => void,
+        z: (name: any) => void,
     };
     translate: SMap<string>;
     element: {
         content: {
-            chooseToDuiben():any;
-            chooseToPSS():any;
-            cardsDiscard():any;
-            chooseToEnable():any;
-            chooseToDisable():any;
-            swapEquip():any;
-            disableEquip():any;
-            enableEquip():any;
-            disableJudge():any;
+            chooseToDuiben: () => any,
+            chooseToPSS: () => any,
+            cardsDiscard: () => void,
+            chooseToEnable: () => any,
+            chooseToDisable: () => any,
+            swapEquip: () => void,
+            disableEquip: () => void,
+            enableEquip: () => void,
+            disableJudge: () => void,
             /*----分界线----*/
-            phasing():any;
-            toggleSubPlayer():any;
-            exitSubPlayer():any;
-            callSubPlayer():any;
-            reverseOrder():any;
-            addJudgeCard():any;
-            equipCard():any;
-            gameDraw():any;
-            phaseLoop():any;
-            loadPackage():any;
-            loadMode():any;
-            forceOver():any;
-            arrangeTrigger():any;
-            createTrigger():any;
-            playVideoContent():any;
-            waitForPlayer():any;
-            replaceHandcards():any;
-            replaceHandcardsOL():any;
-            phase():any;
-            phaseJudge():any;
-            phaseDraw():any;
-            phaseUse():any;
-            phaseDiscard():any;
-            chooseToUse():any;
-            chooseToRespond():any;
-            chooseToDiscard():any;
-            chooseToCompareMultiple():any;
-            chooseToCompare():any;
-            chooseSkill():any;
-            discoverCard():any;
-            chooseButton():any;
-            chooseCardOL():any;
-            chooseButtonOL():any;
-            chooseCard():any;
-            chooseTarget():any;
-            chooseCardTarget():any;
-            chooseControl():any;
-            chooseBool():any;
-            chooseDrawRecover():any;
-            choosePlayerCard():any;
-            discardPlayerCard():any;
-            gainPlayerCard():any;
-            showHandcards():any;
-            showCards():any;
-            viewCards():any;
-            moveCard():any;
-            useCard():any;
-            useSkill():any;
-            draw():any;
-            discard():any;
-            respond():any;
-            swapHandcards():any;
-            gainMultiple():any;
-            gain():any;
-            lose():any;
-            damage():any;
-            recover():any;
-            loseHp():any;
-            doubleDraw():any;
-            loseMaxHp():any;
-            gainMaxHp():any;
-            changeHp():any;
-            changeHujia():any;
-            dying():any;
-            die():any;
-            equip():any;
-            addJudge():any;
-            judge():any;
-            turnOver():any;
-            link():any;
+            phasing: () => void,
+            toggleSubPlayer: () => void,
+            exitSubPlayer: () => void,
+            callSubPlayer: () => void,
+            reverseOrder: () => void,
+            addJudgeCard: () => void,
+            equipCard: () => void,
+            gameDraw: () => void,
+            phaseLoop: () => void,
+            loadPackage: () => void,
+            loadMode: () => void,
+            forceOver: () => void,
+            arrangeTrigger: () => void,
+            createTrigger: () => void,
+            playVideoContent: () => void,
+            waitForPlayer: () => void,
+            replaceHandcards: () => void,
+            replaceHandcardsOL: () => void,
+            phase: () => void,
+            phaseJudge: () => void,
+            phaseDraw: () => void,
+            phaseUse: () => void,
+            phaseDiscard: () => void,
+            chooseToUse: () => void,
+            chooseToRespond: () => void,
+            chooseToDiscard: () => any,
+            chooseToCompareMultiple: () => any,
+            chooseToCompare: () => void,
+            chooseSkill: () => any,
+            discoverCard: () => void,
+            chooseButton: () => void,
+            chooseCardOL: () => void,
+            chooseButtonOL: () => void,
+            chooseCard: () => void,
+            chooseTarget: () => void,
+            chooseCardTarget: () => void,
+            chooseControl: () => void,
+            chooseBool: () => void,
+            chooseDrawRecover: () => void,
+            choosePlayerCard: () => void,
+            discardPlayerCard: () => void,
+            gainPlayerCard: () => void,
+            showHandcards: () => void,
+            showCards: () => void,
+            viewCards: () => void,
+            moveCard: () => void,
+            useCard: () => void,
+            useSkill: () => void,
+            draw: () => void,
+            discard: () => void,
+            respond: () => void,
+            swapHandcards: () => void,
+            gainMultiple: () => void,
+            gain: () => void,
+            lose: () => void,
+            damage: () => void,
+            recover: () => void,
+            loseHp: () => void,
+            doubleDraw: () => void,
+            loseMaxHp: () => void,
+            gainMaxHp: () => void,
+            changeHp: () => void,
+            changeHujia: () => void,
+            dying: () => void,
+            die: () => void,
+            equip: () => void,
+            addJudge: () => void,
+            judge: () => void,
+            turnOver: () => void,
+            link: () => void,
         },
         player: {
             //新函数
-            chooseToDuiben(target: any):any;
-            chooseToPSS(target: any):any;
-            chooseToEnable():any;
-            chooseToDisable(horse: any):any;
-            countDisabled():any;
-            isPhaseUsing(notmeisok: any):any;
-            swapEquip(target: any):any;
-            canCompare(target: any):any;
-            disableEquip(pos: any):any;
-            $disableEquip(skill: any):any;
-            enableEquip(pos: any):any;
-            $enableEquip(skill: any):any;
-            isDisabled(arg: any):any;
-            isEmpty(num: any):any;
-            disableJudge():any;
+            chooseToDuiben: (target: any) => any,
+            chooseToPSS: (target: any) => any,
+            chooseToEnable: () => any,
+            chooseToDisable: (horse: any) => any,
+            countDisabled: () => number,
+            isPhaseUsing: (notmeisok: any) => boolean,
+            swapEquip: (target: any) => any,
+            canCompare: (target: any) => boolean,
+            disableEquip: (pos: any) => any,
+            $disableEquip: (skill: any) => any,
+            enableEquip: (pos: any) => any,
+            $enableEquip: (skill: any) => any,
+            isDisabled: (arg: any) => boolean,
+            isEmpty: (num: any) => boolean,
+            disableJudge: () => any,
             //原有函数
-            init(character: any, character2: any, skill: any):any;
-            initOL(name: any, character: any):any;
-            uninitOL():any;
-            initRoom(info: any, info2: any):any;
-            reinit(from: any, to: any, maxHp: any, online: any):any;
-            uninit():any;
-            getLeft():any;
-            getTop():any;
-            smoothAvatar(vice: any, video: any):any;
-            changeSeat(position: any, video: any):any;
-            send():any;
-            getId():any;
-            chat(str: any):any;
-            say(str: any):any;
-            showGiveup():any;
-            applySkills(skills: any):any;
-            getState():any;
-            setNickname(str: any):any;
-            setAvatar(name: any, name2: any, video: any, fakeme: any):any;
-            setAvatarQueue(name: any, list: any):any;
-            flashAvatar(skill: any, name: any):any;
-            update():any;
-            updateMark(i: any, storage: any):any;
-            updateMarks(connect: any):any;
-            num(arg1: any, arg2: any, arg3: any):any;
-            line(target: any, config: any):any;
-            line2(targets: any, config: any):any;
-            getNext():any;
-            getPrevious():any;
-            countUsed(card: any):any;
-            countSkill(skill: any):any;
-            getStockSkills(unowned: any, unique: any, hidden: any):any;
-            getCards(arg1: any, arg2: any):any;
-            getDiscardableCards(player: any, arg1: any, arg2: any):any;
-            getGainableCards(player: any, arg1: any, arg2: any):any;
-            getGainableSkills(func: any):any;
-            countCards(arg1: any, arg2: any):any;
-            countDiscardableCards(player: any, arg1: any, arg2: any):any;
-            countGainableCards(player: any, arg1: any, arg2: any):any;
-            getOriginalSkills():any;
-            getSkills(arg2: any, arg3: any, arg4: any):any;
-            get(arg1: any, arg2: any, arg3: any, arg4: any):any;
-            syncStorage(skill: any):any;
-            syncSkills():any;
-            playerfocus(time: any):any;
-            setIdentity(identity: any):any;
-            insertPhase(skill: any, insert: any):any;
-            insertEvent(name: any, content: any, arg: any):any;
-            phase(skill: any):any;
-            phaseJudge():any;
-            phaseDraw():any;
-            phaseUse():any;
-            phaseDiscard():any;
-            chooseToUse(use: any):any;
-            chooseToRespond():any;
-            chooseToDiscard():any;
-            chooseToCompare(target: any, check: any):any;
-            chooseSkill(target: any):any;
-            discoverCard(list: any):any;
-            chooseCardButton():any;
-            chooseVCardButton():any;
-            chooseButton():any;
-            chooseButtonOL(list: any, callback: any, ai: any):any;
-            chooseCardOL():any;
-            chooseCard():any;
-            chooseUseTarget(card: any, prompt: any, includecard: any):any;
-            chooseTarget():any;
-            chooseCardTarget(choose: any):any;
-            chooseControlList():any;
-            chooseControl():any;
-            chooseBool():any;
-            chooseDrawRecover():any;
-            choosePlayerCard():any;
-            discardPlayerCard():any;
-            gainPlayerCard():any;
-            showHandcards(str: any):any;
-            showCards(cards: any, str: any):any;
-            viewCards(str: any, cards: any):any;
-            viewHandcards(target: any):any;
-            canMoveCard(withatt: any):any;
-            moveCard():any;
-            useResult(result: any, event: any):any;
-            useCard():any;
-            useSkill():any;
-            draw():any;
-            randomDiscard():any;
-            randomGain():any;
-            discard():any;
-            respond():any;
-            swapHandcards(target: any, cards1: any, cards2: any):any;
-            directequip(cards: any):any;
-            directgain(cards: any):any;
-            gainMultiple(targets: any, position: any):any;
-            gain():any;
-            give(cards: any, target: any, visible: any):any;
-            lose():any;
-            damage():any;
-            recover():any;
-            doubleDraw():any;
-            loseHp(num: any):any;
-            loseMaxHp():any;
-            gainMaxHp():any;
-            changeHp(num: any, popup: any):any;
+            init: (character: any, character2: any, skill: any) => void,
+            initOL: (name: any, character: any) => void,
+            uninitOL: () => void,
+            initRoom: (info: any, info2: any) => any,
+            reinit: (from: any, to: any, maxHp: any, online: any) => void,
+            uninit: () => any,
+            getLeft: () => any,
+            getTop: () => any,
+            smoothAvatar: (vice: any, video: any) => void,
+            changeSeat: (position: any, video: any) => void,
+            send: () => any,
+            getId: () => any,
+            chat: (str: any) => void,
+            say: (str: any) => void,
+            showGiveup: () => void,
+            applySkills: (skills: any) => void,
+            getState: () => any,
+            setNickname: (str: any) => any,
+            setAvatar: (name: any, name2: any, video: any, fakeme: any) => void,
+            setAvatarQueue: (name: any, list: any) => void,
+            flashAvatar: (skill: any, name: any) => void,
+            update: () => void,
+            updateMark: (i: any, storage: any) => any,
+            updateMarks: (connect: any) => void,
+            num: (arg1: any, arg2: any, arg3: any) => void,
+            line: (target: any, config: any) => void,
+            line2: (targets: any, config: any) => void,
+            getNext: () => any,
+            getPrevious: () => any,
+            countUsed: (card: any) => number,
+            countSkill: (skill: any) => number,
+            getStockSkills: (unowned: any, unique: any, hidden: any) => any,
+            getCards: (arg1: any, arg2: any) => any[],
+            getDiscardableCards: (player: any, arg1: any, arg2: any) => any[],
+            getGainableCards: (player: any, arg1: any, arg2: any) => any[],
+            getGainableSkills: (func: any) => any[],
+            countCards: (arg1: any, arg2: any) => number,
+            countDiscardableCards: (player: any, arg1: any, arg2: any) => number,
+            countGainableCards: (player: any, arg1: any, arg2: any) => number,
+            getOriginalSkills: () => any[],
+            getSkills: (arg2: any, arg3: any, arg4: any) => any[],
+            get: (arg1: any, arg2: any, arg3: any, arg4: any) => any[],
+            syncStorage: (skill: any) => void,
+            syncSkills: () => void,
+            playerfocus: (time: any) => any,
+            setIdentity: (identity: any) => any,
+            insertPhase: (skill: any, insert: any) => any,
+            insertEvent: (name: any, content: any, arg: any) => any,
+            phase: (skill: any) => any,
+            phaseJudge: () => any,
+            phaseDraw: () => any,
+            phaseUse: () => any,
+            phaseDiscard: () => any,
+            chooseToUse: (use: any) => any,
+            chooseToRespond: () => any,
+            chooseToDiscard: () => any,
+            chooseToCompare: (target: any, check: any) => any,
+            chooseSkill: (target: any) => void,
+            discoverCard: (list: any) => any,
+            chooseCardButton: () => any,
+            chooseVCardButton: () => any,
+            chooseButton: () => any,
+            chooseButtonOL: (list: any, callback: any, ai: any) => any,
+            chooseCardOL: () => any,
+            chooseCard: () => any,
+            chooseUseTarget: (card: any, prompt: any, includecard: any) => any,
+            chooseTarget: () => any,
+            chooseCardTarget: (choose: any) => any,
+            chooseControlList: () => any,
+            chooseControl: () => any,
+            chooseBool: () => any,
+            chooseDrawRecover: () => any,
+            choosePlayerCard: () => any,
+            discardPlayerCard: () => any,
+            gainPlayerCard: () => any,
+            showHandcards: (str: any) => any,
+            showCards: (cards: any, str: any) => any,
+            viewCards: (str: any, cards: any) => any,
+            viewHandcards: (target: any) => any,
+            canMoveCard: (withatt: any) => any,
+            moveCard: () => any,
+            useResult: (result: any, event: any) => any,
+            useCard: () => any,
+            useSkill: () => any,
+            draw: () => any,
+            randomDiscard: () => any[],
+            randomGain: () => any[],
+            discard: () => any,
+            respond: () => any,
+            swapHandcards: (target: any, cards1: any, cards2: any) => any,
+            directequip: (cards: any) => void,
+            directgain: (cards: any) => any,
+            gainMultiple: (targets: any, position: any) => any,
+            gain: () => any,
+            give: (cards: any, target: any, visible: any) => void,
+            lose: () => any,
+            damage: () => any,
+            recover: () => any,
+            doubleDraw: () => any,
+            loseHp: (num: any) => any,
+            loseMaxHp: () => any,
+            gainMaxHp: () => any,
+            changeHp: (num: any, popup: any) => any,
 
-            changeHujia(num: any, type: any):any;
-            getBuff():any;
-            getDebuff():any;
-            dying(reason: any):any;
-            die(reason: any):any;
-            revive(hp: any, log: any):any;
-            isMad():any;
-            goMad(end: any):any;
-            unMad():any;
-            tempHide():any;
-            addExpose(num: any):any;
-            equip(card: any, draw: any):any;
-            addJudge(card: any, cards: any):any;
-            canAddJudge(card: any):any;
-            addJudgeNext(card: any):any;
-            judge():any;
-            turnOver(bool: any):any;
-            out(skill: any):any;
-            in(skill: any):any;
-            link(bool: any):any;
-            skip(name: any):any;
-            wait(callback: any):any;
-            unwait(result: any):any;
-            logSkill(name: any, targets: any, nature: any, logv: any):any;
-            unprompt():any;
-            prompt(str: any, nature: any):any;
-            prompt_old(name2: any, className: any):any;
-            popup(name: any, className: any):any;
-            popup_old(name: any, className: any):any;
-            _popup():any;
-            showTimer(time: any):any;
-            hideTimer():any;
-            markSkill(name: any, info: any, card: any):any;
-            unmarkSkill(name: any):any;
-            markSkillCharacter(id: any, target: any, name: any, content: any):any;
-            markCharacter(name: any, info: any, learn: any, learn2: any):any;
-            mark(name: any, info: any, skill: any):any;
-            unmark(name: any, info: any):any;
-            addLink():any;
-            removeLink():any;
-            canUse(card: any, target: any, distance: any, includecard: any):any;
-            hasUseTarget(card: any, distance: any, includecard: any):any;
-            getUseValue(card: any, distance: any, includecard: any):any;
-            addSubPlayer(cfg: any):any;
-            removeSubPlayer(name: any):any;
-            callSubPlayer():any;
-            toggleSubPlayer():any;
-            exitSubPlayer(remove: any):any;
-            getSubPlayers(tag: any):any;
-            addSkillTrigger(skill: any, hidden: any, triggeronly: any):any;
-            addSkillLog(skill: any):any;
-            addSkill(skill: any, checkConflict: any, nobroadcast: any):any;
-            addAdditionalSkill(skill: any, skills: any, keep: any):any;
-            removeAdditionalSkill(skill: any, target: any):any;
-            awakenSkill(skill: any, nounmark: any):any;
-            restoreSkill(skill: any, nomark: any):any;
-            disableSkill(skill: any, skills: any):any;
-            enableSkill(skill: any):any;
-            checkMarks():any;
-            addEquipTrigger(card: any):any;
-            removeEquipTrigger(card: any):any;
-            removeSkillTrigger(skill: any, triggeronly: any):any;
-            removeSkill(skill: any):any;
-            addTempSkill(skill: any, expire: any, checkConflict: any):any;
-            attitudeTo(target: any):any;
-            clearSkills(all: any):any;
-            checkConflict(skill: any):any;
-            getStat(key: any):any;
-            queue(time: any):any;
-            getCardUsable(card: any, pure: any):any;
-            getAttackRange(raw: any):any;
-            getGlobalFrom():any;
-            getGlobalTo():any;
-            getHandcardLimit():any;
-            getEnemies(func: any):any;
-            getFriends(func: any):any;
-            isEnemyOf():any;
-            isFriendOf(player: any):any;
-            isFriendsOf(player: any):any;
-            isEnemiesOf(player: any):any;
-            isAlive():any;
-            isDead():any;
-            isDying():any;
-            isDamaged():any;
-            isHealthy():any;
-            isMaxHp(equal: any):any;
-            isMinHp(equal: any):any;
-            isMaxCard(equal: any):any;
-            isMinCard(equal: any):any;
-            isMaxHandcard(equal: any):any;
-            isMinHandcard(equal: any):any;
-            isMaxEquip(equal: any):any;
-            isMinEquip(equal: any):any;
-            isLinked():any;
-            isTurnedOver():any;
-            isOut():any;
-            isMin(distance: any):any;
-            isIn():any;
-            isUnseen(num: any):any;
-            isUnderControl(self: any, me: any):any;
-            isOnline():any;
-            isOnline2():any;
-            isOffline():any;
-            checkShow(skill: any, showonly: any):any;
-            needsToDiscard(num: any):any;
-            distanceTo(target: any, method: any):any;
-            distanceFrom(target: any, method: any):any;
-            hasSkill(skill: any, arg2: any, arg3: any, arg4: any):any;
-            hasStockSkill(skill: any, arg1: any, arg2: any, arg3: any):any;
-            hasZhuSkill(skill: any, player: any):any;
-            hasGlobalTag(tag: any, arg: any):any;
-            hasSkillTag(tag: any, hidden: any, arg: any, globalskill: any):any;
-            hasJudge(name: any):any;
-            hasFriend():any;
-            hasUnknown(num: any):any;
-            isUnknown(player: any):any;
-            hasWuxie():any;
-            hasSha(respond: any, noauto: any):any;
-            hasShan():any;
-            mayHaveShan():any;
-            hasCard(name: any, position: any):any;
-            canEquip(name: any, replace: any):any;
-            getEquip(name: any):any;
-            getJudge(name: any):any;
-            $drawAuto(cards: any, target: any):any;
-            $draw(num: any, init: any, config: any):any;
-            $compareMultiple(card1: any, targets: any, cards: any):any;
-            $compare(card1: any, target: any, card2: any):any;
-            $throw(card: any, time: any, init: any, nosource: any):any;
-            $throwordered():any;
-            $throwordered1(node: any, nosource: any):any;
-            $throwordered2(node: any, nosource: any):any;
-            $throwxy(card: any, left: any, top: any):any;
-            $throwxy2(card: any, left: any, top: any, trans: any, flipx: any, flipy: any):any;
-            throwDice(num: any):any;
-            $giveAuto(card: any, player: any):any;
-            $give(card: any, player: any, log: any, init: any):any;
-            $equip(card: any):any;
-            $gain(card: any, log: any, init: any):any;
-            $gain2(cards: any, log: any):any;
-            $skill(name: any, type: any, color: any, avatar: any):any;
-            $fire():any;
-            $thunder():any;
-            $rare2():any;
-            $epic2():any;
-            $legend2():any;
-            $rare(time: any):any;
-            $epic(time: any):any;
-            $legend(time: any):any;
-            $coin():any;
-            $dust():any;
-            $recover():any;
-            $fullscreenpop(str: any, nature: any, avatar: any):any;
-            $damagepop(num: any, nature: any, font: any):any;
-            $damage(source: any):any;
-            $die():any;
-            $dieflip(type: any):any;
-            $phaseJudge(card: any):any;
+            changeHujia: (num: any, type: any) => any,
+            getBuff: () => any,
+            getDebuff: () => any,
+            dying: (reason: any) => any,
+            die: (reason: any) => any,
+            revive: (hp: any, log: any) => any,
+            isMad: () => any,
+            goMad: (end: any) => any,
+            unMad: () => any,
+            tempHide: () => any,
+            addExpose: (num: any) => any,
+            equip: (card: any, draw: any) => any,
+            addJudge: (card: any, cards: any) => any,
+            canAddJudge: (card: any) => any,
+            addJudgeNext: (card: any) => any,
+            judge: () => any,
+            turnOver: (bool: any) => any,
+            out: (skill: any) => any,
+            in: (skill: any) => any,
+            link: (bool: any) => any,
+            skip: (name: any) => any,
+            wait: (callback: any) => any,
+            unwait: (result: any) => any,
+            logSkill: (name: any, targets: any, nature: any, logv: any) => any,
+            unprompt: () => any,
+            prompt: (str: any, nature: any) => any,
+            prompt_old: (name2: any, className: any) => any,
+            popup: (name: any, className: any) => any,
+            popup_old: (name: any, className: any) => any,
+            _popup: () => any,
+            showTimer: (time: any) => any,
+            hideTimer: () => any,
+            markSkill: (name: any, info: any, card: any) => any,
+            unmarkSkill: (name: any) => any,
+            markSkillCharacter: (id: any, target: any, name: any, content: any) => any,
+            markCharacter: (name: any, info: any, learn: any, learn2: any) => any,
+            mark: (name: any, info: any, skill: any) => any,
+            unmark: (name: any, info: any) => any,
+            addLink: () => any,
+            removeLink: () => any,
+            canUse: (card: any, target: any, distance: any, includecard: any) => any,
+            hasUseTarget: (card: any, distance: any, includecard: any) => any,
+            getUseValue: (card: any, distance: any, includecard: any) => any,
+            addSubPlayer: (cfg: any) => any,
+            removeSubPlayer: (name: any) => any,
+            callSubPlayer: () => any,
+            toggleSubPlayer: () => any,
+            exitSubPlayer: (remove: any) => any,
+            getSubPlayers: (tag: any) => any,
+            addSkillTrigger: (skill: any, hidden: any, triggeronly: any) => any,
+            addSkillLog: (skill: any) => any,
+            addSkill: (skill: any, checkConflict: any, nobroadcast: any) => any,
+            addAdditionalSkill: (skill: any, skills: any, keep: any) => any,
+            removeAdditionalSkill: (skill: any, target: any) => any,
+            awakenSkill: (skill: any, nounmark: any) => any,
+            restoreSkill: (skill: any, nomark: any) => any,
+            disableSkill: (skill: any, skills: any) => any,
+            enableSkill: (skill: any) => any,
+            checkMarks: () => any,
+            addEquipTrigger: (card: any) => any,
+            removeEquipTrigger: (card: any) => any,
+            removeSkillTrigger: (skill: any, triggeronly: any) => any,
+            removeSkill: (skill: any) => any,
+            addTempSkill: (skill: any, expire: any, checkConflict: any) => any,
+            attitudeTo: (target: any) => any,
+            clearSkills: (all: any) => any,
+            checkConflict: (skill: any) => any,
+            getStat: (key: any) => any,
+            queue: (time: any) => any,
+            getCardUsable: (card: any, pure: any) => any,
+            getAttackRange: (raw: any) => any,
+            getGlobalFrom: () => any,
+            getGlobalTo: () => any,
+            getHandcardLimit: () => any,
+            getEnemies: (func: any) => any,
+            getFriends: (func: any) => any,
+            isEnemyOf: () => any,
+            isFriendOf: (player: any) => any,
+            isFriendsOf: (player: any) => any,
+            isEnemiesOf: (player: any) => any,
+            isAlive: () => any,
+            isDead: () => any,
+            isDying: () => any,
+            isDamaged: () => any,
+            isHealthy: () => any,
+            isMaxHp: (equal: any) => any,
+            isMinHp: (equal: any) => any,
+            isMaxCard: (equal: any) => any,
+            isMinCard: (equal: any) => any,
+            isMaxHandcard: (equal: any) => any,
+            isMinHandcard: (equal: any) => any,
+            isMaxEquip: (equal: any) => any,
+            isMinEquip: (equal: any) => any,
+            isLinked: () => any,
+            isTurnedOver: () => any,
+            isOut: () => any,
+            isMin: (distance: any) => any,
+            isIn: () => any,
+            isUnseen: (num: any) => any,
+            isUnderControl: (self: any, me: any) => any,
+            isOnline: () => any,
+            isOnline2: () => any,
+            isOffline: () => any,
+            checkShow: (skill: any, showonly: any) => any,
+            needsToDiscard: (num: any) => any,
+            distanceTo: (target: any, method: any) => any,
+            distanceFrom: (target: any, method: any) => any,
+            hasSkill: (skill: any, arg2: any, arg3: any, arg4: any) => any,
+            hasStockSkill: (skill: any, arg1: any, arg2: any, arg3: any) => any,
+            hasZhuSkill: (skill: any, player: any) => any,
+            hasGlobalTag: (tag: any, arg: any) => any,
+            hasSkillTag: (tag: any, hidden: any, arg: any, globalskill: any) => any,
+            hasJudge: (name: any) => any,
+            hasFriend: () => any,
+            hasUnknown: (num: any) => any,
+            isUnknown: (player: any) => any,
+            hasWuxie: () => any,
+            hasSha: (respond: any, noauto: any) => any,
+            hasShan: () => any,
+            mayHaveShan: () => any,
+            hasCard: (name: any, position: any) => any,
+            canEquip: (name: any, replace: any) => any,
+            getEquip: (name: any) => any,
+            getJudge: (name: any) => any,
+            $drawAuto: (cards: any, target: any) => any,
+            $draw: (num: any, init: any, config: any) => any,
+            $compareMultiple: (card1: any, targets: any, cards: any) => any,
+            $compare: (card1: any, target: any, card2: any) => any,
+            $throw: (card: any, time: any, init: any, nosource: any) => any,
+            $throwordered: () => any,
+            $throwordered1: (node: any, nosource: any) => any,
+            $throwordered2: (node: any, nosource: any) => any,
+            $throwxy: (card: any, left: any, top: any) => any,
+            $throwxy2: (card: any, left: any, top: any, trans: any, flipx: any, flipy: any) => any,
+            throwDice: (num: any) => any,
+            $giveAuto: (card: any, player: any) => any,
+            $give: (card: any, player: any, log: any, init: any) => any,
+            $equip: (card: any) => any,
+            $gain: (card: any, log: any, init: any) => any,
+            $gain2: (cards: any, log: any) => any,
+            $skill: (name: any, type: any, color: any, avatar: any) => any,
+            $fire: () => any,
+            $thunder: () => any,
+            $rare2: () => any,
+            $epic2: () => any,
+            $legend2: () => any,
+            $rare: (time: any) => any,
+            $epic: (time: any) => any,
+            $legend: (time: any) => any,
+            $coin: () => any,
+            $dust: () => any,
+            $recover: () => any,
+            $fullscreenpop: (str: any, nature: any, avatar: any) => any,
+            $damagepop: (num: any, nature: any, font: any) => any,
+            $damage: (source: any) => any,
+            $die: () => any,
+            $dieflip: (type: any) => any,
+            $phaseJudge: (card: any) => any,
             card: {
-                init(card: any):any;
-                updateTransform(bool: any, delay: any):any;
-                aiexclude():any;
-                getSource(name: any):any;
-                moveDelete(player: any):any;
-                moveTo(player: any):any;
-                copy():any;
-                uncheck(skill: any):any;
-                recheck(skill: any):any;
-                discard(bool: any):any;
-                hasTag(tag: any):any;
-                hasPosition():any;
-                isInPile():any;
+                init: (card: any) => any,
+                updateTransform: (bool: any, delay: any) => any,
+                aiexclude: () => any,
+                getSource: (name: any) => any,
+                moveDelete: (player: any) => any,
+                moveTo: (player: any) => any,
+                copy: () => any,
+                uncheck: (skill: any) => any,
+                recheck: (skill: any) => any,
+                discard: (bool: any) => any,
+                hasTag: (tag: any) => any,
+                hasPosition: () => any,
+                isInPile: () => any,
             },
             button: {
-                exclude():any;
+                exclude: () => any,
             },
             event: {
-                finish():any;
-                cancel():any;
-                goto(step: any):any;
-                redo():any;
-                set(key: any, value: any):any;
-                setContent(name: any):any;
-                getLogv():any;
-                send():any;
-                resume():any;
-                getParent(level: any, forced: any):any;
-                getTrigger():any;
-                getRand():any;
-                insert(func: any, map: any):any;
-                insertAfter(func: any, map: any):any;
-                backup(skill: any):any;
-                restore():any;
-                isMine():any;
-                isOnline():any;
-                notLink():any;
-                addTrigger(skill: any, player: any):any;
-                trigger(name: any):any;
-                untrigger(all: any, player: any):any;
+                finish: () => any,
+                cancel: () => any,
+                goto: (step: any) => any,
+                redo: () => any,
+                set: (key: any, value: any) => any,
+                setContent: (name: any) => any,
+                getLogv: () => any,
+                send: () => any,
+                resume: () => any,
+                getParent: (level: any, forced: any) => any,
+                getTrigger: () => any,
+                getRand: () => any,
+                insert: (func: any, map: any) => any,
+                insertAfter: (func: any, map: any) => any,
+                backup: (skill: any) => any,
+                restore: () => any,
+                isMine: () => any,
+                isOnline: () => any,
+                notLink: () => any,
+                addTrigger: (skill: any, player: any) => any,
+                trigger: (name: any) => any,
+                untrigger: (all: any, player: any) => any,
             },
             dialog: {
-                add(item: any, noclick: any, zoom: any):any;
-                addText(str: any, center: any):any;
-                addSmall(item: any, noclick: any):any;
-                addAuto(content: any):any;
-                open():any;
-                close():any;
-                setCaption(str: any):any;
+                add: (item: any, noclick: any, zoom: any) => any,
+                addText: (str: any, center: any) => any,
+                addSmall: (item: any, noclick: any) => any,
+                addAuto: (content: any) => any,
+                open: () => any,
+                close: () => any,
+                setCaption: (str: any) => any,
             },
             control: {
-                open():any;
-                add(item: any):any;
-                close():any;
-                replace():any;
-            }
+                open: () => any,
+                add: (item: any) => any,
+                close: () => any,
+                replace: () => any,
+            },
             client: {
-                send():any;
-                close():any;
+                send: () => any,
+                close: () => any,
             },
             nodews: {
-                send(message: any):any;
-                on(type: any, func: any):any;
-                close():any;
+                send: (message: any) => any,
+                on: (type: any, func: any) => any,
+                close: () => any,
             },
             ws: {
-                onopen():any;
-                onmessage(messageevent: any):any;
-                onerror(e: any):any;
-                onclose():any;
+                onopen: () => any,
+                onmessage: (messageevent: any) => any,
+                onerror: (e: any) => any,
+                onclose: () => any,
             }
         },
         card: {
             list: any[];
         },
         filter: {
-            all():any;
-            buttonIncluded(button: any):any;
-            filterButton(button: any):any;
-            filterTrigger(event: any, player: any, name: any, skill: any):any;
-            characterDisabled(i: any, libCharacter: any):any;
-            characterDisabled2(i: any):any;
-            skillDisabled(skill: any):any;
-            cardEnabled(card: any, player: any, event: any):any;
+            all: () => any,
+            buttonIncluded: (button: any) => any,
+            filterButton: (button: any) => any,
+            filterTrigger: (event: any, player: any, name: any, skill: any) => any,
+            characterDisabled: (i: any, libCharacter: any) => any,
+            characterDisabled2: (i: any) => any,
+            skillDisabled: (skill: any) => any,
+            cardEnabled: (card: any, player: any, event: any) => any,
         },
-        cardRespondable(card: any, player: any, event: any):any;
-        cardUsable(card: any, player: any, event: any):any;
-        cardDiscardable(card: any, player: any, event: any):any;
-        canBeDiscarded(card: any, player: any, target: any, event: any):any;
-        canBeGained(card: any, player: any, target: any, event: any):any;
-        cardAiIncluded(card: any):any;
-        filterCard(card: any, player: any, event: any):any;
-        targetEnabled(card: any, player: any, target: any):any;
-        targetEnabled2(card: any, player: any, target: any):any;
-        targetEnabled3(card: any, player: any, target: any):any;
-        targetInRange(card: any, player: any, target: any):any;
-        filterTarget(card: any, player: any, target: any):any;
-        filterTarget2(card: any, player: any, target: any):any;
-        notMe(card: any, player: any, target: any):any;
-        isMe(card: any, player: any, target: any):any;
-        attackFrom(card: any, player: any, target: any):any;
-        globalFrom(card: any, player: any, target: any):any;
-        selectCard():any;
-        selectTarget():any;
-        judge(card: any, player: any, target: any):any;
-        autoRespondSha():any;
-        autoRespondShan():any;
-        wuxieSwap(event: any):any;
+        cardRespondable: (card: any, player: any, event: any) => any,
+        cardUsable: (card: any, player: any, event: any) => any,
+        cardDiscardable: (card: any, player: any, event: any) => any,
+        canBeDiscarded: (card: any, player: any, target: any, event: any) => any,
+        canBeGained: (card: any, player: any, target: any, event: any) => any,
+        cardAiIncluded: (card: any) => any,
+        filterCard: (card: any, player: any, event: any) => any,
+        targetEnabled: (card: any, player: any, target: any) => any,
+        targetEnabled2: (card: any, player: any, target: any) => any,
+        targetEnabled3: (card: any, player: any, target: any) => any,
+        targetInRange: (card: any, player: any, target: any) => any,
+        filterTarget: (card: any, player: any, target: any) => any,
+        filterTarget2: (card: any, player: any, target: any) => any,
+        notMe: (card: any, player: any, target: any) => any,
+        isMe: (card: any, player: any, target: any) => any,
+        attackFrom: (card: any, player: any, target: any) => any,
+        globalFrom: (card: any, player: any, target: any) => any,
+        selectCard: () => any,
+        selectTarget: () => any,
+        judge: (card: any, player: any, target: any) => any,
+        autoRespondSha: () => any,
+        autoRespondShan: () => any,
+        wuxieSwap: (event: any) => any,
     };
     sort: {
-        character(a: any, b: any):any;
-        card(a: any, b: any):any;
-        random():any;
-        seat(a: any, b: any):any;
-        position(a: any, b: any):any;
-        priority(a: any, b: any):any;
-        number(a: any, b: any):any;
-        number2(a: any, b: any):any;
-        capt(a: any, b: any):any;
-        name(a: any, b: any):any;
+        character: (a: any, b: any) => any,
+        card: (a: any, b: any) => any,
+        random: () => any,
+        seat: (a: any, b: any) => any,
+        position: (a: any, b: any) => any,
+        priority: (a: any, b: any) => any,
+        number: (a: any, b: any) => any,
+        number2: (a: any, b: any) => any,
+        capt: (a: any, b: any) => any,
+        name: (a: any, b: any) => any,
     };
     skill: {
         global: any[];
@@ -1218,18 +1218,18 @@ interface Lib {
         zhu: any;
         zhuSkill: any;
         land_used: any;
-        unequip: { ai: { unequip: boolean } },
+        unequip: { ai: { unequip: true } },
         subplayer: {
             trigger: { player: 'dieBefore' },
-            forced: boolean,
+            forced: true,
             priority: -9,
-            onremove: boolean,
+            onremove: true,
             mark: 'character',
             intro: {
-                content(storage: any, player: any):any;
-                name(storage: any):any;
+                content: (storage: any, player: any) => any,
+                name: (storage: any) => any,
             },
-            content():any;
+            content: () => any,
             ai: {
                 nosave: true
             }
@@ -1243,21 +1243,21 @@ interface Lib {
             forced: true,
             priority: 100,
             popup: false,
-            filter(event: any, player: any):any;
-            content():any;
+            filter: (event: any, player: any) => any,
+            content: () => any,
         },
         dualside: {
             subSkill: {
                 turn: {
                     trigger: { player: ['turnOverAfter', 'dieBefore'] },
                     silent: true,
-                    filter(event: any, player: any):any;
-                    content():any;
+                    filter: (event: any, player: any) => any,
+                    content: () => any,
                 },
                 init: {
                     trigger: { global: 'gameStart', player: 'enterGame' },
                     silent: true,
-                    content():any;
+                    content: () => any,
                 }
             },
             group: ['dualside_init', 'dualside_turn']
@@ -1268,16 +1268,16 @@ interface Lib {
                 content: "已经废除了判定区",
             },
             mod: {
-                targetEnabled(card: any, player: any, target: any):any;
+                targetEnabled: (card: any, player: any, target: any) => any,
             },
         },
         "_disableEquip": {
             marktext: "废",
             intro: {
-                content(storage: any, player: any, skill: any):any;
+                content: (storage: any, player: any, skill: any) => any,
             },
             mod: {
-                targetEnabled(card: any, player: any, target: any):any;
+                targetEnabled: (card: any, player: any, target: any) => any,
             },
             trigger: {
                 player: ['disableEquipBefore', 'enableEquipBefore', 'enterGame'],
@@ -1285,50 +1285,50 @@ interface Lib {
             },
             forced: true,
             popup: false,
-            filter(event: any, player: any):any;
-            content():any;
+            filter: (event: any, player: any) => any,
+            content: () => any,
         },
         fengyin: {
-            init(player: any, skill: any):any;
-            onremove(player: any, skill: any):any;
+            init: (player: any, skill: any) => any,
+            onremove: (player: any, skill: any) => any,
             locked: true,
             mark: true,
             intro: {
-                content(storage: any, player: any, skill: any):any;
+                content: (storage: any, player: any, skill: any) => any,
             }
         },
         baiban: {
-            init(player: any, skill: any):any;
-            onremove(player: any, skill: any):any;
+            init: (player: any, skill: any) => any,
+            onremove: (player: any, skill: any) => any,
             mark: true,
             locked: true,
             intro: {
-                content(storage: any, player: any, skill: any):any;
+                content: (storage: any, player: any, skill: any) => any,
             },
         },
         qianxing: {
             mark: true,
             nopop: true,
-            init(player: any):any;
+            init: (player: any) => any,
             intro: {
                 content: '锁定技，你不能成为其他角色的卡牌的目标'
             },
             mod: {
-                targetEnabled(card: any, player: any, target: any):any;
+                targetEnabled: (card: any, player: any, target: any) => any,
             }
         },
         mianyi: {
             trigger: { player: 'damageBefore' },
             mark: true,
             forced: true,
-            init(player: any):any;
-            content():any;
+            init: (player: any) => any,
+            content: () => any,
             ai: {
                 nofire: true,
                 nothunder: true,
                 nodamage: true,
                 effect: {
-                    target(card: any, player: any, target: any, current: any):any;
+                    target: (card: any, player: any, target: any, current: any) => any,
                 },
             },
             intro: {
@@ -1341,75 +1341,75 @@ interface Lib {
             intro: {
                 content: '已进入混乱状态',
                 name: '混乱',
-                onunmark(storage: any, player: any):any;
+                onunmark: (storage: any, player: any) => any,
             }
         },
         ghujia: {
             intro: {
-                content(content: any, player: any):any;
+                content: (content: any, player: any) => any,
             }
         },
         counttrigger: {
             trigger: { global: 'phaseAfter' },
             silent: true,
             priority: -100,
-            content():any;
+            content: () => any,
         },
         _recovercheck: {
             trigger: { player: 'recoverBefore' },
             forced: true,
             priority: 100,
             popup: false,
-            filter(event: any, player: any):any;
-            content():any;
+            filter: (event: any, player: any) => any,
+            content: () => any,
         },
         _turnover: {
             trigger: { player: 'phaseBefore' },
             forced: true,
             priority: 100,
             popup: false,
-            content():any;
+            content: () => any,
         },
         _usecard: {
             trigger: { global: 'useCardAfter' },
             forced: true,
             popup: false,
             priority: -100,
-            filter(event: any):any;
-            content():any;
+            filter: (event: any) => any,
+            content: () => any,
         },
         _discard: {
             trigger: { global: 'discardAfter' },
             forced: true,
             popup: false,
             priority: -100,
-            filter(event: any):any;
-            content():any;
+            filter: (event: any) => any,
+            content: () => any,
         },
         _save: {
             trigger: { source: 'dying', player: 'dying' },
             priority: 5,
             forced: true,
             popup: false,
-            filter(event: any, player: any):any;
-            content():any;
+            filter: (event: any, player: any) => any,
+            content: () => any,
         },
         _ismin: {
             mod: {
-                cardEnabled(card: any, player: any):any;
+                cardEnabled: (card: any, player: any) => any,
             }
         },
         _chongzhu: {
             enable: 'phaseUse',
             logv: false,
             prompt: '将要重铸的牌置入弃牌堆并摸一张牌',
-            filter(event: any, player: any):any;
-            filterCard(card: any):any;
-            prepare(cards: any, player: any):any;
-            check(card: any):any;
+            filter: (event: any, player: any) => any,
+            filterCard: (card: any) => any,
+            prepare: (cards: any, player: any) => any,
+            check: (card: any) => any,
             discard: false,
             delay: 0.5,
-            content():any;
+            content: () => any,
             ai: {
                 basic: {
                     order: 6
@@ -1421,37 +1421,37 @@ interface Lib {
         },
         _lianhuan: {
             trigger: { player: 'damageAfter' },
-            filter(event: any, player: any):any;
+            filter: (event: any, player: any) => any,
             forced: true,
             popup: false,
             logv: false,
             priority: -5,
-            content():any;
+            content: () => any,
         },
         _lianhuan2: {
             trigger: { global: 'damageAfter' },
-            filter(event: any, player: any):any;
+            filter: (event: any, player: any) => any,
             silent: true,
             popup: false,
             forced: true,
             priority: -5,
-            content():any;
+            content: () => any,
         },
         _lianhuan3: {
             trigger: { global: 'damageAfter' },
             priority: -10,
             forced: true,
             popup: false,
-            filter(event: any, player: any):any;
-            content():any;
+            filter: (event: any, player: any) => any,
+            content: () => any,
         },
         _lianhuan4: {
             trigger: { global: 'dieAfter' },
             priority: -10,
             forced: true,
             popup: false,
-            filter(event: any, player: any):any;
-            content():any;
+            filter: (event: any, player: any) => any,
+            content: () => any,
         }
     };
     character: any;
@@ -1459,44 +1459,44 @@ interface Lib {
     cardPile: any;
     message: {
         server: {
-            init(version: any, config: any, banned_info: any):any;
-            inited():any;
-            reinited():any;
-            result(result: any):any;
-            startGame():any;
-            changeRoomConfig(config: any):any;
-            changeNumConfig(num: any, index: any, bool: any):any;
-            chat(id: any, str: any):any;
-            giveup(player: any):any;
-            auto():any;
-            unauto():any;
-            exec(func: any):any;
-            log():any;
+            init: (version: any, config: any, banned_info: any) => any,
+            inited: () => any,
+            reinited: () => any,
+            result: (result: any) => any,
+            startGame: () => any,
+            changeRoomConfig: (config: any) => any,
+            changeNumConfig: (num: any, index: any, bool: any) => any,
+            chat: (id: any, str: any) => any,
+            giveup: (player: any) => any,
+            auto: () => any,
+            unauto: () => any,
+            exec: (func: any) => any,
+            log: () => any,
         },
         client: {
-            log(arr: any):any;
-            opened():any;
-            onconnection(id: any):any;
-            onmessage(id: any, message: any):any;
-            onclose(id: any):any;
-            selfclose():any;
-            reloadroom(forced: any):any;
-            createroom(index: any, config: any, mode: any):any;
-            enterroomfailed():any;
-            roomlist(list: any, events: any, clients: any, wsid: any):any;
-            updaterooms(list: any, clients: any):any;
-            updateclients(clients: any, bool: any):any;
-            updateevents(events: any):any;
-            eventsdenied(reason: any):any;
-            init(id: any, config: any, ip: any, servermode: any, roomId: any):any;
-            reinit(config: any, state: any, state2: any, ip: any, observe: any, onreconnect: any):any;
-            exec(func: any):any;
-            denied(reason: any):any;
-            cancel(id: any):any;
-            closeDialog(id: any):any;
-            createDialog(id: any):any;
-            gameStart():any;
-            updateWaiting(map: any):any;
+            log: (arr: any) => any,
+            opened: () => any,
+            onconnection: (id: any) => any,
+            onmessage: (id: any, message: any) => any,
+            onclose: (id: any) => any,
+            selfclose: () => any,
+            reloadroom: (forced: any) => any,
+            createroom: (index: any, config: any, mode: any) => any,
+            enterroomfailed: () => any,
+            roomlist: (list: any, events: any, clients: any, wsid: any) => any,
+            updaterooms: (list: any, clients: any) => any,
+            updateclients: (clients: any, bool: any) => any,
+            updateevents: (events: any) => any,
+            eventsdenied: (reason: any) => any,
+            init: (id: any, config: any, ip: any, servermode: any, roomId: any) => any,
+            reinit: (config: any, state: any, state2: any, ip: any, observe: any, onreconnect: any) => any,
+            exec: (func: any) => any,
+            denied: (reason: any) => any,
+            cancel: (id: any) => any,
+            closeDialog: (id: any) => any,
+            createDialog: (id: any) => any,
+            gameStart: () => any,
+            updateWaiting: (map: any) => void,
         }
     };
     suit: string[];
@@ -1546,24 +1546,16 @@ interface CommonMenuConfigData {
     name: string,
     /** 估计是联机配置，具体要看代码 */
     connect?: {
-        // update(config: any, map: any):any;
+        update: (config: any, map: any) => void,
         /** 其余配置(混合两种写法，不知怎么写) */
-        [key: string]: SelectConfigData;
+        // [key: string]: SelectConfigData,
     }
     config: {
-        // update(config: any, map: any):any;
-        /** 其余配置(混合两种写法，不知怎么写) */
-        [key: string]: SelectConfigData,
+        update: (config: any, map: any) => void,
+        /** 其余配置 */
+        // [key: string]: SelectConfigData,
     }
 }
-
-// interface IConfigDataUpdate {
-//     update(config: any, map: any):any;
-// }
-
-// interface IConfigDataUpdateEX extends IConfigDataUpdate {
-//     [key: string]: SelectConfigData;
-// }
 
 /** 扩展菜单的标准配置 */
 interface ExtensionMenuConfigData {
