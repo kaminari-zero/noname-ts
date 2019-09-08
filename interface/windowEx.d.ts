@@ -20,7 +20,7 @@ declare interface Window {
     noname_asset_list:string[],
 
     /** 默认皮肤列表 */
-    noname_skin_list:{[key:string]:number}
+    noname_skin_list:SMap<number>;
 
     /** codeMirror,一个代码编辑器库 */
     CodeMirror:{};
@@ -29,5 +29,5 @@ declare interface Window {
 
     cordovaLoadTimeout:number;
 
-    game:Gamepad
+    game:Game;
 }

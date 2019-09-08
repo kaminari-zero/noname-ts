@@ -6866,6 +6866,7 @@
 							game.import('extension',{name:lib.config.extensions[i]});
 						}
 					}
+					console.log("打印查看一下lib.imported:", lib.imported, lib.config.extensions);
 					var loadPack=function(){
 						var toLoad=lib.config.all.cards.length+lib.config.all.characters.length+1;
 						var packLoaded=function(){
@@ -27931,7 +27932,7 @@
 			next._trigger=event;
 			next.setContent('createTrigger');
 		},
-		createEvent:function(name,trigger,triggerevent){
+		 createEvent:function(name,trigger,triggerevent){
 			var next={
 				name:name,
 				step:0,

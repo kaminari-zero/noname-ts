@@ -30,8 +30,17 @@ interface Game {
     trySkillAudio(skill,player,directaudio):any;
     playSkillAudio(name,index):any;
     playBackgroundMusic():any;
-    import(type,content):any;
-    loadExtension(obj):any;
+    /**
+     * 导入扩展
+     * @param type 导入扩展的类型
+     * @param content 导入扩展的内容
+     */
+    import(type: string, content: ExtensionFunc):any;
+    /**
+     * 读取扩展信息
+     * @param obj 
+     */
+    loadExtension(obj: ExtensionFunc):any;
     importExtension(data,finishLoad,exportext,pkg):any;
     export(textToWrite,name):any;
     multiDownload2(list,onsuccess,onerror,onfinish,process,dev):any;
@@ -58,7 +67,9 @@ interface Game {
     animate:Animate;
     linexy(path):any;
     _linexy(path):any;
+    /** 创建游戏内触发事件 */
     createTrigger(name,skill,player,event):any;
+    /** 创建游戏内事件 */
     createEvent(name,trigger,triggerevent):any;
     addCharacter(name,info):any;
     addCharacterPack(pack,packagename):any;
@@ -74,6 +85,7 @@ interface Game {
     createCard(name,suit,number,nature):any;
     forceOver(bool,callback):any;
     over(result):any;
+    /** 游戏循环 */
     loop():any;
     pause():any;
     pause2():any;
@@ -100,7 +112,7 @@ interface Game {
     asyncDrawAuto(players,num,drawDeck):any;
     finishSkill(i,sub):any;
     finishCards():any;
-    checkMod():any;
+    checkMod(...args):any;
     prepareArena(num):any;
     clearArena():any;
     clearConnect():any;
@@ -257,4 +269,38 @@ interface VideoContent {
 interface Animate{
     window(num):any;
     flame(x,y,duration,type):any;
+}
+
+/** 扩展回调方法 */
+type ExtensionFunc = (lib: Lib, game: Game, ui: UI, get: Get, ai: AI, _status: Status) => ExtensionInfoData;
+
+type ExtensionInfoData = {
+    /** 扩展名 */
+    name:string;
+    /** 是否可编辑该扩展（需要打开显示制作扩展） */
+    editable:boolean;
+
+    element:any;
+
+    /** 该扩展菜单的扩展 */
+    config: SMap<SelectConfigData>;
+    skill:SMap<any>;
+    card:SMap<any>;
+    files:SMap<any[]>;
+    /** 该扩展使用的常量字符串 */
+    translate:SMap<string>;
+    /** 帮助（说明） */
+    help:SMap<string>;
+    
+    package:any;
+    game:any;
+    
+    content(config, pack):void;
+    precontent(data):any;
+    
+    init():void;
+    video():void,
+    arenaReady():void;
+    /** 删除该扩展后调用 */
+    onremove():void;
 }
