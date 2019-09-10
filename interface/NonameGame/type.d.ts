@@ -140,6 +140,9 @@ interface ExSkillData {
     /** 觉醒文字颜色 */
     animationColor:string;
 
+    logv:boolean;
+
+    delay:number;
     /** 同时机技能发动的优先度 */
     priority:number;
     /** 每回合限制使用次数（限制使用次数为变量时需写在filter内） */
@@ -301,7 +304,6 @@ interface ExSkillData {
      * @param player 
      */
     onuse(result, player):void;
-
 }
 
 /** 时机的配置信息 */
@@ -559,11 +561,11 @@ interface CardHolderConfigData {
     /** 该卡包是否可以联机 */
     connect:boolean;
     /** 卡牌 */
-    card:SMap<any>;
-    /** 技能 */
+    card:SMap<CardConfigData>;
+    /** 卡牌技能 */
     skill:SMap<any>;
     /** 翻译 */
-    translate:SMap<any>;
+    translate:SMap<string>;
     /** 牌堆添加 */
     list:string[][];
 }
@@ -573,6 +575,151 @@ interface CardHolderConfigData {
  */
 interface CardConfigData {
     
+}
+
+/**
+ * 游戏玩家对象
+ */
+interface Player {
+    /**
+     * 玩家摸x张牌
+     * @param x x∈[-Infinity,Infinity]，x可不填，不填时默认为1
+     */
+    draw(x?:number);
+    /**
+     * 玩家回复x点体力
+     * @param x x∈[-Infinity,Infinity]，x可不填，不填时默认为1
+     */
+    recover(x?:number);
+    /**
+     * 玩家受到a点b属性伤害
+     * @param a 伤害值
+     * @param name 属性名，b为thunder是时雷属性，b为fire时是火属性
+     */
+    damage(a:number,b:string);
+    /**
+     * 玩家流失x点体力
+     * @param x x∈[-Infinity,Infinity]，x可不填，不填时默认为1
+     */
+    loseHp(x?:number);
+    /**
+     * 玩家体力上限+x
+     * @param x x为Infinity时游戏会出现卡机，x可不填，不填时默认为1
+     */
+    gainMaxHp(x?:number);
+    /**
+     * 玩家体力上限-x
+     * @param x x为Infinity时游戏会出现卡机，x可不填，不填时默认为1
+     */
+    loseMaxHp(x?:number);
+    /**
+     * 玩家选择弃置a张牌
+     * @param a a不填时默认为1
+     * @param b b不填时可以取消弃置，b为true等杂七杂八的东西时强制弃置
+     */
+    chooseToDiscard(a:number,b:any);
+    /**
+     * 玩家选择失去a张牌
+     * @param a 
+     */
+    discard(a:number);
+    /**
+     * 玩家翻面
+     * @param a a不填时玩家翻面，a填false时玩家解除翻面
+     */
+    turnOver(a?:boolean);
+    /**
+     * 玩家横置
+     * @param a a不填时玩家横置，a填false时玩家解除横置
+     */
+    link(a?:boolean);
+    /**
+     * 玩家移出游戏
+     */
+    remove();
+    /**
+     * 玩家离开游戏
+     */
+    out();
+    /**
+     * 玩家立刻死亡
+     */
+    die();
+    /**
+     * 神圣死亡:
+     */
+    delete();
+    /**
+     * 限定技专用,让技能不可再次使用.
+     * @param a a为技能名，该语句需要和player.storage.a=true连用
+     */
+    awakenSkill(a:string);
+    /**
+     * 玩家失去a技能
+     * @param a a为技能名
+     */
+    removeSkill(a:string);
+    /**
+     * 玩家清空所有技能
+     */
+    clearSkills();
+    /**
+     * 刷新
+     */
+    update();
+    /**
+     * 设置玩家身份/势力为a，
+     * 需要和player.identity=a 和player.node.identity.dataset.color='xxx'和player.identityShown=true等语句连用
+     * @param a 身份/势力
+     */
+    setIdentity(a:string);
+    /**
+     * 玩家陷入混乱
+     */
+    goMad();
+    /**
+     * 玩家跳过a阶段
+     * @param a 阶段名
+     */
+    skip(a:string);
+    /**
+     * 将玩家的武将牌替换为a
+     * @param a 武将名
+     */
+    init(a:string);
+    /**
+     * 玩家获得a技能
+     * @param a 技能名
+     */
+    addSkill(a:string);
+    /**
+     * 玩家获得a技能直至b时刻
+     * @param a 技能名
+     * @param b 时机
+     */
+    addTempSkill(a:string,b:string);
+    /**
+     * 玩家复活
+     */
+    revive();
+    /**
+     * 游戏记录里出现 玩家+a+b 的说明
+     * @param a 字符串
+     * @param b 之前代码中已定义的事件或时点或角色，也可不填
+     */
+    logSkill(a:string,b:string);
+    /**
+     * 玩家获得a张牌
+     * @param a 不填时默认为1
+     * @param b 不填时可以取消弃置，为true等杂七杂八的东西时强制获得
+     */
+    gain(a:number,b:any);
+    /**
+     * 玩家获得a点护甲
+     * @param a 
+     */
+    changeHujia(a:number);
+    disableEquip();
 }
 
 type CardAndPlayerFun<T> = (card,player) => T;

@@ -66,6 +66,7 @@ interface UI {
         roundmenu():any;
         pausehistory():any;
         pauseconfig():any;
+        /** 牌堆信息：轮数，剩余牌数，棋牌堆 */
         cardPileButton():any;
         chat():any;
         volumn():any;
