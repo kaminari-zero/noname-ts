@@ -186,7 +186,8 @@ interface Player {
     addEquipTrigger(card: any):any;
     removeEquipTrigger(card: any):any;
     removeSkillTrigger(skill: any, triggeronly: any):any;
-    removeSkill(skill: any):any;
+    /** 玩家失去技能/移除玩家的技能 */
+    removeSkill(skill: any|any[],flag?:boolean):any;
     addTempSkill(skill: any, expire: any, checkConflict: any):any;
     attitudeTo(target: any):any;
     clearSkills(all: any):any;

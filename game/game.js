@@ -6077,9 +6077,8 @@
 			}
 		},
 		init:{
-			/** 游戏初始化 */
 			init:function(){
-				if(typeof __dirname==='string'&&__dirname.length){ //__dirname  指向被执行 js 文件的绝对路径（nodejs环境的对象）
+				if(typeof __dirname==='string'&&__dirname.length){
 					var dirsplit=__dirname.split('/');
 					for(var i=0;i<dirsplit.length;i++){
 						if(dirsplit[i]){
@@ -6866,7 +6865,6 @@
 							game.import('extension',{name:lib.config.extensions[i]});
 						}
 					}
-					console.log("打印查看一下lib.imported:", lib.imported, lib.config.extensions);
 					var loadPack=function(){
 						var toLoad=lib.config.all.cards.length+lib.config.all.characters.length+1;
 						var packLoaded=function(){

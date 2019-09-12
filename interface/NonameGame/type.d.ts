@@ -246,15 +246,17 @@ interface ExSkillData {
     ai: ExAIData;
 
     /**
+     * 失去技能时发动
+     * 当值为string时：
+     * storage
+     * 当值为true时，都是直接移除
+     */
+    onremove:PlayerSkillFun<void>|string|string[]|boolean;
+    /**
      * 获得技能时发动
      * @param player 
      */
     init(player):void;
-    /**
-     * 失去技能时发动
-     * @param player 
-     */
-    onremove(player):void;
     /** 
      * ai如何选牌
      */
@@ -291,6 +293,7 @@ interface ExSkillData {
      * 分步执行
      */
     content(...args):void;
+    precontent(config):void;
 
     /**
      * 视为技按钮出现条件（即发动条件）
@@ -725,6 +728,7 @@ interface Player {
 type CardAndPlayerFun<T> = (card,player) => T;
 type CardPlayerAndTargetFun<T> = (card, player, target) => T;
 type CardFun<T> = (card) => T;
+type PlayerSkillFun<T> = (player,skill) => T;
 type PlayerTargetFun<T> = (player, target) => T;
 type NoParamFun<T> = () => T;
 /**
