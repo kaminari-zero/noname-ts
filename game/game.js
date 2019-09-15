@@ -14775,22 +14775,22 @@
 					return next;
 				},
 				chooseToEnable:function(){
-		var next=game.createEvent('chooseToEnable');
-		next.player=this;
-		next.setContent('chooseToEnable');
-		return next;
-	},
-	chooseToDisable:function(horse){
-		var next=game.createEvent('chooseToDisable');
-		next.player=this;
-		if(horse) next.horse=true;
-		next.setContent('chooseToDisable');
-		return next;
-	},
-	countDisabled:function(){
-		if(!this.storage.disableEquip) return 0;
-		return this.storage.disableEquip.length;
-	},
+					var next=game.createEvent('chooseToEnable');
+					next.player=this;
+					next.setContent('chooseToEnable');
+					return next;
+				},
+				chooseToDisable:function(horse){
+					var next=game.createEvent('chooseToDisable');
+					next.player=this;
+					if(horse) next.horse=true;
+					next.setContent('chooseToDisable');
+					return next;
+				},
+				countDisabled:function(){
+					if(!this.storage.disableEquip) return 0;
+					return this.storage.disableEquip.length;
+				},
 				isPhaseUsing:function(notmeisok){
 					if(!notmeisok&&_status.currentPhase!=this) return false;
 					return _status.event.name=='phaseUse'||_status.event.getParent('phaseUse').name=='phaseUse';

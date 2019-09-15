@@ -183,7 +183,8 @@ interface ExSkillData {
      * 一般用于主动技能
      */
     enable:string|string[];
-    derivation:string[];
+    /** 貌似时联机用的，具体还没确定 */
+    derivation:string[]|string;
     /** 
      * 指定位置：
      * 'h'：手牌区, 'e'：装备区, 'j'：判定区 
@@ -551,7 +552,7 @@ interface CharacterConfigData {
 
 /** 
  * 武将信息:
- * [ "性别","势力",体力,["技能"],["图片"] ]
+ * [ "性别","势力",体力,["技能"],["可以保持图片，一些卡片标记，如："zhu","boss",""...] ]
  */
 type HeroData = [string,string,number,string[],string[]];
 
