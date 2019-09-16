@@ -1,6 +1,8 @@
 game.import("extension", function (lib, game, ui, get, ai, _status) {
     return {
-        name: "群英会", editable: false, content: function (config, pack) {
+        name: "群英会", 
+        editable: false, 
+        content: function (config, pack) {
 
             // ---------------------------------------更新内容------------------------------------------//   
             Xu_update = [
@@ -461,7 +463,8 @@ game.import("extension", function (lib, game, ui, get, ai, _status) {
                     if (lib.character[i][4].indexOf("forbidai") < 0) lib.character[i][4].push("forbidai");
                 };
             };
-        }, precontent: function (xwj) {
+        }, 
+        precontent: function (xwj) {
 
             //动画：
             /*		game.qyhGif=function(str,width,height,isAnimation){
@@ -17385,7 +17388,11 @@ game.import("extension", function (lib, game, ui, get, ai, _status) {
                 lib.config.all.cards.push('xwj_xus_equip');
                 if (!lib.config.cards.contains('xwj_xus_equip')) lib.config.cards.remove('xwj_xus_equip');
             };
-        }, help: { "群英会": "<li>此扩展原名为：新武将，始创于2017年8月，汇集了部分三国新将和《火影忍者》、《秦时明月》、《武庚纪》等作品的部分角色，技能强度略高，可联机。若想关闭某个扩展小包，可在相应武将栏内关闭并重启，开启同理。<li>若发现BUG可到贴吧或扩展交流②群：852740627 反馈，有技能设计（尤其是玄机动画《武庚纪》的角色）的建议也可联系作者<li>新增卡牌：【手里剑】2张，【写轮眼】、【九尾】、【漩涡面具】、【苦无】、【猴子】各1张。<li>须关闭“配音扩展”的“连杀开关”或者直接删了audio-skill目录下的liansha1至liansha7和jiuren1、jiuren2的九个配音文件，否则可能会与“配音扩展”一起播放击杀与回复体力的音效。<li>游戏时或游戏过程中若遇见卡死情况，打开兼容模式提高扩展的兼容性即可解决。目前为止，已解决绝大部分已知的可能会导致游戏卡死的BUG，暂时未发现任何导致游戏卡死、弹窗警告的技能<li>【编码】Sukincen<li>【配图】Sukincen<li>【录制配音】Sukincen" }, config: {
+        }, 
+        help: { 
+            "群英会": "<li>此扩展原名为：新武将，始创于2017年8月，汇集了部分三国新将和《火影忍者》、《秦时明月》、《武庚纪》等作品的部分角色，技能强度略高，可联机。若想关闭某个扩展小包，可在相应武将栏内关闭并重启，开启同理。<li>若发现BUG可到贴吧或扩展交流②群：852740627 反馈，有技能设计（尤其是玄机动画《武庚纪》的角色）的建议也可联系作者<li>新增卡牌：【手里剑】2张，【写轮眼】、【九尾】、【漩涡面具】、【苦无】、【猴子】各1张。<li>须关闭“配音扩展”的“连杀开关”或者直接删了audio-skill目录下的liansha1至liansha7和jiuren1、jiuren2的九个配音文件，否则可能会与“配音扩展”一起播放击杀与回复体力的音效。<li>游戏时或游戏过程中若遇见卡死情况，打开兼容模式提高扩展的兼容性即可解决。目前为止，已解决绝大部分已知的可能会导致游戏卡死的BUG，暂时未发现任何导致游戏卡死、弹窗警告的技能<li>【编码】Sukincen<li>【配图】Sukincen<li>【录制配音】Sukincen" 
+        }, 
+        config: {
             "xwjhelp": {
                 "name": "群英会", "init": "1", "item": { "1": "查看介绍", "2": "<li>此扩展原名为：新武将。若发现BUG可到贴吧或无名杀扩展交流群：852740627 反馈，有技能设计的建议也可联系作者", "3": "<li>本扩展汇集了部分三国新将和《火影忍者》、《秦时明月》、《武庚纪》等作品的人物（可在菜单→武将界面处关闭任意一个扩展小包，关闭重启后会隐藏武将图片且玩家禁选、ai禁用），技能强度略高。有技能特效，Ai智商较高，还可联机！", "4": "<li>本扩展能在关闭兼容模式情况下流畅运行", "5": "<li>更多介绍详看：其它→帮助" }
             },
@@ -17491,7 +17498,8 @@ game.import("extension", function (lib, game, ui, get, ai, _status) {
                 }
             },
 
-        }, package: {
+        }, 
+        package: {
             character: {
                 character: {
                 },
@@ -17520,6 +17528,9 @@ game.import("extension", function (lib, game, ui, get, ai, _status) {
             diskURL: "",
             forumURL: "",
             version: "1.94",
-        }, files: { "character": [], "card": [], "skill": [] }
+        }, 
+        files: { 
+            "character": [], "card": [], "skill": [] 
+        }
     }
 })

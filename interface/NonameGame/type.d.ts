@@ -65,13 +65,13 @@ interface CommonMenuConfigData {
 /** 扩展菜单的标准配置 */
 interface ExtensionMenuConfigData {
     /** 开启 */
-    enable: SelectConfigData,
+    enable?: SelectConfigData,
     /** 功能描述 */
-    intro: SelectConfigData,
+    intro?: SelectConfigData,
     /** 作者信息栏 */
-    author: SelectConfigData,
-    /** 隐藏此扩展 */
-    hide: SelectConfigData,
+    author?: SelectConfigData,
+    /** 隐藏此扩展(代码内部添加) */
+    hide?: SelectConfigData,
     /** 其余配置 */
     [key: string]: SelectConfigData,
 }
@@ -82,71 +82,71 @@ interface ExSkillData {
      * 触发的时机 
      * 一般用于触发技能（被动技能）
      */
-    trigger: ExTriggerData;
+    trigger?: ExTriggerData;
 
     /** 是否实时更新(例如标记) */
-    locked:boolean;
-    unique:boolean;
-    silent:boolean;
+    locked?:boolean;
+    unique?:boolean;
+    silent?:boolean;
     /**
      * 此技能是否可以被设置为自动发动（不询问）
      */
-    frequent:boolean|string;
+    frequent?:boolean|string;
     /** 
      * 此技能是否能固定触发（即自动发动）。
      * true为固定触发（锁定技）
      * 国战可以触发亮将。
      */
-    forced:boolean;
+    forced?:boolean;
     /**
      * player是否logSkill('此技能').
      * true为不
      */
-    nopop:boolean;
+    nopop?:boolean;
     /** 功能相当于forced+nopop */
-    direct:boolean;
+    direct?:boolean;
     /** 
      * 获得技能时是否显示此标记，
      * 若为false，可以用markSkill()来显示此标记
      */
-    mark:boolean;
-    popup:boolean;
-    noLose:boolean;
-    noDeprive:boolean;
-    noRemove:boolean;
-    noDisable:boolean;
-    notarget:boolean;
-    property:boolean;
+    mark?:boolean;
+    popup?:boolean;
+    noLose?:boolean;
+    noDeprive?:boolean;
+    noRemove?:boolean;
+    noDisable?:boolean;
+    notarget?:boolean;
+    property?:boolean;
     /**
      * 是否每个目标都结算一次
      * true为否
      */
-    multitarget: boolean|number;
-    multiline: boolean;
+    multitarget?: boolean|number;
+    multiline?: boolean;
     /**
      * 是否弃牌
      * 若没有这一行，选择牌发动技能后，被选择的牌都要弃置
      */
-    discard:boolean;
+    discard?:boolean;
     /** 
      * 是否为主公技：
      * true时，将这个技能设置为主公技 
      */
-    zhuSkill:boolean;
+    zhuSkill?:boolean;
     /** 是否开启觉醒动画 */
-    skillAnimation:boolean;
+    skillAnimation?:boolean;
     /** 觉醒文字 */
-    animationStr:string;
+    animationStr?:string;
     /** 觉醒文字颜色 */
-    animationColor:string;
+    animationColor?:string;
 
-    logv:boolean;
+    logv?:boolean;
 
-    delay:number;
+    delay?:number;
     /** 同时机技能发动的优先度 */
-    priority:number;
+    priority?:number;
     /** 每回合限制使用次数（限制使用次数为变量时需写在filter内） */
-    usable:number;
+    usable?:number;
     /**
      * 需要选择多少张牌才能发动
      * 选择的牌数
@@ -154,65 +154,65 @@ interface ExSkillData {
      * 数组时，这个数组就是选择牌数的区间
      * 为变量时（具体情况具体分析），例：()=>number
      */
-    selectCard:number|number[]|CardFun<number>;
+    selectCard?:number|number[]|CardFun<number>;
     /**
      * 需要选择多少个目标才能发动
      * 选择的目标数：
      * 为-1时，选择全部人
      * 为数组时，这个数组就是选择目标数的区间
      */
-    selectTarget:number|number[];
+    selectTarget?:number|number[];
     
     /** 技能按钮名字，不写则默认为此技能的翻译 */
-    name:string;
+    name?:string;
     /**
-     * 配音:
+     * 配音：
      * 为数字事，数字为配音数量索引，从1开始，使用无名杀目录\audio\skill内的配音
      * 为字符串时，使用无名杀录目\extension\扩展名内的配音，命名方法：技能名+这是第几个配音
      */
-    audio:number|string;
+    audio?:number|string;
     /** 
-     * 技能组:
+     * 技能组：
      * 拥有这个技能时相当于拥有技能组内的技能
      */
-    group:string[];
+    group?:string[];
     /** 标记显示文本，一般为一个字 */
-    marktext:string;
+    marktext?:string;
     /** 
      * 可使用的阶段 
      * 一般用于主动技能
      */
-    enable:string|string[];
+    enable?:string|string[];
     /** 貌似时联机用的，具体还没确定 */
-    derivation:string[]|string;
+    derivation?:string[]|string;
     /** 
      * 指定位置：
      * 'h'：手牌区, 'e'：装备区, 'j'：判定区 
      */
-    position:string;
+    position?:string;
     /**
      * 不弃牌，准备用这些牌来干什么
      */
-    prepare:string|CardAndPlayerFun<string>;
+    prepare?:string|CardAndPlayerFun<string>;
     /**
      * 选择的目标武将牌上出现什么字，
      * 数组第几元素对应第几个目标
      */
-    targetprompt:string[];
+    targetprompt?:string[];
     /**
      * 选择时弹出的提示
      */
-    prompt:string;
+    prompt?:string;
     /**
-     * 全局技能:
+     * 全局技能?:
      * 你拥有此技能时，所有角色拥有此技能（global的值为技能名）
      * 注：无论是否拥有此技能，此技能都为全局技能写法：技能名前+_
      */
-    global:string;
+    global?:string;
 
-    intro: {
+    intro?: {
         /** 
-         * 标记显示内容:
+         * 标记显示内容？
          * 为cards时显示标记内的牌.
          * 
          * 当标记显示内容是文本时，
@@ -221,30 +221,30 @@ interface ExSkillData {
         content:string|IntroContentFun,
     };
     /** 
-     * 子技能:
+     * 子技能：
      * 你不会拥有写在这里面的技能，可以调用，可以用技能组联系起来;
-     * 子技能名字:“主技能_子技能”，翻译为主技能翻译
+     * 子技能名字：“主技能_子技能”，翻译为主技能翻译
      * 结构存在争议，往后继续研究 
      */
-    subSkill:SMap<ExSkillData>;
+    subSkill?:SMap<ExSkillData>;
     /** 锁定技 */
-    mod: ExModData;
+    mod?: ExModData;
     /**
      * 选择按钮（牌）
      */
-    chooseButton: ChooseButtonConfigData;
+    chooseButton?: ChooseButtonConfigData;
     /**
      * 选择的牌需要满足的条件
      * 可以使用键值对的简便写法
      * 也可以使用函数返回值（推荐）
      */
-    filterCard:SMap<string>|CardFun<boolean>;
+    filterCard?:SMap<string>|CardFun<boolean>;
     /**
      * (视为)目标卡牌
      * 一般用于视为技能
      */
-    viewAs:SMap<string>;
-    ai: ExAIData;
+    viewAs?:SMap<string>;
+    ai?: ExAIData;
 
     /**
      * 失去技能时发动
@@ -252,28 +252,28 @@ interface ExSkillData {
      * storage
      * 当值为true时，都是直接移除
      */
-    onremove:PlayerSkillFun<void>|string|string[]|boolean;
+    onremove?:PlayerSkillFun<void>|string|string[]|boolean;
     /**
      * 获得技能时发动
      * @param player 
      */
-    init(player):void;
+    init?(player):void;
     /** 
      * ai如何选牌
      */
-    check(card) :boolean;
+    check?(card):boolean;
     /**
      * 告诉ai是否发动这个技能
      * 返回true则发动此技能
      * @param event 
      * @param player 
      */
-    check(event, player) :boolean;
+    check?(event, player):boolean;
     /**
      * 第一个参数好想有些不一样：event，card,子技能button
      * @param arg 
      */
-    check(...arg):any;
+    check?(...arg):any;
     /**
      * 过滤发动条件，返回true则可以发动此技能
      * @param event 事件 相当于trigger时机
@@ -291,23 +291,23 @@ interface ExSkillData {
      * 触发内容（技能内容），
      *  当有filterCard时，有参数cards
      *  当有filterTarget时，有参数target和targets
-     * 分步执行
+     * 分步执行(通过step x分割开执行逻辑步骤)
      */
-    content(...args):void;
-    precontent(config):void;
+    content?:ContentFunc;
+    precontent?(config):void;
 
     /**
      * 视为技按钮出现条件（即发动条件）
      * @param player 
      */
-    viewAsFilter(player):boolean;
+    viewAsFilter?(player):boolean;
     /**
      * 使用视为牌时触发内容。
      * result.cards是视为前的牌
      * @param result 
      * @param player 
      */
-    onuse(result, player):void;
+    onuse?(result, player):void;
 }
 
 /** 时机的配置信息 */
@@ -316,20 +316,20 @@ interface ExTriggerData {
      * 全场任意一个 
      * 代表所有人
      */
-    global: string | string[];
+    global?: string | string[];
     /** 
      * 玩家自己 
      * 触发时件中，技能拥有者的角色为事件的发起者
      */
-    player: string | string[];
+    player?: string | string[];
     /**
      * 你自己成为目标
      */
-    target: string | string[];
+    target?: string | string[];
     /**
      * 来源是你自己
      */
-    source: string | string[];
+    source?: string | string[];
 }
 
 /** ai的配置信息 */
@@ -338,64 +338,64 @@ interface ExAIData {
      * ai发动技能的优先度
      * 要具体比什么先发发动，可以使用函数返回结果
      */
-    order: number|NoParamFun<number>,
+    order?: number|NoParamFun<number>,
     /** 
      * 发动技能是身份暴露度（0~1，相当于概率）
      * 取值范围为0~1,用于帮助AI判断身份,AI中未写expose其他AI将会无法判断其身份
      */
-    expose:number;
+    expose?:number;
     /** 
      * 嘲讽值：
      * 嘲讽值越大的角色越容易遭受到敌方的攻击,默认为1,一般在0~4中取值即可(缔盟threaten值为3)
      */
-    threaten: number | PlayerTargetFun<number>; 
+    threaten?: number | PlayerTargetFun<number>; 
     /**
      * 态度：
      * 态度只由identity决定。不同身份对不同身份的att不同。
      * 例如在身份局中,主对忠att值为6,忠对主att值为10;
      */
-    attitude:number;
+    attitude?:number;
 
     /** 
      * 此技能可以用于自救 
      */
-    save:boolean;
+    save?:boolean;
     /** 此技能可以用于救人，一般用于视为技 */
-    respondTao:boolean;
+    respondTao?:boolean;
     /** 
      * 此技能可以响应闪，一般用于视为技 
      * 作用是告诉AI手里没『闪』也可能出『闪』,防止没『闪』直接掉血
      */
-    respondShan:boolean;
+    respondShan?:boolean;
     /** 此技能可以响应杀，一般用于视为技 */
-    respondSha:boolean;
+    respondSha?:boolean;
     /** 
      * 卖血（技能标签）：
      * 用于其他AI检测是否是卖血流(if(target.hasSkillTag('maixie')))。并非加了这个AI就会卖血。
      */
-    maixie:boolean;
-    maixie_hp:boolean;
+    maixie?:boolean;
+    maixie_hp?:boolean;
     /**
      * 无牌（技能标签）：
      * 目前只出现在“连营”和“伤逝”中,用于其它AI检测是否含有标签『无牌』,
      * 从而告诉其他AI不要拆迁(因为生生不息)。
      */
-    noh:boolean,
-    notrick: boolean,
-    nosha: boolean,
-    noe2: boolean,
-    reverseEquip:boolean;
+    noh?:boolean,
+    notrick?: boolean,
+    nosha?: boolean,
+    noe2?: boolean,
+    reverseEquip?:boolean;
     
-    basic:any;
-    tag:any;
+    basic?:any;
+    tag?:any;
     
     /** 
      * 效果：
      * 影响ai出牌（例如什么时候不出杀）等 
      * 效果值为正代表正效果,反之为负效果,AI会倾向于最大效果的目标/卡牌;
      */
-    effect: {
-        target(card, player, target, current):string|number;
+    effect?: {
+        target?(card, player, target, current):string|number;
     }
     /** 
      * 收益：
@@ -403,7 +403,7 @@ interface ExAIData {
      * 一般用于主动技
      * 关于收益的算法，待会再详细描述
      */
-    result: {
+    result?: {
         /**
          * ai如何选择目标（对目标的收益）：
          * 返回负，选敌人，返回正，选队友;
@@ -412,19 +412,19 @@ interface ExAIData {
          * @param player 
          * @param target 
          */
-        target(player,target):number|void;
+        target?(player,target):number|void;
         /**
          * ai是否发动此技能（对玩家（自身）的收益）：
          * 返回正，发动，否则不发动
          * @param player 
          */
-        player(player):number;
+        player?(player):number;
     }
     /**
      * 视为技专属，ai什么时候可以发动视为技
      * @param player 
      */
-    skillTagFilter(player):boolean;
+    skillTagFilter?(player):boolean;
 }
 
 /** 锁定技的配置 */
@@ -434,41 +434,41 @@ interface ExModData {
      * @param card 牌
      * @param player 玩家
      */
-    cardDiscardable(card, player):boolean;
+    cardDiscardable?(card, player):boolean;
     /**
      * 卡牌是否可用
      * cardEnabled一起使用
      * @param card 牌
      * @param player 玩家
      */
-    cardEnabled(card, player): boolean;
+    cardEnabled?(card, player): boolean;
     /**
      * 卡牌是否可用
      * 要与cardEnabled一起使用（目前看来两个效果一致）
      * @param card 牌
      * @param player 玩家
      */
-    cardUsable(card, player): boolean;
+    cardUsable?(card, player): boolean;
     /**
      * 卡牌是否可以响应
      * 要与cardEnabled一起使用（目前看来两个效果一致）
      * @param card 牌
      * @param player 玩家
      */
-    cardRespondable(card, player): boolean;
+    cardRespondable?(card, player): boolean;
     /**
      * 卡牌是否可以救人
      * 要与cardEnabled一起使用（目前看来两个效果一致）
      * @param card 牌
      * @param player 玩家
      */
-    cardSavable(card, player): boolean;
+    cardSavable?(card, player): boolean;
     /** 在全局的防御范围 */
-    globalTo(from, to, current):number;
+    globalTo?(from, to, current):number;
     /** 在全局的进攻距离 */
-    globalFrom(from, to, distance):number;
+    globalFrom?(from, to, distance):number;
     /** 手牌上限 */
-    maxHandcard(player, num):number;
+    maxHandcard?(player, num):number;
     /**
      * 选择的目标
      * card：牌；
@@ -476,21 +476,21 @@ interface ExModData {
      * range：
      *      range[1]：目标个数; 
      */
-    selectTarget(card, player, range): void;
+    selectTarget?(card, player, range): void;
     /** 
      * 是否能成为目标 
      * card：牌；
      * player：使用牌的角色；t
      * arget：玩家
      */
-    targetEnabled(card, player, target): boolean;
+    targetEnabled?(card, player, target): boolean;
     /**
      * 可以指定任意目标
      * @param card 牌
      * @param player 玩家
      * @param target 目标
      */
-    targetInRange(card, player, target):boolean;
+    targetInRange?(card, player, target):boolean;
 }
 
 /** 选择按钮配置 */
@@ -498,30 +498,30 @@ interface ChooseButtonConfigData {
     /** 
      * 选择内容 （目前只支持寻找卡牌）
      */
-    dialog():any;
+    dialog?():any;
     /**
      * 卡牌选择条件
      * @param button 
      * @param player 
      */
-    filter (button, player) :void;
+    filter?(button, player) :void;
     /**
      * ai如何选牌
      * @param button 
      */
-    check(button):any;
+    check?(button):any;
     /**
      * 返回“视为”部分（即当作该选择为视为的操作逻辑）
      * @param links 
      * @param player 
      */
-    backup(links, player): ExSkillData;
+    backup?(links, player): ExSkillData;
     /**
      * 选择时弹出的提示
      * @param links 
      * @param player 
      */
-    prompt(links, player):string;
+    prompt?(links, player): string;
 }
 
 /**
@@ -581,151 +581,6 @@ interface CardConfigData {
     
 }
 
-/**
- * 游戏玩家对象
- */
-interface Player {
-    /**
-     * 玩家摸x张牌
-     * @param x x∈[-Infinity,Infinity]，x可不填，不填时默认为1
-     */
-    draw(x?:number);
-    /**
-     * 玩家回复x点体力
-     * @param x x∈[-Infinity,Infinity]，x可不填，不填时默认为1
-     */
-    recover(x?:number);
-    /**
-     * 玩家受到a点b属性伤害
-     * @param a 伤害值
-     * @param name 属性名，b为thunder是时雷属性，b为fire时是火属性
-     */
-    damage(a:number,b:string);
-    /**
-     * 玩家流失x点体力
-     * @param x x∈[-Infinity,Infinity]，x可不填，不填时默认为1
-     */
-    loseHp(x?:number);
-    /**
-     * 玩家体力上限+x
-     * @param x x为Infinity时游戏会出现卡机，x可不填，不填时默认为1
-     */
-    gainMaxHp(x?:number);
-    /**
-     * 玩家体力上限-x
-     * @param x x为Infinity时游戏会出现卡机，x可不填，不填时默认为1
-     */
-    loseMaxHp(x?:number);
-    /**
-     * 玩家选择弃置a张牌
-     * @param a a不填时默认为1
-     * @param b b不填时可以取消弃置，b为true等杂七杂八的东西时强制弃置
-     */
-    chooseToDiscard(a:number,b:any);
-    /**
-     * 玩家选择失去a张牌
-     * @param a 
-     */
-    discard(a:number);
-    /**
-     * 玩家翻面
-     * @param a a不填时玩家翻面，a填false时玩家解除翻面
-     */
-    turnOver(a?:boolean);
-    /**
-     * 玩家横置
-     * @param a a不填时玩家横置，a填false时玩家解除横置
-     */
-    link(a?:boolean);
-    /**
-     * 玩家移出游戏
-     */
-    remove();
-    /**
-     * 玩家离开游戏
-     */
-    out();
-    /**
-     * 玩家立刻死亡
-     */
-    die();
-    /**
-     * 神圣死亡:
-     */
-    delete();
-    /**
-     * 限定技专用,让技能不可再次使用.
-     * @param a a为技能名，该语句需要和player.storage.a=true连用
-     */
-    awakenSkill(a:string);
-    /**
-     * 玩家失去a技能
-     * @param a a为技能名
-     */
-    removeSkill(a:string);
-    /**
-     * 玩家清空所有技能
-     */
-    clearSkills();
-    /**
-     * 刷新
-     */
-    update();
-    /**
-     * 设置玩家身份/势力为a，
-     * 需要和player.identity=a 和player.node.identity.dataset.color='xxx'和player.identityShown=true等语句连用
-     * @param a 身份/势力
-     */
-    setIdentity(a:string);
-    /**
-     * 玩家陷入混乱
-     */
-    goMad();
-    /**
-     * 玩家跳过a阶段
-     * @param a 阶段名
-     */
-    skip(a:string);
-    /**
-     * 将玩家的武将牌替换为a
-     * @param a 武将名
-     */
-    init(a:string);
-    /**
-     * 玩家获得a技能
-     * @param a 技能名
-     */
-    addSkill(a:string);
-    /**
-     * 玩家获得a技能直至b时刻
-     * @param a 技能名
-     * @param b 时机
-     */
-    addTempSkill(a:string,b:string);
-    /**
-     * 玩家复活
-     */
-    revive();
-    /**
-     * 游戏记录里出现 玩家+a+b 的说明
-     * @param a 字符串
-     * @param b 之前代码中已定义的事件或时点或角色，也可不填
-     */
-    logSkill(a:string,b:string);
-    /**
-     * 玩家获得a张牌
-     * @param a 不填时默认为1
-     * @param b 不填时可以取消弃置，为true等杂七杂八的东西时强制获得
-     */
-    gain(a:number,b:any);
-    /**
-     * 玩家获得a点护甲
-     * @param a 
-     */
-    changeHujia(a:number);
-    disableEquip();
-}
-
 type CardAndPlayerFun<T> = (card,player) => T;
 type CardPlayerAndTargetFun<T> = (card, player, target) => T;
 type CardFun<T> = (card) => T;
@@ -736,3 +591,49 @@ type NoParamFun<T> = () => T;
  * 标记显示内容为文本时的返回字符串方法
  */
 type IntroContentFun = (storage,player,skill) => string;
+
+/** 扩展回调方法 */
+type ExtensionFunc = (lib: Lib, game: Game, ui: UI, get: Get, ai: AI, _status: Status) => ExtensionInfoData;
+
+/**
+ * extentsion扩展的配置
+ * game.import的回调返回值结构
+ */
+interface ExtensionInfoData {
+    /** 扩展名 */
+    name:string;
+    /** 是否可编辑该扩展（需要打开显示制作扩展） */
+    editable:boolean;
+
+    element:any;
+
+    /** 该扩展菜单的扩展 */
+    config: SMap<SelectConfigData>;
+    skill:SMap<any>;
+    card:SMap<any>;
+    files:SMap<any[]>;
+    /** 该扩展使用的常量字符串 */
+    translate:SMap<string>;
+    /** 帮助（说明） */
+    help:SMap<string>;
+    
+    package:any;
+    game:any;
+    
+    content(config, pack):void;
+    precontent(data):any;
+    
+    init():void;
+    video():void;
+    arenaReady():void;
+    /** 删除该扩展后调用 */
+    onremove():void;
+}
+
+/**
+ * content触发内容：
+ * 经过game.createEvent创建事件，设置setContent，
+ * 经过lib.init.parse转换，
+ * 在game.loop内，传入这些参数调用
+ */
+type ContentFunc = (event, step, source, player, target, targets, card, cards, skill, forced, num, trigger, result, _status, lib, game, ui, get, ai) => void;

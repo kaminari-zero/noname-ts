@@ -41,7 +41,23 @@ interface Game {
      * @param obj 
      */
     loadExtension(obj: ExtensionFunc):any;
+    /**
+     * 导入扩展：（25693-25900）
+     * 若不存在window.JSZip，则先加载JSZip，加载完后再重新执行一遍game.importExtension。
+     * 若存在：后面主要都是生成zip的逻辑。
+     * @param data 
+     * @param finishLoad 
+     * @param exportext 
+     * @param pkg 
+     */
     importExtension(data,finishLoad,exportext,pkg):any;
+    /**
+     * 导出：（25091-25932）
+     * 如果当前是在移动端，则直接导出到移动端相关的文件夹内。
+     * 若是网页版，则生成下载链接，点击下载配置。
+     * @param textToWrite 
+     * @param name 
+     */
     export(textToWrite,name):any;
     multiDownload2(list,onsuccess,onerror,onfinish,process,dev):any;
     multiDownload(list,onsuccess,onerror,onfinish,process,dev):any;
@@ -85,7 +101,7 @@ interface Game {
     createCard(name,suit,number,nature):any;
     forceOver(bool,callback):any;
     over(result):any;
-    /** 游戏循环 */
+    /** 游戏循环（核心） */
     loop():any;
     pause():any;
     pause2():any;
@@ -124,7 +140,17 @@ interface Game {
     save(key,value,mode):any;
     showChangeLog():any;
     showExtensionChangeLog(str,extname):any;
-    saveConfig(key,value,local,callback):any;
+    /**
+     * 保存配置：（31499-31556）
+     * 若存在lib.db，则保存在指定数据库中，若没有则缓存在本地中。
+     * 同时，也会保存到内存中，若选择保存本地，则保存在lib.config.mode_config；
+     * 若不是则lib.config中。
+     * @param key 保存的key
+     * @param value 保存的value
+     * @param local 是否保存在本地,当local是string时，则key将拼接成：key+='_mode_config_'+local
+     * @param callback 执行完保存后的回调
+     */
+    saveConfig(key:string,value:any,local:boolean|string,callback:()=>void):any;
     saveConfigValue(key):any;
     saveExtensionConfig(extension,key,value):any;
     getExtensionConfig(extension,key):any;
@@ -269,38 +295,4 @@ interface VideoContent {
 interface Animate{
     window(num):any;
     flame(x,y,duration,type):any;
-}
-
-/** 扩展回调方法 */
-type ExtensionFunc = (lib: Lib, game: Game, ui: UI, get: Get, ai: AI, _status: Status) => ExtensionInfoData;
-
-type ExtensionInfoData = {
-    /** 扩展名 */
-    name:string;
-    /** 是否可编辑该扩展（需要打开显示制作扩展） */
-    editable:boolean;
-
-    element:any;
-
-    /** 该扩展菜单的扩展 */
-    config: SMap<SelectConfigData>;
-    skill:SMap<any>;
-    card:SMap<any>;
-    files:SMap<any[]>;
-    /** 该扩展使用的常量字符串 */
-    translate:SMap<string>;
-    /** 帮助（说明） */
-    help:SMap<string>;
-    
-    package:any;
-    game:any;
-    
-    content(config, pack):void;
-    precontent(data):any;
-    
-    init():void;
-    video():void,
-    arenaReady():void;
-    /** 删除该扩展后调用 */
-    onremove():void;
 }
