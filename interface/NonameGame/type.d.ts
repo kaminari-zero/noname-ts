@@ -183,7 +183,10 @@ interface ExSkillData {
      * 一般用于主动技能
      */
     enable?:string|string[];
-    /** 貌似时联机用的，具体还没确定 */
+    /** 
+     * 来源：
+     * 貌似时联机用的，具体还没确定
+     */
     derivation?:string[]|string;
     /** 
      * 指定位置：
