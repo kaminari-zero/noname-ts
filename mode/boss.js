@@ -581,50 +581,49 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 				type:"equip",
 				subtype:"equip2",
 				ai:{
-					basic:{
-						equipValue:7,
-						order:function(card,player){
-				if(player&&player.hasSkillTag('reverseEquip')){
-					return 8.5-get.equipValue(card,player)/20;
-				}
-				else{
-					return 8+get.equipValue(card,player)/20;
-				}
-			},
-						useful:2,
-						value:function(card,player){
-				var value=0;
-				var info=get.info(card);
-				var current=player.getEquip(info.subtype);
-				if(current&&card!=current){
-					value=get.value(current,player);
-				}
-				var equipValue=info.ai.equipValue;
-				if(equipValue==undefined){
-					equipValue=info.ai.basic.equipValue;
-				}
-				if(typeof equipValue=='function') return equipValue(card,player)-value;
-				if(typeof equipValue!='number') equipValue=0;
-				return equipValue-value;
-			},
+					basic: {
+						equipValue: 7,
+						order: function (card, player) {
+							if (player && player.hasSkillTag('reverseEquip')) {
+								return 8.5 - get.equipValue(card, player) / 20;
+							} else {
+								return 8 + get.equipValue(card, player) / 20;
+							}
+						},
+						useful: 2,
+						value: function (card, player) {
+							var value = 0;
+							var info = get.info(card);
+							var current = player.getEquip(info.subtype);
+							if (current && card != current) {
+								value = get.value(current, player);
+							}
+							var equipValue = info.ai.equipValue;
+							if (equipValue == undefined) {
+								equipValue = info.ai.basic.equipValue;
+							}
+							if (typeof equipValue == 'function') return equipValue(card, player) - value;
+							if (typeof equipValue != 'number') equipValue = 0;
+							return equipValue - value;
+						},
 					},
-					result:{
-						target:function(player,target){
-				return get.equipResult(player,target,name);
-			},
+					result: {
+						target: function (player, target) {
+							return get.equipResult(player, target, name);
+						},
 					},
 				},
 				skills:["hongmianbaihuapao_skill"],
 				enable:true,
 				selectTarget:-1,
-				filterTarget:function(card,player,target){
-		return target==player;
-	},
+				filterTarget: function (card, player, target) {
+					return target == player;
+				},
 				modTarget:true,
 				allowMultiple:false,
-				content:function(){
-		target.equip(card);
-	},
+				content: function () {
+					target.equip(card);
+				},
 				toself:true,
 				fullimage:true,
 			},

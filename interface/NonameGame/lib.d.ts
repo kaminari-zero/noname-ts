@@ -20,7 +20,7 @@ interface Lib {
     characterTitle: any;
     characterPack: any;
     characterFilter: any;
-    characterSort: any;
+    characterSort: SMap<SMap<string[]>>;
     cardPack: any;
     onresize: any[];
     onphase: any[];

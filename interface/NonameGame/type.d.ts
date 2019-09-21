@@ -313,6 +313,12 @@ interface ExSkillData {
     onuse?(result, player):void;
 }
 
+/** 导入技能包的配置信息 */
+interface ExSkillConifgData extends ExCommonConfig {
+    /** 技能 */
+    skill:SMap<ExSkillData>;
+}
+
 /** 时机的配置信息 */
 interface ExTriggerData {
     /** 
@@ -530,15 +536,12 @@ interface ChooseButtonConfigData {
 /**
  * 武将包的配置信息
  */
-interface CharacterConfigData {
-    /** 武将包名(英文) */
-    name:string;
+interface CharacterConfigData extends ExCommonConfig {
     /** 该武将包是否可以联机 */
     connect:boolean;
 
     /** 
      * 武将基本配置信息
-     * "武将名字":[ "性别","势力",体力,["技能"],[] ]
      */
     character:SMap<HeroData>;
     /** 武将介绍 */
@@ -547,32 +550,31 @@ interface CharacterConfigData {
     characterTitle?:SMap<string>;
     /** 技能 */
     skill:SMap<ExSkillData>;
-    /** 翻译 */
-    translate:SMap<string>;
     /** 珠联璧合武将 */
     perfectPair?:SMap<string[]>;
 }
 
 /** 
  * 武将信息:
- * [ "性别","势力",体力,["技能"],["可以保持图片，一些卡片标记，如："zhu","boss",""...] ]
+ * [ 0string,1string,2number,3string[],4string[],.....其他特殊扩展 ]
+ * 0："性别",
+ * 1："势力",
+ * 2：体力,
+ * 3：["技能"],
+ * 4：[可以保持图片，一些卡片标记，如："zhu","boss",""...,或者一些带前缀的特殊文本，例如：des:xxxx，表示描述]
  */
 type HeroData = [string,string,number,string[],string[]];
 
 /**
  * 卡包配置信息
  */
-interface CardHolderConfigData {
-    /** 卡包名 */
-    name:string;
+interface CardHolderConfigData extends ExCommonConfig {
     /** 该卡包是否可以联机 */
     connect:boolean;
     /** 卡牌 */
-    card:SMap<CardConfigData>;
+    card:SMap<ExCardData>;
     /** 卡牌技能 */
     skill:SMap<any>;
-    /** 翻译 */
-    translate:SMap<string>;
     /** 牌堆添加 */
     list:string[][];
 }
@@ -580,57 +582,156 @@ interface CardHolderConfigData {
 /**
  * 卡牌信息配置
  */
-interface CardConfigData {
-    
+interface ExCardData {
+    type: string;
+    enable: boolean;
+    filterTarget: boolean;
+    content:ContentFunc;
+    ai: ExAIData,
+    fullskin: boolean,
 }
 
-type CardAndPlayerFun<T> = (card,player) => T;
-type CardPlayerAndTargetFun<T> = (card, player, target) => T;
-type CardFun<T> = (card) => T;
-type PlayerSkillFun<T> = (player,skill) => T;
-type PlayerTargetFun<T> = (player, target) => T;
-type NoParamFun<T> = () => T;
 /**
  * 标记显示内容为文本时的返回字符串方法
  */
 type IntroContentFun = (storage,player,skill) => string;
 
 /** 扩展回调方法 */
-type ExtensionFunc = (lib: Lib, game: Game, ui: UI, get: Get, ai: AI, _status: Status) => ExtensionInfoData;
+type ExtensionFunc = (lib: Lib, game: Game, ui: UI, get: Get, ai: AI, _status: Status) => ExtensionInfoConfigData;
 
 /**
  * extentsion扩展的配置
  * game.import的回调返回值结构
  */
-interface ExtensionInfoData {
-    /** 扩展名 */
-    name:string;
-    /** 是否可编辑该扩展（需要打开显示制作扩展） */
+interface ExtensionInfoConfigData extends ExCommonConfig {
+    /** 
+     * 是否可编辑该扩展（需要打开显示制作扩展）
+     * （都满足条件，则可以开启“编辑此扩展”功能）
+     */
     editable:boolean;
-
-    element:any;
-
-    /** 该扩展菜单的扩展 */
+    
+    /** 
+     * 该扩展菜单的扩展 
+     * (也是游戏编辑器中的选项代码部分)
+     */
     config: SMap<SelectConfigData>;
+    
+    /**
+     * 扩展的包信息
+     * （主要是通过系统内部自带编译器编辑的代码，导入逻辑其实基本一致）
+     */
+    package:PackageData;
+
+    game?:any;
+    element?:any;
+
     skill:SMap<any>;
     card:SMap<any>;
     files:SMap<any[]>;
-    /** 该扩展使用的常量字符串 */
-    translate:SMap<string>;
-    /** 帮助（说明） */
-    help:SMap<string>;
     
-    package:any;
-    game:any;
-    
+    /**
+     * 函数执行时机为游戏数据加载之后、界面加载之前
+     * （也是游戏编辑器中的主代码部分）
+     * @param config 扩展选/配置
+     * @param pack 扩展定义的武将、卡牌和技能等
+     */
     content(config, pack):void;
+    /**
+     * 函数执行时机为游戏数据加载之前，且不受禁用扩展的限制
+     * 除添加模式外请慎用
+     * （也是游戏编辑器中的启动代码部分）
+     * @param data 
+     */
     precontent(data):any;
-    
-    init():void;
-    video():void;
-    arenaReady():void;
     /** 删除该扩展后调用 */
     onremove():void;
+    
+    init?():void;
+    video?():void;
+    arenaReady?():void;
+}
+
+/**
+ * 玩法模式的扩展配置
+ * game.import,type为mode的主要返回结构
+ * 
+ * 若想扩展一些项目内没有的对象，最好采用以下两种结构加入：
+ * 1.数组:[];
+ * 2.对象结构：{}
+ * 要扩充方法，通过对象结构，都会以lib[新对象结构的key]={对象结构}的方式保存在本地。
+ */
+interface ExModeConfigData extends ExCommonConfig {
+    /**
+     * 对应lib.element,
+     * 若里面是项目内的同名字段，将覆盖原方法
+     */
+    element:any,
+    /**
+     * 对应ai
+     */
+    ai:any,
+    /**
+     * 对应ui
+     */
+    ui:any,
+    /**
+     * 对应game
+     */
+    game:any,
+    /**
+     * 对应get
+     */
+    get:any,
+
+    /** 技能（主要是放些该模式下特有的技能） */
+    skill?:SMap<ExSkillData>;
+    /** 
+     * 武将包：
+     * （主要导入该模式下特有的武将，角色）
+     * 主要以一个个包形式导入，每个包包含这该包一系列武将信息
+     */
+    characterPack?:SMap<SMap<HeroData>>;
+    /**
+     * 武将分类排序：
+     * 整合在该模式下的某些武将排序。
+     */
+    characterSort?:SMap<SMap<string[]>>;
+    /** 卡牌（主要是放些该模式下特有的卡牌） */
+    card?:SMap<ExCardData>;
+    /** 
+     * 卡包：
+     * （主要导入该模式下特有的卡牌）
+     * 主要以一个个包形式导入，每个包包含这该包一系列卡牌名
+     */
+    cardPack?:SMap<SMap<string[]>>;
+
+    /**
+     * mode的init方法
+     * （若有，init是最早启动的方法）
+     */
+    init?():void;
+    /**
+     * mode的start启动方法
+     */
+    start():void;
+    /**
+     * mode的start启动之前的处理方法
+     */
+    startBefore?():void;
+    /**
+     * 重新初始化
+     * 在lib.client.reinit中，
+     * game.loadModeAsync，读取mode时启用这个初始化。
+     * 具体作用：有待考究
+     */
+    onreinit?():void;
+
+    /** 
+     * 可以继续加入更多对象：
+     * 这些对象会对应附加在lib中，或替换对应lib位置的对象：
+     * 例如：translate，help，skill... ... 或者其他自定义的...
+     */
+    [key:string]:any;
 }
 
 /**
@@ -640,3 +741,74 @@ interface ExtensionInfoData {
  * 在game.loop内，传入这些参数调用
  */
 type ContentFunc = (event, step, source, player, target, targets, card, cards, skill, forced, num, trigger, result, _status, lib, game, ui, get, ai) => void;
+
+/** 扩展通用配置项 */
+interface ExCommonConfig {
+    /** 
+     * 扩展名
+     * （必须要有，程序内检索就是通过这个名字检索的）
+     */
+    name:string;
+    /** 
+     * 翻译（本地化）
+     * 该扩展使用的常量字符串
+     */
+    translate:SMap<string>;
+    /** 
+     * 帮助文本
+     * 帮助内容将显示在菜单－选项－帮助中
+     * 游戏编辑器的帮助代码部分：
+     * 基本示例结构：
+     * "帮助条目":"
+     *  <ul>
+     *      <li>列表1-条目1
+     *      <li>列表1-条目2
+     *  </ul>
+     *  <ol>
+     *      <li>列表2-条目1
+     *      <li>列表2-条目2
+     *  </ul>"
+     * 看起来有点奇怪的html文档结构，详细，等参阅代码之后
+     * (目前可显示帮助信息：mode，extension，card卡包，character武将包)
+     */
+    help?:SMap<string>;
+}
+
+/** 
+ * 扩展的包信息
+ * 游戏自带编辑器的代码编辑区域的扩展结构：
+ * （主要是通过系统内部自带编译器编辑的代码，导入逻辑其实基本一致）
+ */
+interface PackageData {
+    /** 扩展制作作者名 */
+    author:string,
+    /** 扩展描述 */
+    intro:string,
+    /** 讨论地址 */
+    diskURL: string,
+    /** 网盘地址 */
+    forumURL: string,
+    /** 扩展版本 */
+    version: string,
+
+    /** 武将导入信息 */
+    character:CharacterConfigData;
+    /** 卡牌导入信息 */
+    card:CardHolderConfigData;
+    /** 技能导入信息 */
+    skill:ExSkillConifgData;
+
+    /** 相关文件名（扩展所使用的一些图片） */
+    files:{
+        character: string[];
+        card: string[];
+        skill: string[];
+    }
+}
+
+type CardAndPlayerFun<T> = (card,player) => T;
+type CardPlayerAndTargetFun<T> = (card, player, target) => T;
+type CardFun<T> = (card) => T;
+type PlayerSkillFun<T> = (player,skill) => T;
+type PlayerTargetFun<T> = (player, target) => T;
+type NoParamFun<T> = () => T;
