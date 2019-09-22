@@ -1,6 +1,9 @@
+declare namespace Lib.element {
+
 /**
  * 玩家类
  * 还有许多内部属性没暴露出来
+ * 来源：lib.element.player
  */
 interface Player {
     //新函数
@@ -283,4 +286,5 @@ interface Player {
     $die():any;
     $dieflip(type: any):any;
     $phaseJudge(card: any):any;
+}
 }

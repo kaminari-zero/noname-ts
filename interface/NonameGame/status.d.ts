@@ -5,6 +5,7 @@ interface Status {
     over:boolean,
     clicked:boolean,
     auto:boolean,
+    /** 游戏当前事件 */
     event:{
         finished:boolean,
         next:any[],

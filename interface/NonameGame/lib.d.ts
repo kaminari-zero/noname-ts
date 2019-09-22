@@ -36,12 +36,13 @@ interface Lib {
     extensionPack: SMap<any>;
     cardType: any;
     hook: {
-        globaltrigger: any, globalskill: any;
+        globaltrigger: any;
+        globalskill: any;
     };
     hookmap: any;
     /** 已经导入的扩展 */
     imported: any;
-    layoutfixed: ['chess', 'tafang', 'stone'];
+    layoutfixed: string[];
     characterDialogGroup: SMap<(name: any, capt: any)=>void>
     listenEnd(node: any):any;
     /** 菜单配置 */
@@ -60,6 +61,11 @@ interface Lib {
         videoId: number,
         globalId: number,
     };
+    /** 
+     * 帮助内容数据中心
+     * 帮助内容将显示在菜单－选项－帮助中
+     * （所有扩展的help都会集中到这里）
+     */
     help: SMap<string>;
     setIntro(node: HTMLDivElement, func: any, left: any):any;
     setPopped(node: HTMLDivElement, func: any, width: any, height: any, forceclick: any, paused2: any):any;
@@ -146,162 +152,21 @@ interface Lib {
     };
     translate: SMap<string>;
     element: {
-        content: {
-            chooseToDuiben():any;
-            chooseToPSS():any;
-            cardsDiscard():any;
-            chooseToEnable():any;
-            chooseToDisable():any;
-            swapEquip():any;
-            disableEquip():any;
-            enableEquip():any;
-            disableJudge():any;
-            /*----分界线----*/
-            phasing():any;
-            toggleSubPlayer():any;
-            exitSubPlayer():any;
-            callSubPlayer():any;
-            reverseOrder():any;
-            addJudgeCard():any;
-            equipCard():any;
-            gameDraw():any;
-            phaseLoop():any;
-            loadPackage():any;
-            loadMode():any;
-            forceOver():any;
-            arrangeTrigger():any;
-            createTrigger():any;
-            playVideoContent():any;
-            waitForPlayer():any;
-            replaceHandcards():any;
-            replaceHandcardsOL():any;
-            phase():any;
-            phaseJudge():any;
-            phaseDraw():any;
-            phaseUse():any;
-            phaseDiscard():any;
-            chooseToUse():any;
-            chooseToRespond():any;
-            chooseToDiscard():any;
-            chooseToCompareMultiple():any;
-            chooseToCompare():any;
-            chooseSkill():any;
-            discoverCard():any;
-            chooseButton():any;
-            chooseCardOL():any;
-            chooseButtonOL():any;
-            chooseCard():any;
-            chooseTarget():any;
-            chooseCardTarget():any;
-            chooseControl():any;
-            chooseBool():any;
-            chooseDrawRecover():any;
-            choosePlayerCard():any;
-            discardPlayerCard():any;
-            gainPlayerCard():any;
-            showHandcards():any;
-            showCards():any;
-            viewCards():any;
-            moveCard():any;
-            useCard():any;
-            useSkill():any;
-            draw():any;
-            discard():any;
-            respond():any;
-            swapHandcards():any;
-            gainMultiple():any;
-            gain():any;
-            lose():any;
-            damage():any;
-            recover():any;
-            loseHp():any;
-            doubleDraw():any;
-            loseMaxHp():any;
-            gainMaxHp():any;
-            changeHp():any;
-            changeHujia():any;
-            dying():any;
-            die():any;
-            equip():any;
-            addJudge():any;
-            judge():any;
-            turnOver():any;
-            link():any;
-        },
-        player: Player,
-        card: {
-            init(card: any):any;
-            updateTransform(bool: any, delay: any):any;
-            aiexclude():any;
-            getSource(name: any):any;
-            moveDelete(player: any):any;
-            moveTo(player: any):any;
-            copy():any;
-            uncheck(skill: any):any;
-            recheck(skill: any):any;
-            discard(bool: any):any;
-            hasTag(tag: any):any;
-            hasPosition():any;
-            isInPile():any;
-        },
-        button: {
-            exclude():any;
-        },
-        event: {
-            finish():any;
-            cancel():any;
-            goto(step: any):any;
-            redo():any;
-            set(key: any, value: any):any;
-            setContent(name: any):any;
-            getLogv():any;
-            send():any;
-            resume():any;
-            getParent(level: any, forced: any):any;
-            getTrigger():any;
-            getRand():any;
-            insert(func: any, map: any):any;
-            insertAfter(func: any, map: any):any;
-            backup(skill: any):any;
-            restore():any;
-            isMine():any;
-            isOnline():any;
-            notLink():any;
-            addTrigger(skill: any, player: any):any;
-            trigger(name: any):any;
-            untrigger(all: any, player: any):any;
-        },
-        dialog: {
-            add(item: any, noclick: any, zoom: any):any;
-            addText(str: any, center: any):any;
-            addSmall(item: any, noclick: any):any;
-            addAuto(content: any):any;
-            open():any;
-            close():any;
-            setCaption(str: any):any;
-        },
-        control: {
-            open():any;
-            add(item: any):any;
-            close():any;
-            replace():any;
-        },
-        client: {
-            send():any;
-            close():any;
-        },
-        nodews: {
-            send(message: any):any;
-            on(type: any, func: any):any;
-            close():any;
-        },
-        ws: {
-            onopen():any;
-            onmessage(messageevent: any):any;
-            onerror(e: any):any;
-            onclose():any;
-        }
+        content: Lib.element.Content;
+        player: Lib.element.Player;
+        card: Lib.element.Card;
+        button: Lib.element.Button;
+        event: Lib.element.Event;
+        dialog: Lib.element.Dialog;
+        control: Lib.element.Control;
+        client: Lib.element.Client;
+        nodews: Lib.element.Nodews;
+        ws: Lib.element.WS;
     }, 
+    /** 
+     * 卡片数据中心 
+     * （所有扩展的card都会集中到这里）
+     */
     card: {
         list: any[];
     },
@@ -350,6 +215,10 @@ interface Lib {
         capt(a: any, b: any):any;
         name(a: any, b: any):any;
     };
+    /**
+     * 技能数据中心
+     * （所有扩展的skill都会集中到这里）
+     */
     skill: {
         /** 保存游戏内所有全局技能 */
         global: any[];
@@ -386,6 +255,10 @@ interface Lib {
         _lianhuan3: ExSkillData,
         _lianhuan4: ExSkillData
     };
+    /**
+     * 武将数据中心
+     * （所有扩展的character都会集中到这里）
+     */
     character: any;
     perfectPair: any;
     cardPile: any;

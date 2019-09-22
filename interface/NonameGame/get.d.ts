@@ -2,29 +2,7 @@ declare var get:Get;
 interface Get {
     infoHp(hp):any;
     infoMaxHp(hp):any;
-    is:{
-        converted(event):any;
-        safari():any;
-        freePosition(cards):any;
-        nomenu(name,item):any;
-        altered(skill):any;
-        node(obj):any;
-        div(obj):any;
-        map(obj):any;
-        set(obj):any;
-        object(obj):any;
-        singleSelect(func):any;
-        jun(name):any;
-        versus():any;
-        mobileMe(player):any;
-        newLayout():any;
-        phoneLayout():any;
-        singleHandcard():any;
-        linked2(player):any;
-        empty(obj):any;
-        pos(str):any;
-        locked(skill):any;
-    },
+    is:Is,
     bottomCards(num):any;
     discarded():any;
     cardOffset():any;
@@ -171,4 +149,28 @@ interface Get {
     recoverEffect(target,player,viewer):any;
     buttonValue(button):any;
     attitude2(to):any;
+}
+
+interface Is {
+    converted(event): any;
+    safari(): any;
+    freePosition(cards): any;
+    nomenu(name, item): any;
+    altered(skill): any;
+    node(obj): any;
+    div(obj): any;
+    map(obj): any;
+    set(obj): any;
+    object(obj): any;
+    singleSelect(func): any;
+    jun(name): any;
+    versus(): any;
+    mobileMe(player): any;
+    newLayout(): any;
+    phoneLayout(): any;
+    singleHandcard(): any;
+    linked2(player): any;
+    empty(obj): any;
+    pos(str): any;
+    locked(skill): any;
 }
