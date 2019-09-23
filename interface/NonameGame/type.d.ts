@@ -734,13 +734,6 @@ interface ExModeConfigData extends ExCommonConfig {
     [key:string]:any;
 }
 
-/**
- * content触发内容：
- * 经过game.createEvent创建事件，设置setContent，
- * 经过lib.init.parse转换，
- * 在game.loop内，传入这些参数调用
- */
-type ContentFunc = (event, step, source, player, target, targets, card, cards, skill, forced, num, trigger, result, _status, lib, game, ui, get, ai) => void;
 
 /** 扩展通用配置项 */
 interface ExCommonConfig {
@@ -797,7 +790,7 @@ interface PackageData {
     card:CardHolderConfigData;
     /** 技能导入信息 */
     skill:ExSkillConifgData;
-
+    
     /** 相关文件名（扩展所使用的一些图片） */
     files:{
         character: string[];
@@ -812,3 +805,32 @@ type CardFun<T> = (card) => T;
 type PlayerSkillFun<T> = (player,skill) => T;
 type PlayerTargetFun<T> = (player, target) => T;
 type NoParamFun<T> = () => T;
+
+/**
+ * content触发内容：
+ * 经过game.createEvent创建事件，设置setContent，
+ * 经过lib.init.parse转换，
+ * 在game.loop内，传入这些参数调用。
+ *  
+ */
+type ContentFunc = (
+    event, 
+    step, 
+    source, 
+    player, 
+    target, 
+    targets, 
+    card, 
+    cards, 
+    skill, 
+    forced, 
+    num, 
+    trigger, 
+    result, 
+    _status, 
+    lib, 
+    game, 
+    ui, 
+    get, 
+    ai
+    ) => void;

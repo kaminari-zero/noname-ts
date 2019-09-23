@@ -107,7 +107,13 @@ interface Game {
     pause2():any;
     resume():any;
     resume2():any;
-    delay(time,time2):any;
+    /**
+     * 游戏延迟
+     * 延迟结束后继续游戏
+     * @param time 时间倍率
+     * @param time2 额外增加的延时时间
+     */
+    delay(time?:number,time2?:number):any;
     delayx(time,time2):any;
     check(event):any;
     uncheck():any;
@@ -129,7 +135,17 @@ interface Game {
     finishSkill(i,sub):any;
     finishCards():any;
     checkMod(...args):any;
-    prepareArena(num):any;
+    /**
+     * 准备场地:
+     * 基本流程：
+     *  准备显示历史面板 game.showHistory(false)
+     *  创建玩家 ui.create.players(num)
+     *  创建自身 ui.create.me()
+     *  同步创建卡牌 ui.create.cardsAsync()
+     *  卡牌创建完成 game.finishCards()
+     * @param num 玩家人数
+     */
+    prepareArena(num?:number):any;
     clearArena():any;
     clearConnect():any;
     log():any;

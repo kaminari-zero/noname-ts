@@ -43,7 +43,12 @@ interface Get {
     skillState(player):any;
     id():any;
     zhu(player,skill,unseen):any;
-    config(item,mode):any;
+    /**
+     * 获取指定玩法模式的指定config配置项
+     * @param item config的配置项
+     * @param mode 玩法模式，默认是当前的玩法模式：lib.config.mode
+     */
+    config(item:string,mode?:string):any;
     coinCoeff(list):any;
     rank(name,num):any;
     skillRank(skill,type,grouped):any;

@@ -1,0 +1,46 @@
+declare namespace UI {
+
+interface Create {
+    div():any;
+    filediv():any;
+    node():any;
+    iframe(src):any;
+    identitycircle(list,target):any;
+    chat():any;
+    exit():any;
+    connecting(bool):any;
+    roomInfo():any;
+    templayer(time):any;
+    selectlist(list,init,position,onchange):any;
+    menu(connectMenu):any;
+    table():any;
+    giveup():any;
+    groupControl(dialog):any;
+    cardDialog():any;
+    characterDialog2(filter):any;
+    characterDialog():any;
+    dialog():any;
+    line2():any;
+    line():any;
+    switcher(name,current,current2):any;
+    caption(str,position):any;
+    control():any;
+    confirm(str,func):any;
+    skills(skills):any;
+    skills2(skills):any;
+    skills3(skills):any;
+    arena():any;
+    system(str,func,right,before):any;
+    pause():any;
+    prebutton(item,type,position,noclick):any;
+    button(item,type,position,noclick,node):any;
+    buttons(list,type,position,noclick,zoom):any;
+    player(position,noclick):any;
+    connectPlayers(ip):any;
+    players(num):any;
+    me(hasme):any;
+    card(position,info,noclick):any;
+    cardsAsync():any;
+    cards(ordered):any;
+}
+}
