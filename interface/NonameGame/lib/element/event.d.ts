@@ -21,6 +21,10 @@ interface Event {
     isOnline(): any;
     notLink(): any;
     addTrigger(skill: any, player: any): any;
+    /**
+     * 发送触发事件
+     * @param name 
+     */
     trigger(name: any): any;
     untrigger(all: any, player: any): any;
 }
