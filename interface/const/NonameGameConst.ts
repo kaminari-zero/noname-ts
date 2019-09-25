@@ -285,6 +285,14 @@ namespace NG {
     }
 
     /**
+     * 特殊阶段
+     */
+    enum Super_Trigger_Enum {
+        /** 触发结束后 */
+        triggerAfter = "triggerAfter"
+    }
+
+    /**
      * 主动技触发时机
      * 用于主动技的enable中
      */

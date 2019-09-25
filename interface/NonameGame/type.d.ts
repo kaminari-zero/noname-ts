@@ -84,10 +84,15 @@ interface ExSkillData {
      */
     trigger?: ExTriggerData;
 
+    /**
+     * 为true时，将该技能加入到_hookTrigger
+     * 具体作用尚为知晓
+     */
+    hookTrigger?:boolean;
+
     /** 是否实时更新(例如标记) */
     locked?:boolean;
     unique?:boolean;
-    silent?:boolean;
     /**
      * 此技能是否可以被设置为自动发动（不询问）
      */
@@ -103,14 +108,20 @@ interface ExSkillData {
      * true为不
      */
     nopop?:boolean;
-    /** 功能相当于forced+nopop */
+    /** 功能相当于forced+nopop ,会不会是被托管时的标记呢，正在验证*/
     direct?:boolean;
     /** 
      * 获得技能时是否显示此标记，
      * 若为false，可以用markSkill()来显示此标记
      */
     mark?:boolean;
+    /** 
+     * 是否可以弹出选择
+     * 用于在arrangeTrigger过滤出多个同时机的触发技能时
+     */
     popup?:boolean;
+    /** 目前具体不知什么功能，当前所知，和popup功能一致 */
+    silent?:boolean;
     noLose?:boolean;
     noDeprive?:boolean;
     noRemove?:boolean;
@@ -147,6 +158,8 @@ interface ExSkillData {
     priority?:number;
     /** 每回合限制使用次数（限制使用次数为变量时需写在filter内） */
     usable?:number;
+    /** 目前还没确定具体，应该是一场游戏中，能使用的次数 */
+    round?:number;
     /**
      * 需要选择多少张牌才能发动
      * 选择的牌数
@@ -162,6 +175,10 @@ interface ExSkillData {
      * 为数组时，这个数组就是选择目标数的区间
      */
     selectTarget?:number|number[];
+    /**
+     * 自动延迟的时间
+     */
+    autodelay?:number|TriggerAndPlayer<number>;
     
     /** 技能按钮名字，不写则默认为此技能的翻译 */
     name?:string;
@@ -205,13 +222,25 @@ interface ExSkillData {
     /**
      * 选择时弹出的提示
      */
-    prompt?:string;
+    prompt?:string|TriggerAndPlayer<string>;
+    /**
+     * 阶段日志
+     * 配置一个触发阶段，或者一个方法直接返回文本
+     * 若没有配置prompt，显示该配置的提示
+     */
+    logTarget?:string|TriggerAndPlayer<string>;
+    /**
+     * 二次提示，主要显示的时机暂未明确
+     * 若是boolean类型，则使用lib.translate[“技能名_info”]的描述
+     */
+    prompt2?:string|TriggerAndPlayer<string>|boolean;
     /**
      * 全局技能?:
      * 你拥有此技能时，所有角色拥有此技能（global的值为技能名）
      * 注：无论是否拥有此技能，此技能都为全局技能写法：技能名前+_
      */
     global?:string;
+    globalSilent?:any;
 
     intro?: {
         /** 
@@ -311,6 +340,33 @@ interface ExSkillData {
      * @param player 
      */
     onuse?(result, player):void;
+
+    /**
+     * 在filterTrigger中执行，过滤发动条件，和filter有些类似，具体功能稍后分析
+     * @param event 
+     * @param player 
+     * @param name 
+     * @param skill 
+     */
+    block?(event,player,name,skill):void;
+
+    /**
+     * 取消触发后的处理
+     * 在createTrigger中step 3处理
+     * @param trigger 
+     * @param player 
+     */
+    oncancel?(trigger,player):void;
+
+    /**
+     * 之后处理方法
+     * 在createTrigger中最终步骤中，需要当前没有hookTrigger配置才调用到
+     * 若返回true时，会触发“triggerAfter”
+     * @param event 
+     * @param player 
+     * @param triggername 
+     */
+    after?(event,player,triggername):boolean;
 }
 
 /** 导入技能包的配置信息 */
@@ -589,6 +645,10 @@ interface ExCardData {
     content:ContentFunc;
     ai: ExAIData,
     fullskin: boolean,
+
+    viewAs?:any,
+    cancel?:any,
+    effect?:any,
 }
 
 /**
@@ -799,12 +859,23 @@ interface PackageData {
     }
 }
 
+/** 判断阶段的事件reslut */
+interface JudgeResultData {
+    card:string,
+    number:number,
+    suit:string,
+    color:string,
+    judge:any,
+    node:any,
+}
+
 type CardAndPlayerFun<T> = (card,player) => T;
 type CardPlayerAndTargetFun<T> = (card, player, target) => T;
 type CardFun<T> = (card) => T;
 type PlayerSkillFun<T> = (player,skill) => T;
 type PlayerTargetFun<T> = (player, target) => T;
 type NoParamFun<T> = () => T;
+type TriggerAndPlayer<T> = () => T;
 
 /**
  * content触发内容：

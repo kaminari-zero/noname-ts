@@ -176,7 +176,13 @@ declare namespace Lib.element {
         toggleSubPlayer(): any;
         exitSubPlayer(remove: any): any;
         getSubPlayers(tag: any): any;
-        addSkillTrigger(skill: any, hidden: any, triggeronly: any): any;
+        /**
+         * 增加技能触发
+         * @param skill 技能名
+         * @param hidden 
+         * @param triggeronly 
+         */
+        addSkillTrigger(skill: string, hidden: boolean, triggeronly?: boolean): any;
         addSkillLog(skill: any): any;
         addSkill(skill: any, checkConflict: any, nobroadcast: any): any;
         addAdditionalSkill(skill: any, skills: any, keep: any): any;
