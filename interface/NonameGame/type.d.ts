@@ -647,7 +647,9 @@ interface ExCardData {
     fullskin: boolean,
 
     viewAs?:any,
+    /** 当前判断阶段被取消 */
     cancel?:any,
+    /** 卡牌效果 */
     effect?:any,
 }
 
