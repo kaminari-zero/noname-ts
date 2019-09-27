@@ -37,6 +37,7 @@ window.noname_package={
 		cardpile:'牌堆补充',
 		wuxing:'五行生克',
 		coin:'富甲天下',
+		"代码搜索器":"代码搜索器"
 	},
 	mode:{
 		identity:'身份',

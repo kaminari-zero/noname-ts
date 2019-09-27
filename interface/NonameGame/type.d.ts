@@ -651,6 +651,12 @@ interface ExCardData {
     cancel?:any,
     /** 卡牌效果 */
     effect?:any,
+
+    /**
+     * 在lose中使用
+     * 若存在则设置在卡牌的destroyed
+     */
+    destroy?:any,
 }
 
 /**
