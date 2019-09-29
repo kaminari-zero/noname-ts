@@ -8,6 +8,13 @@ interface Get {
     cardOffset():any;
     colorspan(str):any;
     evtprompt(next,str):any;
+    /**
+     * 自动视为指定牌。
+     * 若指定视为牌，有autoViewAs，则返回重新整合后的视为牌;
+     * 若不是，则返回card的副本，将card.cards设为cards的副本
+     * @param card 指定视为牌
+     * @param cards 待操作的卡牌集合
+     */
     autoViewAs(card,cards):any;
     max(list,func,type):any;
     min(list,func,type):any;
@@ -19,7 +26,13 @@ interface Get {
     sort(arr,method):any;
     sortSeat(arr,target):any;
     zip(callback):any;
-    delayx(num,max):any;
+    /**
+     * 计算当前延迟x秒
+     * 根据lib.config.game_speed，会获得当前模式的延迟值
+     * @param num 延迟的时间，默认为1
+     * @param max 最大值，默认为Infinity
+     */
+    delayx(num?:number,max?:number):number;
     prompt(skill,target,player):any;
     prompt2(skill,target,player):any;
     url(master):any;
@@ -27,6 +40,11 @@ interface Get {
     playerNumber():any;
     benchmark(func1,func2,iteration,arg):any;
     stringify(obj,level):any;
+    /**
+     * 深复制对象
+     * （对象结构过于复杂，可能会很慢）
+     * @param obj 
+     */
     copy(obj):any;
     inpilefull(type):any;
     inpile(type,filter):any;
@@ -92,17 +110,48 @@ interface Get {
     nature(card):any;
     cards(num):any;
     judge(card):any;
-    distance(from,to,method):any;
+    /**
+     * 获得玩家from到to之间的距离
+     * 具体距离类型，到时详细研究代码分析：
+     * raw，原始距离；
+     * pure，直线距离；
+     * absolute，绝对距离；
+     * attack，攻击距离；
+     * 除以上情况，其他值（默认）为防御距离
+     * @param from 源玩家
+     * @param to 目标玩家
+     * @param method 获取距离的类型：raw，pure，absolute，attack，默认防御距离
+     */
+    distance(from,to,method?:string):number;
     info(item):any;
+    /**
+     * 获取当前可选择的目标数，范围。
+     * 若没有默认返回[1,1]
+     * @param select 
+     * @return [number,number] 数组第一个目标数（可选目标数），数组第二个值为进攻范围，若为-1，则无距离限制
+     */
     select(select):any;
-    card(original):any;
+    /**
+     * 获得卡牌
+     * 根据
+     * _status.event.skill存在， 当前事件中的技能若有viewAs，则将选中牌；
+     * _status.event._get_card存在，则返回_status.event._get_card；
+     * ui.selected.cards[0] ，若original为true，则直接返回该第一张牌；若不是则返回处理过cards；
+     * @param original 
+     */
+    card(original?:boolean):any;
     player():any;
     players(sort,dead,out):any;
     position(card):any;
     skillTranslation(str,player):any;
     skillInfoTranslation(name):any;
     translation(str,arg):any;
-    cnNumber(num,two):any;
+    /**
+     * 将阿拉伯数字转成中文数字显示
+     * @param num 原数字
+     * @param two 是否显示“二”，还是显示“两”
+     */
+    cnNumber(num:number,two?:boolean):any;
     selectableButtons(sort):any;
     selectableCards(sort):any;
     skills():any;
@@ -114,6 +163,9 @@ interface Get {
     cardCount(card,player):any;
     skillCount(skill,player):any;
     owner(card,method):any;
+    /**
+     * 是否当前没有可选择的目标
+     */
     noSelected():any;
     population(identity):any;
     totalPopulation(identity):any;

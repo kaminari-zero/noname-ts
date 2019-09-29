@@ -22326,6 +22326,7 @@
 					if(!lib.hookmap[name]&&!lib.config.compatiblemode) return;
 					if(!game.players||!game.players.length) return;
 					var event=this;
+					lib.cheat.testLog(2,name,`事件名:${event.name}`)
 					var start=event.player||game.me||game.players[0];
 					if(!game.players.contains(start)){
 						start=game.findNext(start);
@@ -22451,6 +22452,7 @@
 					list.sort(function(a,b){
 						return b[2]-a[2];
 					});
+					lib.cheat.testLog(3,name,`执行trigger事件名:${event.name}`,`收集技能:${list.toString()}`)
 					if(list.length){
 						var next=game.createEvent('arrangeTrigger',false,event);
 						next.setContent('arrangeTrigger');
@@ -27951,6 +27953,7 @@
 				next[i]=lib.element.event[i];
 			}
 			(triggerevent||_status.event).next.push(next);
+			lib.cheat.testLog(0,name,`当前运行中事件:${_status.event?_status.event.name:"null"}`)
 			return next;
 		},
 		addCharacter:function(name,info){
@@ -29001,6 +29004,7 @@
 				else{
 					next.parent=event;
 					_status.event=next;
+					lib.cheat.testLog(4,next.name,`设置父节点:${next.parent.name}`)
 				}
 			}
 			else if(event.finished){
@@ -29031,6 +29035,7 @@
 					}
 				}
 				else{
+					lib.cheat.testLog(1,event.name,`父节点:${event.parent?event.parent.name:"null"}`)
 					if(event.parent){
 						if(event.result){
 							event.parent._result=event.result;
@@ -49158,6 +49163,43 @@
 		},
 		get:get
 	};
+	//创建一些自定义方法：
+	let isShowLog = true;
+	lib.cheat.testLog = function(type,name){
+		if(!isShowLog) return;
+		let startTime = new Date().toLocaleString();
+		let name2 = "";
+		let body = "";
+		let rest = Array.prototype.splice.call(arguments,2);
+		let body2 = "";
+		if(rest && rest.length>0){
+			body2 = rest.join(",");
+		}
+		//添加一个测试用日志，用来记录trigger触发：
+		switch(type) {
+			case 0:
+				name2 = "Event";
+				body = `创建事件${name}`;
+				break;
+			case 1:
+				name2 = "EventEnd";
+				body = `事件结束${name}`;
+				break;
+			case 2:
+				name2 = "Trigger";
+				body = `触发名${name}`;
+				break;
+			case 3:
+				name2 = "TriggerList";
+				body = `${name}触发列表`;
+				break;
+			case 4:
+				name2 = "EventStart";
+				body = `开始事件${name}`;
+				break;
+		}
+		console.log(`【${name2}】${startTime}：[${body}]->${body2};`);
+	}
 	lib.init.init();
 
 	//方法二：直接赋值于传入的对象内

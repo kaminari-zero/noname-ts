@@ -13,6 +13,7 @@
         // "noImplicitAny": true, //在表达式和声明上有隐含的 any类型时报错
         // "module": "none",  //模块化的风格，none，CommonJS，AMD......
         //增加这个，即使在es5的情况下，也能调用es6的方法提示（不过不能使用es6新语法，这个用ts代替就行了）
+        // "noUnusedParameters":false, //若有未使用的参数则抛错。
         "lib": [
             "es5",
             "es2015.core",

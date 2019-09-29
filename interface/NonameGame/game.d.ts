@@ -115,7 +115,18 @@ interface Game {
      */
     delay(time?:number,time2?:number):any;
     delayx(time,time2):any;
-    check(event):any;
+    /**
+     * 检测当前需要选中，并且在ui上做出选中处理
+     * 主要是根据event的数据作为依据，若没有，则默认使用_status.event
+     * @param event 
+     */
+    check(event?):any;
+    /**
+     * 取消选中
+     * 其参数若为空，默认取消所有，若有指定的类型，则只取消该类型的选中
+     * @param type 其类型可以card,target,button
+     */
+    uncheck(type:string):any;
     uncheck():any;
     swapSeat(player1,player2,prompt,behind,noanimate):any;
     swapPlayer(player,player2):any;

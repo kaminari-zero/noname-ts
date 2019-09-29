@@ -326,6 +326,11 @@ interface ExSkillData {
      * 分步执行(通过step x分割开执行逻辑步骤)
      */
     content?:ContentFunc;
+    /**
+     * 在content之前执行
+     * 其执行时机和chooseButton一致，当chooseButton不存在时且game.online为false，则会执行这个
+     * @param config 
+     */
     precontent?(config):void;
 
     /**
@@ -571,9 +576,10 @@ interface ExModData {
 /** 选择按钮配置 */
 interface ChooseButtonConfigData {
     /** 
-     * 选择内容 （目前只支持寻找卡牌）
+     * 选择内容 
+     * 返回传递给player.chooseButton的参数
      */
-    dialog?():any;
+    dialog?(event,player):any;
     /**
      * 卡牌选择条件
      * @param button 
