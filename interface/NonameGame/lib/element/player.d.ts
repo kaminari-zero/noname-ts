@@ -63,7 +63,16 @@ declare namespace Lib.element {
         countDiscardableCards(player: any, arg1: any, arg2: any): any;
         countGainableCards(player: any, arg1: any, arg2: any): any;
         getOriginalSkills(): any;
-        getSkills(arg2: any, arg3: any, arg4: any): any;
+        /**
+         * 获取玩家的技能。
+         * 默认获取玩家（除了玩家forbiddenSkills上的禁用技能）的：
+         *  武将技能skills+附加技能additionalSkills+临时技能tempSkills
+         * @param arg2 若为true，获取技能附带隐藏技能hiddenSkills
+         * @param arg3 若为true，获取技能附带装备技能；
+         * @param arg4 若为true，获取技能经过game.filterSkills过滤后的技能
+         * @return 返回最后收集到的玩家的技能   
+         */
+        getSkills(arg2?: boolean, arg3?: boolean, arg4?: boolean): any;
         get(arg1: any, arg2: any, arg3: any, arg4: any): any;
         syncStorage(skill: any): any;
         syncSkills(): any;

@@ -179,6 +179,11 @@ interface Game {
     replacePlayer(player,character,character2):any;
     arrangePlayers():any;
     filterSkills(skills,player):any;
+    /**
+     * 解析技能所包含的技能组。
+     * 即技能的group属性所记录的技能组
+     * @param skills 
+     */
     expandSkills(skills):any;
     css(style):any;
     hasPlayer(func):any;

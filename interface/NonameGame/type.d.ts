@@ -367,6 +367,16 @@ interface ExSkillData {
      * @param triggername 
      */
     after?(event,player,triggername):boolean;
+
+    /**
+     * 选中该技能使用时,进行处理
+     * 在chooseToUse 的content中调用，
+     * 目前参考的例子中，大多数多是用于添加一些牌到待选择到event.set(key，收集的牌)中，
+     * 用于使用前先选牌的效果
+     * 注：其调用时机应该远早于触发技能的，在选中牌时就开始处理。
+     * @param event 
+     */
+    onChooseToUse?(event):void;
 }
 
 /** 导入技能包的配置信息 */
