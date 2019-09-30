@@ -10072,6 +10072,7 @@
 				},
 				phaseLoop:function(){
 					"step 0"
+					lib.cheat.testLog(5,player.name,`别名：${player.name2}`)
 					for(var i=0;i<lib.onphase.length;i++){
 						lib.onphase[i]();
 					}
@@ -49196,6 +49197,10 @@
 			case 4:
 				name2 = "EventStart";
 				body = `开始事件${name}`;
+				break;
+			case 5:
+				name2 = "PhaseLoop";
+				body = `${name}的回合开始`;
 				break;
 		}
 		console.log(`【${name2}】${startTime}：[${body}]->${body2};`);

@@ -571,6 +571,12 @@ interface ExModData {
      * @param target 目标
      */
     targetInRange?(card, player, target):boolean;
+    /**
+     * 弃牌阶段时，忽略的手牌
+     * @param card 
+     * @param player 
+     */
+    ignoredHandcard?(card, player):boolean;
 }
 
 /** 选择按钮配置 */
