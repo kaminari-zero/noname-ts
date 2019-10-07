@@ -5,6 +5,7 @@ declare namespace Lib.element {
      * event, step, source, player, target, targets, card, cards, skill, forced, num, trigger, result, _status, lib, game, ui, get, ai
      * 当前使用任意参数的方式
      * 来源：lib.element.content
+     * 注：当前游戏内自定义的content，大部分
      */
     interface Content {
         chooseToDuiben(): any;
@@ -36,7 +37,13 @@ declare namespace Lib.element {
         loadPackage(): any;
         loadMode(): any;
         forceOver(): any;
+        /**
+         * 并排多个同阶段触发的技能
+         */
         arrangeTrigger(): any;
+        /**
+         * 创建触发的技能的事件：“技能名”s
+         */
         createTrigger(): any;
         playVideoContent(): any;
         /**
@@ -52,6 +59,9 @@ declare namespace Lib.element {
         phaseDiscard(): any;
         chooseToUse(): any;
         chooseToRespond(): any;
+        /**
+         * 选择弃牌
+         */
         chooseToDiscard(): any;
         chooseToCompareMultiple(): any;
         chooseToCompare(): any;

@@ -1,5 +1,11 @@
 declare var game:Game;
 interface Game {
+    /**
+     * 卡牌弃置
+     * 创建“cardsDiscard”事件，
+     * 该事件逻辑是遍历cards，调用它们的discard舍弃；
+     * @param cards 
+     */
     cardsDiscard(cards):any;
     online:false;
     onlineID:null;
@@ -81,7 +87,11 @@ interface Game {
     alert(str):any;
     print():any;
     animate:Animate;
-    linexy(path):any;
+    /**
+     * 画线
+     * @param path 起始位置的信息
+     */
+    linexy(path, config?: number | LineConfig,node?:any):any;
     _linexy(path):any;
     /** 创建游戏内触发事件 */
     createTrigger(name,skill,player,event):any;
@@ -145,6 +155,10 @@ interface Game {
     asyncDrawAuto(players,num,drawDeck):any;
     finishSkill(i,sub):any;
     finishCards():any;
+    /**
+     * 检查是否有锁定技，并且执行锁定技，修改一些值和触发一些效果
+     * @param args 
+     */
     checkMod(...args):any;
     /**
      * 准备场地:
@@ -327,4 +341,11 @@ interface VideoContent {
 interface Animate{
     window(num):any;
     flame(x,y,duration,type):any;
+}
+
+type LineConfig = { 
+    opacity?:any;
+    color?:any;
+    dashed?:any;
+    duration?:any;
 }

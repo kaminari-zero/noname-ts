@@ -4,6 +4,13 @@ interface Filter {
     all():any;
     buttonIncluded(button: any):any;
     filterButton(button: any):any;
+    /**
+     * 过滤触发条件
+     * @param event 
+     * @param player 
+     * @param name 
+     * @param skill 
+     */
     filterTrigger(event: any, player: any, name: any, skill: any):any;
     characterDisabled(i: any, libCharacter: any):any;
     characterDisabled2(i: any):any;
@@ -11,6 +18,13 @@ interface Filter {
     cardEnabled(card: any, player: any, event: any):any;
     cardRespondable(card: any, player: any, event: any):any;
     cardUsable(card: any, player: any, event: any):any;
+    /**
+     * 检查某卡牌是哦夫可以弃置。
+     * 内部根据是否有锁定技mode有“cardDiscardable”卡牌是否可弃置
+     * @param card 
+     * @param player 
+     * @param event 
+     */
     cardDiscardable(card: any, player: any, event: any):any;
     canBeDiscarded(card: any, player: any, target: any, event: any):any;
     canBeGained(card: any, player: any, target: any, event: any):any;

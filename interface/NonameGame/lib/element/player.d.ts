@@ -48,6 +48,11 @@ declare namespace Lib.element {
         updateMark(i: any, storage: any): any;
         updateMarks(connect: any): any;
         num(arg1: any, arg2: any, arg3: any): any;
+        /**
+         *  画指引线
+         * @param target 
+         * @param config 
+         */
         line(target: any, config: any): any;
         line2(targets: any, config: any): any;
         getNext(): any;
@@ -55,7 +60,13 @@ declare namespace Lib.element {
         countUsed(card: any): any;
         countSkill(skill: any): any;
         getStockSkills(unowned: any, unique: any, hidden: any): any;
-        getCards(arg1: any, arg2: any): any;
+        /**
+         * 获取当前玩家的牌
+         * 参数2：若是字符串则是卡牌名，若是对象是个cardSimpInfo结构
+         * @param arg1 获取玩家身上牌的类型：h手牌，e装备牌，j判定牌，可以多个拼接
+         * @param arg2 获取牌的详细过滤条件
+         */
+        getCards(arg1: string, arg2: string | cardSimpInfo): any[];
         getDiscardableCards(player: any, arg1: any, arg2: any): any;
         getGainableCards(player: any, arg1: any, arg2: any): any;
         getGainableSkills(func: any): any;
@@ -80,11 +91,31 @@ declare namespace Lib.element {
         setIdentity(identity: any): any;
         insertPhase(skill: any, insert: any): any;
         insertEvent(name: any, content: any, arg: any): any;
+        /**
+         * 回合阶段
+         * @param skill 
+         */
         phase(skill: any): any;
+        /**
+         * 判断阶段
+         */
         phaseJudge(): any;
+        /**
+         * 抽牌阶段
+         */
         phaseDraw(): any;
+        /**
+         * 出牌阶段
+         */
         phaseUse(): any;
+        /**
+         * 弃牌阶段
+         */
         phaseDiscard(): any;
+        /**
+         * 创建选将使用事件
+         * @param use 
+         */
         chooseToUse(use: any): any;
         chooseToRespond(): any;
         chooseToDiscard(): any;
@@ -113,33 +144,83 @@ declare namespace Lib.element {
         viewHandcards(target: any): any;
         canMoveCard(withatt: any): any;
         moveCard(): any;
+        /**
+         * 处理使用event.result
+         * @param result 
+         * @param event 
+         */
         useResult(result: any, event: any): any;
+        /**
+         * 使用卡牌
+         */
         useCard(): any;
+        /**
+         * 使用技能
+         */
         useSkill(): any;
+        /** 抽牌  */
         draw(): any;
         randomDiscard(): any;
         randomGain(): any;
+        /**
+         * 弃牌
+         */
         discard(): any;
         respond(): any;
         swapHandcards(target: any, cards1: any, cards2: any): any;
         directequip(cards: any): any;
         directgain(cards: any): any;
         gainMultiple(targets: any, position: any): any;
+        /**
+         * 获得牌
+         */
         gain(): any;
         give(cards: any, target: any, visible: any): any;
+        /**
+         * 失去牌
+         */
         lose(): any;
+        /**
+         * 收到伤害
+         */
         damage(): any;
+        /**
+         * 回复体力
+         */
         recover(): any;
         doubleDraw(): any;
+        /**
+         * 失去体力
+         * @param num 
+         */
         loseHp(num: any): any;
+        /**
+         * 失去体力上限
+         */
         loseMaxHp(): any;
+        /**
+         * 增加体力上限
+         */
         gainMaxHp(): any;
+        /**
+         * 血量改变
+         * @param num 
+         * @param popup 
+         */
         changeHp(num: any, popup: any): any;
 
         changeHujia(num: any, type: any): any;
         getBuff(): any;
         getDebuff(): any;
+        /**
+         * 濒死阶段
+         * @param reason 
+         */
         dying(reason: any): any;
+        /**
+         * 死亡阶段
+         * @param reason 
+         */
         die(reason: any): any;
         revive(hp: any, log: any): any;
         isMad(): any;
@@ -148,9 +229,29 @@ declare namespace Lib.element {
         tempHide(): any;
         addExpose(num: any): any;
         equip(card: any, draw: any): any;
+        /**
+         * 添加判定牌
+         * （当前玩家是被添加目标，移除源目标的添加牌的方法为靠get.owner，
+         * 找到牌使用的玩家）
+         * @param card 
+         * @param cards 
+         */
         addJudge(card: any, cards: any): any;
-        canAddJudge(card: any): any;
-        addJudgeNext(card: any): any;
+        /**
+         * 判断该牌是否可以添加到判定区
+         * 需要通过game.checkMod，检测通过“targetEnabled”锁定技；
+         * （注：该方法貌似值用在类似闪电这种，可以长时间逗留的判定牌）
+         * @param card 
+         */
+        canAddJudge(card: any): boolean;
+        /**
+         * 添加当前玩家的某判定牌到下一位玩家
+         * @param card 
+         */
+        addJudgeNext(card: any): void;
+        /**
+         * 创建“judge”判定事件
+         */
         judge(): any;
         turnOver(bool: any): any;
         out(skill: any): any;
@@ -223,30 +324,89 @@ declare namespace Lib.element {
         isFriendOf(player: any): any;
         isFriendsOf(player: any): any;
         isEnemiesOf(player: any): any;
-        isAlive(): any;
-        isDead(): any;
-        isDying(): any;
-        isDamaged(): any;
-        isHealthy(): any;
-        isMaxHp(equal: any): any;
-        isMinHp(equal: any): any;
-        isMaxCard(equal: any): any;
-        isMinCard(equal: any): any;
-        isMaxHandcard(equal: any): any;
-        isMinHandcard(equal: any): any;
-        isMaxEquip(equal: any): any;
-        isMinEquip(equal: any): any;
+        /**
+         * 当前玩家是否还存活，存活则返回true
+         */
+        isAlive(): boolean;
+        /**
+         * 判断当前玩家是否死亡，死亡则返回true
+         */
+        isDead(): boolean;
+        /**
+         * 当前玩家是否在濒死阶段
+         */
+        isDying(): boolean;
+        /**
+         * 当前玩家是否已经受伤
+         */
+        isDamaged(): boolean;
+        /**
+         * 当前玩家是否满血
+         */
+        isHealthy(): boolean;
+        /**
+         * 判断当前玩家是否是全场最多血的
+         * @param equal 是否包括相等
+         */
+        isMaxHp(equal: boolean): boolean;
+        /**
+         * 判断当前玩家是否是全场最少血的
+         * @param equal 是否包括相等
+         */
+        isMinHp(equal: boolean): boolean;
+        /**
+         * 判断当前玩家（手牌+装备）的牌数是全场最多的
+         * @param equal 是否包括相等
+         */
+        isMaxCard(equal: boolean): boolean;
+        /**
+         * 判断当前玩家（手牌+装备）的牌数是全场最少的
+         * @param equal 是否包括相等
+         */
+        isMinCard(equal: boolean): boolean;
+        /**
+         * 判断当前玩家（手牌）的牌数是全场最多的
+         * @param equal 是否包括相等
+         */
+        isMaxHandcard(equal: boolean): boolean;
+        /**
+         * 判断当前玩家（手牌）的牌数是全场最少的
+         * @param equal 是否包括相等
+         */
+        isMinHandcard(equal: boolean): boolean;
+        /**
+         * 判断当前玩家（装备）的牌数是全场最多的
+         * @param equal 是否包括相等
+         */
+        isMaxEquip(equal: boolean): boolean;
+        /**
+         * 判断当前玩家（装备）的牌数是全场最少的
+         * @param equal 是否包括相等
+         */
+        isMinEquip(equal: boolean): boolean;
         isLinked(): any;
         isTurnedOver(): any;
+        /**
+         * 判定当前玩家是否退出（离开）
+         */
         isOut(): any;
         isMin(distance: any): any;
         isIn(): any;
-        isUnseen(num: any): any;
+        /**
+         * 当前player的class标记是否有“unseen”，“unseen2”
+         * 应该时标记是否可见的标记，后面继续研究
+         * @param num 
+         */
+        isUnseen(num: number): boolean;
         isUnderControl(self: any, me: any): any;
         isOnline(): any;
         isOnline2(): any;
         isOffline(): any;
         checkShow(skill: any, showonly: any): any;
+        /**
+         * 弃牌阶段是，计算需要弃置的牌
+         * @param num 
+         */
         needsToDiscard(num: any): any;
         distanceTo(target: any, method: any): any;
         distanceFrom(target: any, method: any): any;
@@ -255,7 +415,11 @@ declare namespace Lib.element {
         hasZhuSkill(skill: any, player: any): any;
         hasGlobalTag(tag: any, arg: any): any;
         hasSkillTag(tag: any, hidden: any, arg: any, globalskill: any): any;
-        hasJudge(name: any): any;
+        /**
+         * 判断当前玩家是否有该名字的牌在判定区
+         * @param name 
+         */
+        hasJudge(name: string): boolean;
         hasFriend(): any;
         hasUnknown(num: any): any;
         isUnknown(player: any): any;
@@ -302,4 +466,15 @@ declare namespace Lib.element {
         $dieflip(type: any): any;
         $phaseJudge(card: any): any;
     }
+}
+
+/** 简单的牌的结构 */
+type cardSimpInfo = { 
+    type, 
+    subtype, 
+    color, 
+    suit, 
+    number,
+    /** 额外参数 */
+    [key:string]:any
 }

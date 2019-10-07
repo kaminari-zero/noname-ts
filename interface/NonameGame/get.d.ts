@@ -3,10 +3,19 @@ interface Get {
     infoHp(hp):any;
     infoMaxHp(hp):any;
     is:Is,
+    /**
+     * 获取（牌堆底部的）牌
+     * @param num 
+     */
     bottomCards(num):any;
     discarded():any;
     cardOffset():any;
     colorspan(str):any;
+    /**
+     * 设置事件的prompt
+     * @param next 
+     * @param str 
+     */
     evtprompt(next,str):any;
     /**
      * 自动视为指定牌。
@@ -108,7 +117,17 @@ interface Get {
     color(card):any;
     number(card):any;
     nature(card):any;
+    /**
+     * 获取（牌堆顶的）牌
+     * @param num 
+     */
     cards(num):any;
+    /**
+     * 获取卡牌的judge（判定牌的判断条件）
+     * 若该卡牌有viewAs（视为牌），则返回视为牌的judge；
+     * 否则，直接返回该牌的judge
+     * @param card 
+     */
     judge(card):any;
     /**
      * 获得玩家from到to之间的距离
@@ -159,10 +178,21 @@ interface Get {
     gainableSkillsName(name, func):any;
     gainableCharacters(func):any;
     selectableTargets(sort):any;
+    /**
+     * 返回一个过滤用高阶方法。
+     * 传入一个过滤列表，生成一个以该过滤列表为基准的过滤函数，该函数传入一个值，判断该值是否处于该列表内，属于则返回false，没有则返回true；
+     * @param filter 传入一个过滤列表
+     * @param i 
+     */
     filter(filter,i):any;
     cardCount(card,player):any;
     skillCount(skill,player):any;
-    owner(card,method):any;
+    /**
+     * 获取该card的所有者（拥有者）
+     * @param card 指定card
+     * @param method 目前没什么太大用途，值为“judge”排除掉判定的牌
+     */
+    owner(card,method?):any;
     /**
      * 是否当前没有可选择的目标
      */

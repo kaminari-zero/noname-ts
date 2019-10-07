@@ -133,12 +133,24 @@ interface ExSkillData {
      * true为否
      */
     multitarget?: boolean|number;
+    /** 是否显示多条指引线 */
     multiline?: boolean;
     /**
      * 是否弃牌
      * 若没有这一行，选择牌发动技能后，被选择的牌都要弃置
      */
     discard?:boolean;
+    /** 
+     * 是否失去牌 
+     * 与discard调用时机一致，都在useSkill中，
+     */
+    lose?:boolean;
+    /** 
+     * 是否触发lose失去牌阶段，
+     * 若为false，则跳过该触发
+     * 具体不知有什么用，适合lose绑定一起使用，为false时，设置丢失牌事件_triggered为null
+     */
+    losetrigger?:boolean;
     /** 
      * 是否为主公技：
      * true时，将这个技能设置为主公技 
@@ -151,8 +163,14 @@ interface ExSkillData {
     /** 觉醒文字颜色 */
     animationColor?:string;
 
+    /**
+     * 源技能
+     * 卡牌和技能都有的东西，不知道具体指什么
+     */
+    sourceSkill?:any;
     logv?:boolean;
 
+    /** 延迟的时间 */
     delay?:number;
     /** 同时机技能发动的优先度 */
     priority?:number;
@@ -212,8 +230,11 @@ interface ExSkillData {
     position?:string;
     /**
      * 不弃牌，准备用这些牌来干什么
+     * 其字符串枚举有：
+     * give，give2，throw，throw2
+     * 若不是字符串，则执行该方法
      */
-    prepare?:string|CardAndPlayerFun<string>;
+    prepare?: string | CardsPlayerAndTargetsFun<string>;
     /**
      * 选择的目标武将牌上出现什么字，
      * 数组第几元素对应第几个目标
@@ -235,12 +256,31 @@ interface ExSkillData {
      */
     prompt2?:string|TriggerAndPlayer<string>|boolean;
     /**
+     * 是否显示弹出该技能使用卡牌的文字
+     * useCard中使用，
+     * 若为true的话，则执行player.popup
+     * 例如：player.popup({使用卡牌名name，使用卡牌nature}，'metal')
+     */
+    popname?:boolean;
+    /**
      * 全局技能?:
      * 你拥有此技能时，所有角色拥有此技能（global的值为技能名）
      * 注：无论是否拥有此技能，此技能都为全局技能写法：技能名前+_
      */
     global?:string;
     globalSilent?:any;
+
+    /**
+     * 指向线的颜色枚举：
+     * fire（橙红色FF9244），thunder（浅蓝色8DD8FF），green（青色8DFFD8），
+     */
+    line?:string;
+
+    /**
+     * 显示日志的标记
+     * 若值为“notarget”，则显示出对目标相关描述的日志
+     */
+    log?:string;
 
     intro?: {
         /** 
@@ -320,6 +360,16 @@ interface ExSkillData {
      */
     filterTarget(card, player, target):boolean;
     /**
+     * 在content之前执行
+     * 其执行时机和chooseButton一致，当chooseButton不存在时且game.online为false，则会执行这个
+     * @param config 
+     */
+    precontent?(config):void;
+    /**
+     * 在content之前触发内容
+     */
+    contentBefore?: ContentFunc;
+    /**
      * 触发内容（技能内容），
      *  当有filterCard时，有参数cards
      *  当有filterTarget时，有参数target和targets
@@ -327,11 +377,9 @@ interface ExSkillData {
      */
     content?:ContentFunc;
     /**
-     * 在content之前执行
-     * 其执行时机和chooseButton一致，当chooseButton不存在时且game.online为false，则会执行这个
-     * @param config 
+     * 在content之后触发内容
      */
-    precontent?(config):void;
+    contentAfter?: ContentFunc;
 
     /**
      * 视为技按钮出现条件（即发动条件）
@@ -664,21 +712,89 @@ interface ExCardData {
     type: string;
     enable: boolean;
     filterTarget: boolean;
-    content:ContentFunc;
     ai: ExAIData,
     fullskin: boolean,
-
+    
     viewAs?:any,
     /** 当前判断阶段被取消 */
     cancel?:any,
     /** 卡牌效果 */
     effect?:any,
-
+    
     /**
      * 在lose中使用
      * 若存在则设置在卡牌的destroyed
      */
     destroy?:any,
+    autoViewAs?:any,
+    /**
+     * 在useCard创建事件中调用
+     */
+    changeTarget?(player,targets):void;
+    /**
+     * 单一目标的卡
+     */
+    singleCard?:boolean;
+
+    /**
+     * 多目标
+     */
+    multitarget?:any;
+    
+    targetDelay?:any;
+    nodelay?:any;
+    
+    /**
+     * 是否可以指定目标
+     * true为不可以
+     */
+    notarget?:boolean;
+    
+    postAi?(targets):void;
+    
+    /**
+     * 在lose中调用
+     * 用于设置“lose_+name”事件的content，即丢失某牌事件
+     */
+    onLose?:any;
+    
+    /**
+     * 在lose中调用
+     * @param card 
+     * @param player 
+     */
+    filterLose?(card, player):void;
+    
+    loseDelay?:any;
+
+    /**
+     * 判断是否通过判断条件
+     * @param card 
+     */
+    judge?(card):number;
+
+    changeTarget?():void;
+
+    /**
+     * 死否能救人
+     * @param card 
+     * @param player 
+     * @param dyingPlayer 
+     */
+    savable?(card, player, dyingPlayer):void;
+
+    /**
+     * 应该是在执行该卡牌content之前执行的事件content
+     */
+    contentBefore?(player, targets): any;
+    /**
+     * 核心：触发内容
+     */
+    content:ContentFunc;
+    /**
+     * 应该是在执行该卡牌content之后执行的事件content
+     */
+    contentAfter?():any;
 }
 
 /**
@@ -901,6 +1017,7 @@ interface JudgeResultData {
 
 type CardAndPlayerFun<T> = (card,player) => T;
 type CardPlayerAndTargetFun<T> = (card, player, target) => T;
+type CardsPlayerAndTargetsFun<T> = (cards, player, targets) => T;
 type CardFun<T> = (card) => T;
 type PlayerSkillFun<T> = (player,skill) => T;
 type PlayerTargetFun<T> = (player, target) => T;

@@ -33,10 +33,15 @@ interface Event {
     notLink(): any;
     addTrigger(skill: any, player: any): any;
     /**
-     * 发送触发事件
+     * 触发阶段，筛选阶段触发的技能
      * @param name 
      */
     trigger(name: any): any;
+    /**
+     * 删除某个阶段触发
+     * @param all 
+     * @param player 
+     */
     untrigger(all: any, player: any): any;
 }
 }
