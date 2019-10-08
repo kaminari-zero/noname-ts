@@ -21,6 +21,10 @@ declare namespace Lib.element {
         $enableEquip(skill: any): any;
         isDisabled(arg: any): any;
         isEmpty(num: any): any;
+        /**
+         * 创建废除判定区事件
+         * 使该玩家markSkill('_disableJudge')
+         */
         disableJudge(): any;
         //原有函数
         init(character: any, character2: any, skill: any): any;
@@ -118,6 +122,9 @@ declare namespace Lib.element {
          */
         chooseToUse(use: any): any;
         chooseToRespond(): any;
+        /**
+         * 创建选择弃牌事件
+         */
         chooseToDiscard(): any;
         chooseToCompare(target: any, check: any): any;
         chooseSkill(target: any): any;
@@ -430,7 +437,13 @@ declare namespace Lib.element {
         hasCard(name: any, position: any): any;
         canEquip(name: any, replace: any): any;
         getEquip(name: any): any;
-        getJudge(name: any): any;
+        /**
+         * 获得一张指定名字的判定牌
+         * 若该判定牌是视为牌，则是视为牌名字，否则就是该判定牌的名字；
+         * 目前逻辑上，只能获得第一张符合条件的判定牌；
+         * @param name 判定牌的名字
+         */
+        getJudge(name: string): any;
         $drawAuto(cards: any, target: any): any;
         $draw(num: any, init: any, config: any): any;
         $compareMultiple(card1: any, targets: any, cards: any): any;

@@ -16,5 +16,13 @@ interface Status {
     skillaudio:any[],
     dieClose:any[],
     dragline:any[],
-    dying:any[]
+    dying:any[];
+
+
+    /*  扩展成员  */
+
+    /** 当前是否播放录像中 */
+    video:boolean;
+    /** delay延时游戏的setTimeout标记 */
+    timeout:number;
 }

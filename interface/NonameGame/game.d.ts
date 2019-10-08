@@ -73,13 +73,29 @@ interface Game {
     videoContent:VideoContent;
     reload():any;
     reload2():any;
+    /** 退出游戏 */
     exit():any;
+    /**
+     * 打开链接
+     * 若是安卓或者ios客户端，则用iframe或者内置流浪器打开；
+     * h5端直接跳转该链接
+     * @param url 
+     */
     open(url):any;
     reloadCurrent():any;
     update(func):any;
     unupdate(func):any;
     stop():any;
     run():any;
+    /**
+     * 添加进录像里
+     * 添加操作进lib.video中，当局游戏的操作，都会记录在里面（需要手动调用添加操作）；
+     * 在game.over（游戏结束）中，将该lib.video设置到newvid.video中保存到.lib.videos；
+     * （目前未知lib.video是在什么时候清理，或者就是这样保存所有的操作）
+     * @param type 
+     * @param player 
+     * @param content 
+     */
     addVideo(type,player,content):any;
     draw(func):any;
     vibrate(time):any;
@@ -110,20 +126,41 @@ interface Game {
     addRecentCharacter():any;
     createCard(name,suit,number,nature):any;
     forceOver(bool,callback):any;
+    /** 游戏结束 */
     over(result):any;
     /** 游戏循环（核心） */
     loop():any;
+    /**
+     * 暂停游戏循环
+     */
     pause():any;
+    /**
+     * 暂停游戏循环2（ui相关）
+     */
     pause2():any;
+    /** 
+     * 游戏继续
+     * 设置pause为false，重新loop
+     */
     resume():any;
+     /** 
+      * 游戏继续2
+      * 设置pause2为false，重新loop
+      */
     resume2():any;
     /**
      * 游戏延迟
-     * 延迟结束后继续游戏
-     * @param time 时间倍率
-     * @param time2 额外增加的延时时间
+     * 延迟结束后继续游戏(先暂停游戏循环loop，待x秒后resume继续游戏)
+     * @param time 延迟时间（lib.config.duration）倍率
+     * @param time2 额外增加的延时时间（不参与倍率计算）
      */
     delay(time?:number,time2?:number):any;
+    /**
+     * 游戏延迟2
+     * 根据lib.config.game_speed（游戏的流程速度）：vslow，slow，fast，vfast，vvfast，调整游戏延迟时间的倍率；
+     * @param time 延迟的时间
+     * @param time2 额外增加的延时时间（不参与倍率计算）
+     */
     delayx(time,time2):any;
     /**
      * 检测当前需要选中，并且在ui上做出选中处理
@@ -226,6 +263,9 @@ interface Game {
     shuffleNumber:0;
 }
 
+/**
+ * 录像相关content
+ */
 interface VideoContent {
     init(players):any;
     newcard(content):any;
