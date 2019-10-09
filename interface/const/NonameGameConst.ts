@@ -350,4 +350,26 @@ namespace NG {
         /** 火属性 */
         Fire = "fire",
     }
+
+    // subCardType 卡牌子类型
+    // food: 0.3
+    // gwmaoxian: 0.5
+    // hsbaowu: 0.5
+    // hsdusu: 0.5
+    // hsfashu: 0.5
+    // hsjixie: 0.5
+    // hslingjian: 0.5
+    // hsmengjing: 0.5
+    // hsqingyu: 0.5
+    // hsqizhou: 0.5
+    // hsshenqi: 0.5
+    // hsyaoshui: 0.5
+    // hszuzhou: 0.5
+    // jiguan: 0.45
+    // jiqi: 0.4
+    // land: 0.6
+    // spell: 0.5
+    // spell_bronze: 0.2
+    // spell_gold: 0.4
+    // spell_silver: 0.3
 }

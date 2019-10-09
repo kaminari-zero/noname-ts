@@ -112,11 +112,18 @@ interface Lib {
         /** 保存的技能信息与玩家之间的关系map,目前在项目内没看出有什么用 */
         globalmap: any;
         storage: any;
+        /**
+         * 不计入距离的计算且不能使用牌且不是牌的合法目标
+         * （目前该标记直接标记到技能的group中，拥有该技能就是被隔离出游戏，目前还没见使用到这成员）
+         * 目前在项目内没什么用，只有标记到技能的group中使用，用于免除某些阶段结算
+         */
         undist: any;
         others: any;
         zhu: any;
         zhuSkill: any;
         land_used: any;
+
+        //以下皆为游戏内预设的全局特殊节能
         unequip: ExSkillData,
         subplayer: ExSkillData,
         autoswap: ExSkillData,
@@ -127,13 +134,28 @@ interface Lib {
         baiban: ExSkillData,
         qianxing: ExSkillData,
         mianyi: ExSkillData,
+        /**
+         * 特殊技能：混乱
+         * 标记技能
+         * 进入“混乱”状态的情况下，不能操作（自己的面板），player.isMine的结果也是false（不能确定当前玩家是自己）
+         */
         mad: ExSkillData,
         ghujia: ExSkillData,
+        /**
+         * 特殊技能：计算触发次数
+         * 触发阶段：phaseAfter（回合结束之后）
+         * 当技能存在“usable”每回合使用次数时，在创建技能事件时，添加该技能。
+         * 其作用是，在回合结束时，清除player.storage.counttrigger触发技术。
+         */
         counttrigger: ExSkillData
         _recovercheck: ExSkillData,
         _turnover: ExSkillData,
         _usecard: ExSkillData,
         _discard: ExSkillData,
+        /**
+         * 特殊技能：濒死阶段循环询问求救
+         * 触发阶段：濒死阶段触发
+         */
         _save: ExSkillData,
         _ismin: ExSkillData,
         _chongzhu: ExSkillData,

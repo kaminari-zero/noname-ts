@@ -22,7 +22,7 @@ declare namespace Lib.element {
         isDisabled(arg: any): any;
         isEmpty(num: any): any;
         /**
-         * 创建废除判定区事件
+         * 废除判定区
          * 使该玩家markSkill('_disableJudge')
          */
         disableJudge(): any;
@@ -59,22 +59,36 @@ declare namespace Lib.element {
          */
         line(target: any, config: any): any;
         line2(targets: any, config: any): any;
+        /**
+         * 获取当前玩家的下一个玩家（下家）
+         * 注：若当前有skill为“undist”，则没有下一个玩家；
+         * 若遍历，直到找到下一个没有“undist”玩家
+         */
         getNext(): any;
+        /**
+         * 获取当前玩家的上一个玩家（上家）
+         * 注：若当前有skill为“undist”，则没有上一个玩家；
+         * 若遍历，直到找到上一个没有“undist”玩家
+         */
         getPrevious(): any;
         countUsed(card: any): any;
         countSkill(skill: any): any;
         getStockSkills(unowned: any, unique: any, hidden: any): any;
         /**
-         * 获取当前玩家的牌
-         * 参数2：若是字符串则是卡牌名，若是对象是个cardSimpInfo结构
+         * 获取当前玩家的牌(根据类型指定)
          * @param arg1 获取玩家身上牌的类型：h手牌，e装备牌，j判定牌，可以多个拼接
-         * @param arg2 获取牌的详细过滤条件
+         * @param arg2 获取牌的详细过滤条件（若是字符串则是卡牌名，若是对象是个cardSimpInfo结构）
          */
         getCards(arg1: string, arg2: string | cardSimpInfo): any[];
         getDiscardableCards(player: any, arg1: any, arg2: any): any;
         getGainableCards(player: any, arg1: any, arg2: any): any;
         getGainableSkills(func: any): any;
-        countCards(arg1: any, arg2: any): any;
+        /**
+         * 计算获取当前玩家的牌数(根据类型指定)
+         * @param arg1 获取玩家身上牌的类型：h手牌，e装备牌，j判定牌，可以多个拼接
+         * @param arg2 获取牌的详细过滤条件（若是字符串则是卡牌名，若是对象是个cardSimpInfo结构）
+         */
+        countCards(arg1: string, arg2: string | cardSimpInfo): number;
         countDiscardableCards(player: any, arg1: any, arg2: any): any;
         countGainableCards(player: any, arg1: any, arg2: any): any;
         getOriginalSkills(): any;
@@ -117,13 +131,13 @@ declare namespace Lib.element {
          */
         phaseDiscard(): any;
         /**
-         * 创建选将使用事件
+         * 选将使用
          * @param use 
          */
         chooseToUse(use: any): any;
         chooseToRespond(): any;
         /**
-         * 创建选择弃牌事件
+         * 选择弃牌
          */
         chooseToDiscard(): any;
         chooseToCompare(target: any, check: any): any;
@@ -165,7 +179,9 @@ declare namespace Lib.element {
          * 使用技能
          */
         useSkill(): any;
-        /** 抽牌  */
+        /**
+         * 抽牌
+         */
         draw(): any;
         randomDiscard(): any;
         randomGain(): any;
@@ -182,19 +198,28 @@ declare namespace Lib.element {
          * 获得牌
          */
         gain(): any;
-        give(cards: any, target: any, visible: any): any;
+        /**
+         * 当前玩家给牌给目标玩家
+         * @param cards 要给的牌
+         * @param target 目标玩家
+         * @param visible 给出去的牌是否大家都可见 
+         */
+        give(cards: any|any[], target: any, visible: boolean): any;
         /**
          * 失去牌
          */
-        lose(): any;
+        lose(...args): any;
         /**
          * 收到伤害
          */
-        damage(): any;
+        damage(...args): any;
         /**
          * 回复体力
          */
-        recover(): any;
+        recover(...args): any;
+        /**
+         * 双将模式下的抽牌
+         */
         doubleDraw(): any;
         /**
          * 失去体力
@@ -215,10 +240,23 @@ declare namespace Lib.element {
          * @param popup 
          */
         changeHp(num: any, popup: any): any;
-
-        changeHujia(num: any, type: any): any;
-        getBuff(): any;
-        getDebuff(): any;
+        /**
+         * 护甲改变
+         * （不是三国杀常规模式下相关的）
+         * @param num 改变的护甲数，默认为1
+         * @param type 护甲类型
+         */
+        changeHujia(num?: number, type?: any): any;
+        /**
+         * 随机获取一个buff
+         * （目前看起来和三国杀常规模式游戏没关系，不知为何在这）
+         */
+        getBuff(...num:number[]): any;
+        /**
+         * 随机获取一个debuff
+         * （目前看起来和三国杀常规模式游戏没关系，不知为何在这）
+         */
+        getDebuff(...num:number[]): any;
         /**
          * 濒死阶段
          * @param reason 
@@ -229,9 +267,28 @@ declare namespace Lib.element {
          * @param reason 
          */
         die(reason: any): any;
-        revive(hp: any, log: any): any;
+        /**
+         * 复活
+         * @param hp 
+         * @param log 
+         */
+        revive(hp: number, log: boolean): any;
+        /**
+         * 是否是“混乱”状态
+         * 即判断是否含有“mad”技能
+         */
         isMad(): any;
+        /**
+         * 设置进入“混乱”状态
+         * 即添加“mad”技能
+         * 进入“混乱”状态的情况下，不能操作（自己的面板），player.isMine的结果也是false（不能确定当前玩家是自己）
+         * @param end 
+         */
         goMad(end: any): any;
+        /**
+         * 接触“混乱”状态
+         * 即移除“mad”技能
+         */
         unMad(): any;
         tempHide(): any;
         addExpose(num: any): any;
@@ -300,7 +357,17 @@ declare namespace Lib.element {
          * @param triggeronly 
          */
         addSkillTrigger(skill: string, hidden: boolean, triggeronly?: boolean): any;
+        /**
+         * 添加技能，同时打印日志与弹出显示添加的技能提示文字
+         * @param skill 
+         */
         addSkillLog(skill: any): any;
+        /**
+         * 玩家增加技能（获得技能）
+         * @param skill 
+         * @param checkConflict 
+         * @param nobroadcast 
+         */
         addSkill(skill: any, checkConflict: any, nobroadcast: any): any;
         addAdditionalSkill(skill: any, skills: any, keep: any): any;
         removeAdditionalSkill(skill: any, target: any): any;
@@ -318,7 +385,15 @@ declare namespace Lib.element {
         attitudeTo(target: any): any;
         clearSkills(all: any): any;
         checkConflict(skill: any): any;
-        getStat(key: any): any;
+        /**
+         * 获取当前玩家的保存的统计数据
+         * 目前主要保存的值：
+         * 伤害damage，受伤damaged，摸牌gain，出牌(不同名字的牌单独计数)card，杀敌kill，
+         * 使用技能（不同名字的技能单独计数）skill，
+         * 使用技能次数（不区分统一计数）allSkills
+         * @param key 当轮的统计数据的key，若没有，则获取当轮的统计数据
+         */
+        getStat(key?: string): any;
         queue(time: any): any;
         getCardUsable(card: any, pure: any): any;
         getAttackRange(raw: any): any;
@@ -401,7 +476,8 @@ declare namespace Lib.element {
         isIn(): any;
         /**
          * 当前player的class标记是否有“unseen”，“unseen2”
-         * 应该时标记是否可见的标记，后面继续研究
+         * 应该是标记是否可见/隐藏的标记，后面继续研究
+         * 据推测，应该是双将模式下，隐藏武将
          * @param num 
          */
         isUnseen(num: number): boolean;
@@ -444,6 +520,8 @@ declare namespace Lib.element {
          * @param name 判定牌的名字
          */
         getJudge(name: string): any;
+
+        //动画,UI相关的方法（前置$符）[不过也有些内部混如一些操作逻辑，没分离彻底]
         $drawAuto(cards: any, target: any): any;
         $draw(num: any, init: any, config: any): any;
         $compareMultiple(card1: any, targets: any, cards: any): any;

@@ -209,6 +209,9 @@ interface ExSkillData {
     /** 
      * 技能组：
      * 拥有这个技能时相当于拥有技能组内的技能
+     * 注：一些特殊技能标签：
+     * “undist”：不计入距离的计算且不能使用牌且不是牌的合法目标
+     *  （被隔离玩家，目前确定的作用：player.getNext获取下一位玩家，player.getPrevious确定上一位玩家，player.distance计算玩家距离）；
      */
     group?:string[];
     /** 标记显示文本，一般为一个字 */

@@ -249,12 +249,18 @@ interface Game {
     expandSkills(skills):any;
     css(style):any;
     hasPlayer(func):any;
-    countPlayer(func):any;
+    /**
+     * 计算玩家数
+     * @param func 回调函数，根据条件返回计数，若返回值为false则不计数，返回值为true默认+1，返回值为num，则增加num
+     */
+    countPlayer(func:(player)=>number|boolean):number;
     filterPlayer(func,list):any;
     findPlayer(func):any;
     findCards(func,all):any;
     countGroup():any;
+    /** 正在游戏中的玩家 */
     players:[];
+    /** 死亡玩家 */
     dead:[];
     imported:[];
     playerMap:{};

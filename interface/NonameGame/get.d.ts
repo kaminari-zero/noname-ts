@@ -106,17 +106,89 @@ interface Get {
     utc():any;
     evtDistance(e1,e2):any;
     xyDistance(from,to):any;
-    itemtype(obj):any;
-    equipNum(card):any;
-    objtype(obj):any;
-    type(obj,method):any;
-    type2(card):any;
-    subtype(obj):any;
-    equiptype(card):any;
-    suit(card):any;
-    color(card):any;
-    number(card):any;
-    nature(card):any;
+    /**
+     * 获取对象归属类型：
+     * 若对象是字符串，长度<=3,其中包含“h,j,e”中一个，则返回类型:position（位置）；
+     * 若对象是字符串，其值属于lib.nature，则返回类型：nature（伤害属性）；
+     * 若对象是集合，其集合所有元素都是“player”类型，则返回类型：players；（player列表）
+     * 若对象是集合，其集合所有元素都是“card”类型，则返回类型：cards；（card列表）
+     * 若对象是集合，其长度为2，即[num1,num2]，其num1<=num2，则返回类型：select（选择范围）；
+     * 若对象是集合，其长度为4都是number，即[num1,num2,num3,num4]，则返回类型：divposition（设置div的位置，采用calc()方法运算）；
+     * 若对象是类型是“div”，则：
+     *      若class列表有“button”，则返回类型：button（按钮）；
+     *      若class列表有“card”，则返回类型：card（卡牌）；
+     *      若class列表有“player”，则返回类型：player（玩家，玩家ui）；
+     *      若class列表有“dialog”，则返回类型：dialog（对话框，包括提示，弹出框...）；
+     * @param obj 
+     */
+    itemtype(obj:any):any;
+    /**
+     * 获取装备的类型（1-5）
+     * 逻辑和get.equiptype基本一致（算是冗余的方法）
+     * @param card 
+     */
+    equipNum(card):number;
+    /**
+     * 获取对象的类型：
+     * 当前可分辨类型：array，object，div，table，tr，td
+     * @param obj 
+     */
+    objtype(obj:any):string;
+    /**
+     * 获取卡牌的类型
+     * 返回卡牌的type属性，
+     * 基本有：basic（基本牌），trick（锦囊牌），delay（延时锦囊牌），equip（装备牌），chess（战棋模式的战棋）
+     * @param obj 可以是卡牌的名字，也可以是带有name属性的对象
+     * @param method 若传入“trick”，则type为“delay”（延时锦囊牌），也视为“锦囊牌”，结果返回“trick”
+     */
+    type(obj:string|object,method?:string):string;
+    /**
+     * 获取卡牌的类型2（上面方法的简略版，把延时锦囊“delay”，视为锦囊“trick”返回）
+     * @param card 可以是卡牌的名字，也可以是带有name属性的对象
+     */
+    type2(card:string|object):string;
+    /**
+     * 获取卡牌第二类型（子类型）
+     * 返回卡牌的subtype属性
+     * 例:equip装备的子类型：equip1武器，equip2防具，equip3防御马，equip4进攻马，equip5宝物（常规外的额外装备）
+     * @param obj 可以是卡牌的名字，也可以是带有name属性的对象
+     */
+    subtype(obj:string|object):string;
+    /**
+     * 获取装备的类型（1-5）
+     * 当前类型分别为：1武器，2防具，3防御马，4进攻马，5宝物（常规外的额外装备）
+     * @param card 可以是卡牌的名字，也可以是带有name属性的对象
+     */
+    equiptype(card:string|object):number;
+    /**
+     * 获取卡牌的花色suit
+     * 
+     * 花色：spade黑桃，heart红桃，club梅花，diamond方块，none
+     * 若该卡牌是玩家拥有的，则检查mod锁定技存在（game.checkMod），获取返回的花色；否则，获取该卡牌花色suit；
+     * 特殊情况：
+     * 若card的类型是“cards”，若所有卡牌花色都相同，则返回第一张的卡牌花色suit，若有一张不同，则返回“none”；
+     * 若card有cards属性，该card.cards的类型为“cards”，且该card不是“muniu”，则按上面“cards”方式返回花色；
+     * @param card 
+     */
+    suit(card):string;
+    /**
+     * 获取卡牌颜色color
+     * 卡牌颜色：black黑色，red红色，none
+     * 其逻辑与get.suit一致，实质也是调用get.suit
+     * @param card 
+     */
+    color(card):string;
+    /**
+     * 获取卡牌的数字number
+     * @param card 
+     */
+    number(card):number;
+    /**
+     * 获取卡牌的nature（伤害属性）
+     * nature：fire火，thunder雷，poison毒
+     * @param card 
+     */
+    nature(card):string;
     /**
      * 获取（牌堆顶的）牌
      * @param num 
@@ -159,8 +231,25 @@ interface Get {
      * @param original 
      */
     card(original?:boolean):any;
+    /**
+     * 获取当前event的玩家player
+     * 返回_status.event.player （算是个无用的方法）
+     */
     player():any;
-    players(sort,dead,out):any;
+    /**
+     * 获取当前游戏内所有玩家
+     * 
+     * 根据以下参数条件剔除添加玩家
+     * @param sort 若为false，则不排序；若为function，则用该function排序，若不是则默认lib.sort.seat排序
+     * @param dead 是否获取死亡的角色（默认只获取正在游戏中角色），true则加入死亡角色
+     * @param out 是否剔除已经退出游戏的角色（isOut），true则保留，false则剔除
+     */
+    players(sort:Function|boolean,dead:boolean,out?:boolean):any;
+    /**
+     * 获取卡牌所在的位置：
+     * 位置：e装备区，j判定区，h手牌，c抽牌区，d弃牌区，s特殊区（special）
+     * @param card 
+     */
     position(card):any;
     skillTranslation(str,player):any;
     skillInfoTranslation(name):any;
