@@ -705,8 +705,25 @@ interface CardHolderConfigData extends ExCommonConfig {
     /** 卡牌技能 */
     skill:SMap<any>;
     /** 牌堆添加 */
-    list:string[][];
+    list:CardBaseData[];
 }
+
+/**
+ * 卡牌基础配置信息(记录与牌堆list中基本结构)：
+ * 0：花色
+ * 1：数字
+ * 2：名字
+ * 3：伤害属性
+ * 4........暂时没看见，有也是额外扩展
+ */
+type CardBaseData = [string,number,string,string];
+
+/**
+ * 联网模式下卡牌基础配置信息
+ * 0:卡牌的唯一id
+ * 其余和上面一致
+ */
+type CardBaseOLData = [string,string,number,string,string];
 
 /**
  * 卡牌信息配置
@@ -723,6 +740,9 @@ interface ExCardData {
     cancel?:any,
     /** 卡牌效果 */
     effect?:any,
+
+    /** 只可在以下指定mode使用（不指定应该是都可用） */
+    mode?:string[],
     
     /**
      * 在lose中使用
@@ -1008,6 +1028,16 @@ interface PackageData {
     }
 }
 
+/**
+ * 用于显示的简单卡牌结构
+ */
+interface CardBaseUIData {
+    name:string;
+    suit:string;
+    number:number;
+    nature:string;
+}
+
 /** 判断阶段的事件reslut */
 interface JudgeResultData {
     card:string,
@@ -1018,6 +1048,19 @@ interface JudgeResultData {
     node:any,
 }
 
+/**
+ * 当前游戏状况信息（联机模式下）
+ */
+interface AreanStateInfo{
+    number:number,
+    players:NMap<any>,
+    mode:string,
+    dying:any[],
+    servermode:string,
+    roomId:any,
+    over:boolean
+}
+
 type CardAndPlayerFun<T> = (card,player) => T;
 type CardPlayerAndTargetFun<T> = (card, player, target) => T;
 type CardsPlayerAndTargetsFun<T> = (cards, player, targets) => T;
@@ -1026,6 +1069,13 @@ type PlayerSkillFun<T> = (player,skill) => T;
 type PlayerTargetFun<T> = (player, target) => T;
 type NoParamFun<T> = () => T;
 type TriggerAndPlayer<T> = () => T;
+
+//从0个参数到任意参数的方法结构声明
+type NoneParmFum<T> = () => T;
+type OneParmFun<U,T> = (arg0: U) => T;
+type TwoParmFun<U1,U2,T> = (arg0: U1,arg1:U2) => T;
+type ThreeParmFun<U1,U2,U3,T> = (arg0: U1,arg1:U2,arg2:U3) => T;
+type RestParmFun<T> = (...args) =>T;
 
 /**
  * content触发内容：

@@ -7,10 +7,14 @@ interface UI {
     refresh(node):any;
     create:UI.Create,
     click:UI.Click,
+    /** 选中的ui */
     selected:{
-        buttons:[],
-        cards:[],
-        targets:[]
+        /** 选中的按钮列表（技能，操作） */
+        buttons:any[],
+        /** 选中的卡牌列表 */
+        cards:any[],
+        /** 选中的玩家目标列表 */
+        targets:any[]
     },
     clear():any;
     updatec():any;

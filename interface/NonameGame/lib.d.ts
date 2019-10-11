@@ -31,7 +31,8 @@ interface Lib {
     chatHistory: any[];
     arenaReady: any[];
     onfree: any[];
-    inpile: any[];
+    /** 在牌堆里牌(指不区分数字，花色，伤害属性的牌) */
+    inpile: string[];
     extensions: any[];
     extensionPack: SMap<any>;
     cardType: any;

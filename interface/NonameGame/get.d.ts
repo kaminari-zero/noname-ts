@@ -1,39 +1,70 @@
 declare var get:Get;
+/**
+ * 封装获取数据的方法
+ */
 interface Get {
-    infoHp(hp):any;
-    infoMaxHp(hp):any;
-    is:Is,
+    /** 获取当前血量（xx/xxx左边部分 或者自身） */
+    infoHp(hp:number|string):number;
+    /** 获取当前最大血量（xx/xxx右边部分 或者自身） */
+    infoMaxHp(hp:number|string):number;
+
+    /** 一些常用的条件判断 */
+    is:Is;
+    
     /**
      * 获取（牌堆底部的）牌
      * @param num 
      */
     bottomCards(num):any;
-    discarded():any;
-    cardOffset():any;
-    colorspan(str):any;
+    /** 获取弃牌区的所有牌列表 */
+    discarded():any[];
+
+    cardOffset():number;
+    colorspan(str:string):string;
     /**
      * 设置事件的prompt
      * @param next 
      * @param str 
      */
-    evtprompt(next,str):any;
+    evtprompt(next,str:string):string;
     /**
      * 自动视为指定牌。
      * 若指定视为牌，有autoViewAs，则返回重新整合后的视为牌;
      * 若不是，则返回card的副本，将card.cards设为cards的副本
+     * (总结：返回一张牌的克隆，若为视为牌，自动变成该视为牌，返回的牌不是当前牌堆，玩家手上，场地唯一卡牌对象，而是独立创建的克隆)
      * @param card 指定视为牌
      * @param cards 待操作的卡牌集合
      */
     autoViewAs(card,cards):any;
     max(list,func,type):any;
     min(list,func,type):any;
-    character(name,num):any;
-    characterIntro(name):any;
+    /**
+     * 获取武将信息
+     * @param name 武将名
+     * @param num 指定获取武将的信息：0："性别",1："势力",2：体力,3：["技能"],4：[额外信息]
+     */
+    character(name:string,num:number):any;
+    /** 获取武将介绍 */
+    characterIntro(name:string):string;
+    /** 获取势力的classname */
     groupnature(group,method):any;
-    sgn(num):any;
-    rand(num,num2):any;
-    sort(arr,method):any;
+    /**
+     * 获取数字的符号(以-1负，0，1正表示)
+     * @param num 
+     */
+    sgn(num:number):number;
+    /**
+     * 随机获取一个数字
+     * @param num 
+     * @param num2 若指定该参数，则是取[num~num2]之间的数字 
+     */
+    rand(num:number,num2?:number):number;
+
+    /** 指定排序方式排序【当前项目内没有使用，是个冗余方法】 */
+    sort(arr:any[],method:string):any[];
     sortSeat(arr,target):any;
+
+    /** 生成zip压缩包 */
     zip(callback):any;
     /**
      * 计算当前延迟x秒
@@ -42,49 +73,141 @@ interface Get {
      * @param max 最大值，默认为Infinity
      */
     delayx(num?:number,max?:number):number;
-    prompt(skill,target,player):any;
-    prompt2(skill,target,player):any;
+    /**
+     * 获取用于会话框提取文本
+     * （“是否对......”，“是否发动xxxx?”）
+     * @param skill  技能名
+     * @param target 目标玩家
+     * @param player 源玩家
+     */
+    prompt(skill:string,target,player):string;
+    /** 在get.prompt基础上拼接“技能名_info”的信息 */
+    prompt2(skill:string,target,player):string;
+    /** 获取更新地址 */
     url(master):any;
-    round(num,f):any;
+    /**
+     * 获取四舍五入后放大10的倍数的数值
+     * @param num 目标数
+     * @param f 10的倍数
+     */
+    round(num:number,f:number):number;
+    /**
+     * 获取游戏配置“player_number”的最大玩家人数（若没有默认是2）
+     */
     playerNumber():any;
     benchmark(func1,func2,iteration,arg):any;
-    stringify(obj,level):any;
+
+    /**
+     * 序列化对象（将对象变成字符串）
+     * @param obj 指定序列化对象
+     * @param level 格式化空格倍数（不需要填，用于内部建立格式化字符串的）
+     */
+    stringify(obj,level?:number):any;
     /**
      * 深复制对象
      * （对象结构过于复杂，可能会很慢）
      * @param obj 
      */
     copy(obj):any;
-    inpilefull(type):any;
-    inpile(type,filter):any;
+    /**
+     * 获取牌堆(lib.inpile)里所有指定类型的牌
+     * @param type 牌的类型（详情请看get.type）
+     * @return 返回{name:xx;suit:xx;.....}结构的数组类型
+     */
+    inpilefull(type:string):CardBaseUIData[];
+    /**
+     * 获取牌堆(lib.inpile)里所有指定类型的牌
+     * @param type 若是字符串，则是类型type,子类型subtype；若是方法，则是自定义过滤条件
+     * @param filter 若是字符串“trick”，则采用将“delay”视为“trick”锦囊牌类型过滤；若是方法，则是自定义过滤条件
+     * @return 返回牌的名字的数组
+     */
+    inpile(type:string|OneParmFun<any,boolean>,filter:string|OneParmFun<any,boolean>):string[];
+    /** 默认filter参数为“trick”的get.inpile */
     inpile2(type):any;
-    typeCard(type,filter):any;
-    libCard(filter):any;
-    ip():any;
+    /**
+     * 获取卡牌配置信息（lib.card）中指定类型的卡牌
+     * 注：排除掉不是当前指定模式玩法的卡牌，有destroy配置，filter不通过的，没有“技能名_info”对应翻译...卡牌配置
+     * @param type 指定类型，type,或者subtype
+     * @param filter 自定义过滤条件
+     * @return 返回卡牌配置列表
+     */
+    typeCard(type:string,filter?:OneParmFun<any,boolean>):any[];
+    /**
+     * 获取卡牌配置信息（lib.card）中，可用的卡牌
+     * 注：排除掉不是当前指定模式玩法的卡牌，有destroy配置，filter不通过的，没有“技能名_info”对应翻译...卡牌配置;
+     * 以外，还排除禁用列表（lib.config.bannedcards）的卡牌
+     * @param filter 自定义过滤条件
+     */
+    libCard(filter:TwoParmFun<any,string,boolean>):any[];
+    /** 获取ipv4 网络ip（只有在nodejs环境下才行） */
+    ip():string;
     modetrans(config,server):any;
-    charactersOL(func):any;
-    trimip(str):any;
-    mode():any;
-    idDialog(id):any;
-    arenaState():any;
-    skillState(player):any;
-    id():any;
-    zhu(player,skill,unseen):any;
+    /**
+     * 获取ol（联网模式）下武将列表
+     * 注：排除掉禁用列表，lib.filter.characterDisabled，自定义过滤条件func
+     * @param func 自定义过滤条件
+     */
+    charactersOL(func?:OneParmFun<any,boolean>):any[];
+    /** 获取ip部分(去掉端口)字符串 */
+    trimip(str:string):string;
+    /** 获取当前玩法模式 */
+    mode():string;
+    /** 获取当前（ui.dialogs）指定id的会话面板 */
+    idDialog(id:number):any;
+    /** 获取当前游戏状况信息（联机模式下） */
+    arenaState():AreanStateInfo;
+    /** 获取当前游戏skill状态信息（主要用于联机通信同步下） */
+    skillState(player?:any):any;
+    /** 随机获取一个id */
+    id():string;
+    /**
+     * 获取拥有指定技能skill是“zhu”的玩家
+     * 注：不同玩法，“zhu”的定义不一样
+     * @param player 
+     * @param skill 
+     * @param unseen 
+     */
+    zhu(player:string|object,skill?:string,unseen?:boolean):any;
     /**
      * 获取指定玩法模式的指定config配置项
      * @param item config的配置项
      * @param mode 玩法模式，默认是当前的玩法模式：lib.config.mode
      */
     config(item:string,mode?:string):any;
+
     coinCoeff(list):any;
     rank(name,num):any;
     skillRank(skill,type,grouped):any;
+
     targetsInfo(targets):any;
     infoTargets(info):any;
-    cardInfo(card):any;
-    cardsInfo(cards):any;
-    infoCard(info):any;
-    infoCards(info):any;
+    /**
+     * 获取card对象上的基础信息
+     * @param card 卡牌对象（UI上的卡牌）
+     * @return 返回[....]结构的卡牌信息 
+     */
+    cardInfo(card:object):CardBaseData;
+    /**
+     * 获取cards列表上的对象的基础信息
+     * @param cards card列表
+     * @return 返回[....]结构的卡牌信息列表 
+     */
+    cardsInfo(cards:object[]):CardBaseData[];
+    /**
+     * 根据info中的基础信息创建card
+     * @param info [...]结构的卡牌信息
+     * @return 返回创建的卡牌对象
+     */
+    infoCard(info:CardBaseData):object;
+    /**
+     * 根据info中的基础信息列表创建cards
+     * @param info [...]结构的卡牌信息列表
+     * @return 返回创建的卡牌对象列表
+     */
+    infoCards(info:CardBaseData[]):object[];
+
+
+    //联网模式下的信息获取，稍后统一研究
     cardInfoOL(card):any;
     infoCardOL(info):any;
     cardsInfoOL(cards):any;
@@ -97,15 +220,29 @@ interface Get {
     infoFuncOL(info):any;
     stringifiedResult(item,level):any;
     parsedResult(item):any;
-    verticalStr(str,sp):any;
-    numStr(num,method):any;
-    rawName(str):any;
-    rawName2(str):any;
-    slimName(str):any;
-    time():any;
-    utc():any;
+
+    /** 输出垂直显示字符串 */
+    verticalStr(str:string,sp:boolean):string;
+    /**
+     * 获取数字显示字符串
+     * @param num 若值是Infinity
+     * @param method 若num是Infinity，“card”，“target”，分布获得的结果是是它们的最大值，否则是“∞”
+     */
+    numStr(num:number,method?:string):string;
+    /** 获取去掉特殊前缀（SP，☆SP，手杀... ...）的原名 */
+    rawName(str:string):string;
+    rawName2(str):any;//无用
+     /** 获取去掉特殊前缀（SP，☆SP，手杀... ...）的名字，将其垂直输出 */
+    slimName(str:string):string;
+
+    /** 游戏经历时间（当前时间 - 初始UI加载完成后的开始时间 - lib.status.dateDelayed游戏因ui操作延迟的时间） */
+    time():number;
+    /** 获取当前时间（UTC） */
+    utc():number;
+
     evtDistance(e1,e2):any;
     xyDistance(from,to):any;
+
     /**
      * 获取对象归属类型：
      * 若对象是字符串，长度<=3,其中包含“h,j,e”中一个，则返回类型:position（位置）；
@@ -335,11 +472,21 @@ interface Get {
      * 返回一个过滤用高阶方法。
      * 传入一个过滤列表，生成一个以该过滤列表为基准的过滤函数，该函数传入一个值，判断该值是否处于该列表内，属于则返回false，没有则返回true；
      * @param filter 传入一个过滤列表
-     * @param i 
+     * @param i 指定过滤方法的过滤目标是第i个参数
      */
-    filter(filter,i):any;
-    cardCount(card,player):any;
-    skillCount(skill,player):any;
+    filter(filter:Function|object|string,i:number):Function;
+    /**
+     * 获取玩家当前回合的卡牌的使用次数
+     * @param card 若是true，则获取player的当前回合卡牌使用次数；若是对象，字符串，则获取指定牌的当前回合使用次数
+     * @param player 要获取的玩家，默认是当前处理中的玩家_status.event.player
+     */
+    cardCount(card:boolean|string|object,player?:any):number;
+    /**
+     * 获取玩家当前回合技能的使用次数
+     * @param skill 技能名
+     * @param player 要获取的玩家，默认是当前处理中的玩家_status.event.player
+     */
+    skillCount(skill:string,player?:any):any;
     /**
      * 获取该card的所有者（拥有者）
      * @param card 指定card
@@ -349,26 +496,83 @@ interface Get {
     /**
      * 是否当前没有可选择的目标
      */
-    noSelected():any;
-    population(identity):any;
-    totalPopulation(identity):any;
+    noSelected():boolean;
+    /**
+     * 获取当前正在游戏中（还活着）的（身份）人数
+     * @param identity 指定身份，不填默认获取当前所有玩家数（正在游戏+已死亡）
+     */
+    population(identity?:number):number;
+    /**
+     * 获取当前游戏中（活着+死亡）的（身份）人数
+     * @param identity 指定身份，不填默认获取当前所有玩家数（正在游戏+已死亡）
+     */
+    totalPopulation(identity?:number):number;
+    /**
+     * 获取ai.tag（？暂时不知是什么）
+     * @param item 
+     * @param tag 
+     * @param item2 
+     */
     tag(item,tag,item2):any;
-    sortCard(sort):any;
-    difficulty():any;
-    cardPile(name,create):any;
-    cardPile2(name):any;
-    discardPile(name):any;
-    aiStrategy():any;
-    skillintro(name,learn,learn2):any;
-    intro(name):any;
+    /**
+     * 获取排序卡牌的方法
+     * @param sort 指定排序方法：type_sort，suit_sort，number_sort
+     */
+    sortCard(sort:string):Function;
+    /**
+     * 获取难度级别：easy1，normal2，hard3
+     */
+    difficulty():number;
+    /**
+     * 获取某区域的指定卡牌（一张）
+     * @param name 获取卡牌的名字，获取判定卡牌的方法
+     * @param create 指定获取卡牌的地方：'cardPile'抽卡区,'discardPile'弃卡区,'field'玩家场地（玩家的装备，判定牌区），若都不是，则创建一张该名字的卡牌
+     */
+    cardPile(name:string|CardFun<boolean>,create:string):any;
+    /**
+     * 获取抽卡区里指定名字的卡牌（一张）
+     * @param name 获取卡牌的名字，获取判定卡牌的方法
+     */
+    cardPile2(name:string|CardFun<boolean>):any;
+    /**
+     * 获取弃卡去里指定名字的卡牌（一张）
+     * @param name 获取卡牌的名字，获取判定卡牌的方法
+     */
+    discardPile(name:string|CardFun<boolean>):any;
+
+
+    /** 获取ai的态度 */
+    aiStrategy():number;
+
+
+    //获取各种描述信息，用于ui显示上
+    /** 获取指定武将的技能信息描述 */
+    skillintro(name:string,learn,learn2):string;
+    /** 获取指定武将的信息描述 */
+    intro(name:string):string;
+    /** 获取缓存的信息 */
     storageintro(type,content,player,dialog,skill):any;
+    /** 获取设置node节点的信息 */
     nodeintro(node,simple,evt):any;
+    /** 获取横置（连环）的信息 */
     linkintro(dialog,content,player):any;
-    groups():any;
-    types():any;
+
+    /** 获取游戏中的势力标记列表 */
+    groups():string[];
+    /** 获取lib.card中所有（不重复，延迟锦囊算作锦囊trick）类型type */
+    types():string[];
     links(buttons):any;
+
+
+    //ai相关的操作
     threaten(target,player,hp):any;
     condition(player):any;
+    /**
+     * 获取两个之间玩家，ai的态度
+     * 注：需要mode实现get.rawAttitude
+     * @param from 
+     * @param to 
+     */
     attitude(from,to):any;
     sgnAttitude():any;
     useful(card):any;
@@ -391,6 +595,9 @@ interface Get {
     attitude2(to):any;
 }
 
+/**
+ * 一些条件判断
+ */
 interface Is {
     converted(event): any;
     safari(): any;
