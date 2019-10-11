@@ -214,7 +214,11 @@ interface Get {
      * @param method 获取距离的类型：raw，pure，absolute，attack，默认防御距离
      */
     distance(from,to,method?:string):number;
-    info(item):any;
+    /**
+     * 获取item的信息
+     * @param item 若传入的参数是字符串，则返回lib.skill[item]；若传入的参数是一个对象（拥有name属性），则返回lib.card[item.name]；
+     */
+    info(item:string|{name:string}):ExCommonConfig;
     /**
      * 获取当前可选择的目标数，范围。
      * 若没有默认返回[1,1]
@@ -251,22 +255,82 @@ interface Get {
      * @param card 
      */
     position(card):any;
-    skillTranslation(str,player):any;
-    skillInfoTranslation(name):any;
-    translation(str,arg):any;
+
+    /**
+     * 获取技能的翻译名
+     * @param str 技能名，若名字有“re”属于（界）；名字有“xin”属于（新）
+     * @param player 指定玩家
+     */
+    skillTranslation(str:string,player):string;
+    /**
+     * 获取技能的描述
+     * （“技能名_info”）
+     * @param name 技能名
+     */
+    skillInfoTranslation(name: string): string;
+    /**
+     * 获取翻译（本地化）
+     * 
+     * 若是对象，且有name属性，则：
+     *  若arg为“viewAs”，则获取该视为牌的翻译，否则获取原牌的翻译；
+     *  若该对象是“card”卡牌，则拼接【花色+数字】;
+     * 若是数组，则返回集合中每个元素get.translation后用“、”拼接；
+     * 若arg为“skill”，则返回lib.translate[str]中的前两个字；
+     * 若arg为“info”，则返回lib.translate[str+'_info'],若不存在，可以搜索以下几种方式：
+     *  1.去掉末尾最后一个字符；2.获取“_”前面部分；3.去掉末尾2个字符部分，直接获取翻译，或者若是技能名，获取技能的prompt；
+     * 其他则直接获取lib.translate[str]，没有则获取自身；
+     * @param str  
+     * @param arg 类型：viewAs，skill，info
+     */
+    translation(str: string|object, arg?:string): string;
     /**
      * 将阿拉伯数字转成中文数字显示
      * @param num 原数字
      * @param two 是否显示“二”，还是显示“两”
      */
     cnNumber(num:number,two?:boolean):any;
-    selectableButtons(sort):any;
-    selectableCards(sort):any;
+
+    /**
+     * 获取当前对话面板已选中的按钮
+     * 
+     * 当前事件的对面面板对象的按钮组：_status.event.dialog.buttons;
+     * @param sort 排序的方法
+     */
+    selectableButtons(sort:Function):any;
+    /**
+     * 获取当前对话面板已选中的卡牌
+     * 
+     * 当前事件的玩家已选中的卡牌：_status.event.player.getCards('hej');
+     * @param sort 排序的方法
+     */
+    selectableCards(sort: Function):any;
+    /**
+     * 获取ui上的技能列表
+     * （ui.skills，ui.skills2，ui.skills3） 具体还不明了，后面研究
+     */
     skills():any;
+    /**
+     * 返回能获取的（武将）技能的技能列表
+     * @param func 
+     * @param player 需要获取技能的玩家
+     */
     gainableSkills(func,player):any;
-    gainableSkillsName(name, func):any;
+    /**
+     * 根据（武将）名字返回能获取的（武将）技能的技能列表
+     * @param name 
+     * @param func 
+     */
+    gainableSkillsName(name:string, func):any;
+    /**
+     * 返回能获取的武将列表
+     * @param func 
+     */
     gainableCharacters(func):any;
-    selectableTargets(sort):any;
+    /**
+     * 获取当前已选中的（目标）玩家
+     * @param sort 排序的方法
+     */
+    selectableTargets(sort: Function):any;
     /**
      * 返回一个过滤用高阶方法。
      * 传入一个过滤列表，生成一个以该过滤列表为基准的过滤函数，该函数传入一个值，判断该值是否处于该列表内，属于则返回false，没有则返回true；
