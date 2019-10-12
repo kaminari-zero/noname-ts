@@ -43,7 +43,11 @@ declare namespace Lib.element {
         say(str: any): any;
         showGiveup(): any;
         applySkills(skills: any): any;
-        getState(): any;
+        /**
+         * 获取玩家当前的状态信息
+         * 注：主要是联机同步信息用，将信息打包成json结果（不过不知为什么把div打包了）
+         */
+        getState(): PlayerStateInfo;
         setNickname(str: any): any;
         setAvatar(name: any, name2: any, video: any, fakeme: any): any;
         setAvatarQueue(name: any, list: any): any;
@@ -393,7 +397,7 @@ declare namespace Lib.element {
          * 使用技能次数（不区分统一计数）allSkills
          * @param key 当轮的统计数据的key，若没有，则获取当轮的统计数据
          */
-        getStat(key?: string): any;
+        getStat(key?: string): StatInfo;
         queue(time: any): any;
         getCardUsable(card: any, pure: any): any;
         getAttackRange(raw: any): any;
@@ -557,6 +561,93 @@ declare namespace Lib.element {
         $dieflip(type: any): any;
         $phaseJudge(card: any): any;
     }
+
+    //核心成员属性（暂时先暂时一部分比较核心常用的）
+    interface Player{
+        /** 武将名 */
+        name:string;
+        /** 武将名2 */
+        name2?:string;
+        /** 性别 */
+        sex:string;
+        /** 势力 */
+        group:string;
+        /** 当前血量 */
+        hp:number;
+        /** 最大血量（血量上限） */
+        maxHp:number;
+        /** 护甲 */
+        hujia:number;
+
+        /** 是否是单数血（双将模式下两血相加取一半模式，记录是否是单数的血量） */
+        singleHp:boolean;
+
+        /** 信息显示节点 */
+        node:any;
+
+        /**
+         * 跳过列表
+         */
+        skipList:string[];
+        /**
+         * 玩家的技能列表
+         */
+        skills:string[];
+        /**
+         * 已经初始化完成的技能
+         * 主要添加时机：player.addSkill->player.addSkillTrigger
+         */
+        initedSkills:string[];
+        /**
+         * 玩家的附加技能
+         * 主要添加时机：player.addAdditionalSkill
+         */
+        additionalSkills:SMap<string[]>;
+        /**
+         * 玩家丧失的技能
+         * 主要添加时机：player.disableSkill
+         */
+        disabledSkills:SMap<string[]>;
+        /**
+         * 隐藏技能（不能用）
+         * 主要添加时机：应该在各个玩法模式
+         */
+        hiddenSkills:string[];
+        /**
+         * 玩家已发动的觉醒技
+         * 主要添加时机：玩家启动觉醒技后调用player.awakenedSkills
+         */
+        awakenedSkills:string[];
+        /**
+         * 禁用技能
+         * (暂不清楚)
+         */
+        forbiddenSkills:SMap<string[]>;
+        /**
+         * 玩家的游戏统计：
+         * 每回合“phasing”，在轮到玩家新一轮开始时，添加新的统计集合
+         */
+        stat:StatInfo[];
+        /**
+         * 保存玩家的临时技能的持续时机
+         * 主要添加时机：player.addTempSkill
+         */
+        tempSkills:SMap<string>;
+        /**
+         * 玩家的缓存信息区
+         * （信息过多，之后再研究）
+         */
+        storage:SMap<any>;
+        /**
+         * 玩家的标记
+         * 主要添加时机：player.markSkill
+         */
+        marks:SMap<any>;
+        /**
+         * 玩家的ai（日后研究）
+         */
+        ai:PlayerAIInfo;
+    }
 }
 
 /** 简单的牌的结构 */
@@ -569,3 +660,60 @@ type cardSimpInfo = {
     /** 额外参数 */
     [key:string]:any
 }
+
+/**
+ * 玩家的统计数据结构
+ */
+type StatInfo = {
+    /** 出牌(不同名字的牌单独计数) */
+    card:SMap<number>;
+    /** 使用技能（不同名字的技能单独计数） */
+    skill:SMap<number>;
+    
+    /** 伤害 */
+    damage:number;
+    /** 受到伤害 */
+    damaged:number;
+    /** 摸排 */
+    gain:number;
+    /** 杀敌 */
+    kill:number;
+
+    /** 使用技能次数（不区分统一计数） */
+    allSkills:number;
+
+    /** 额外参数 */
+    [key:string]:any
+}
+
+/**
+ * 玩家的状态信息
+ */
+type PlayerStateInfo = {
+    hp:number;
+    maxHp:number;
+    nickname:string;
+    sex:string;
+    name:string;
+    name1:string;
+    name2:string;
+    handcards:any[];
+    equips:any[];
+    judges:any[];
+    views:string[],
+    position:number;
+    hujia:number;
+    side:number;
+    identityShown:string;
+    identityNode:[any,any];
+    identity:string;
+    dead:boolean;
+    linked:boolean;
+    turnedover:boolean;
+}
+
+/**
+ * 玩家的ai
+ * （具体内容日后讨论）
+ */
+type PlayerAIInfo = {}
