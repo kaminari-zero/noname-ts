@@ -563,7 +563,7 @@ declare namespace Lib.element {
     }
 
     //核心成员属性（暂时先暂时一部分比较核心常用的）
-    interface Player{
+    interface Player extends HTMLDivElement{
         /** 武将名 */
         name:string;
         /** 武将名2 */

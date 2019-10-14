@@ -68,6 +68,9 @@ interface HTMLDivElement {
      * @param style 
      */
     css(style:SMap<any>):HTMLDivElement;
+}
+
+interface HTMLTableElement {
     /**
      * 获取该div下表结构row行，col列的元素
      * @param row 

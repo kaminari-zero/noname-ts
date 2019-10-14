@@ -1,47 +1,192 @@
 declare namespace Lib.element {
+    /**
+     * 游戏事件
+     */
+    interface Event {
+        /**
+         * 完成事件。
+         * 设置finished为true
+         */
+        finish(): void;
+        /**
+         * 取消事件执行，结束事件。
+         * 执行untrigger清除掉指定触发,触发“当前事件名Cancelled”阶段
+         */
+        cancel(...args): void;
+        /**
+         * 指定跳转到某一步骤
+         * @param step 
+         */
+        goto(step: number): void;
+        /** 
+         * 回退到上一步骤（可产生类似循环执行效果）
+         */
+        redo(): void;
+        /**
+         * 设置一个key到event里，用于保存，传递数据
+         * 设置进event的值，还会另外保存在_set集合中，用于缓存，set的数据（有可能也用于标记）
+         * @param key 若key不为字符串，且只有一个参数时，则执行批量set
+         * @param value 
+         */
+        set(key: string | [string, any][], value?: any): Event;
+        /**
+         * 设置content（核心）
+         * @param name 如果是方法类型，则使用lib.init.parse转成指定结构方法；如果是字符串，则是使用lib.element.content预定义好的content
+         */
+        setContent(name: Function|string): Event;
+        /**
+         * 获取事件的logvid。
+         * 注：获取3代内的logvid，若3代内没有，则返回null。
+         */
+        getLogv(): string;
 
-interface Event {
-    finish(): any;
-    cancel(): any;
-    goto(step: any): any;
-    redo(): any;
-    /**
-     * 设置一个key到event里，用于保存，传递数据
-     * 设置进event的值，还会另外保存在_set集合中，用于缓存，set的数据（有可能也用于标记）
-     * @param key 若key不为字符串，且只有一个参数时，则执行批量set
-     * @param value 
-     */
-    set(key: string|[string,any][], value?: any): any;
-    setContent(name: any): any;
-    getLogv(): any;
-    send(): any;
-    resume(): any;
-    getParent(level: any, forced: any): any;
-    getTrigger(): any;
-    getRand(): any;
-    insert(func: any, map: any): any;
-    insertAfter(func: any, map: any): any;
-    backup(skill: any): any;
-    restore(): any;
-    /**
-     * 判断当前event.player是不是自己，
-     * 并且当前不处与自动状态中（托管）
-     * 并且当前不处于isMad混乱状态（应该是某些模式，卡牌特有的效果）
-     */
-    isMine(): any;
-    isOnline(): any;
-    notLink(): any;
-    addTrigger(skill: any, player: any): any;
-    /**
-     * 触发阶段，筛选阶段触发的技能
-     * @param name 
-     */
-    trigger(name: any): any;
-    /**
-     * 删除某个阶段触发
-     * @param all 
-     * @param player 
-     */
-    untrigger(all: any, player: any): any;
-}
+        send(): void;
+
+        /**
+         * 重置事件。
+         * 
+         * 主要是删除_cardChoice，_targetChoice，_skillChoice，重新再进行选择。
+         */
+        resume(): void;
+        /**
+         * 获取该事件的父节点。
+         * 默认获取上一个父节点（核心）。
+         * @param level 获取的父节点的深度（number），或者指定名字父节点（string，最多可以查找20代内）
+         * @param forced 是否强制其获取不到父节点，返回null（不知有什么意义）
+         */
+        getParent(level?: number|string, forced?: boolean): Event;
+        /**
+         * 获取该事件的触发者。
+         * 返回父节点的_trigger。
+         */
+        getTrigger(): Event;
+        /**
+         * 获取一个随机数（隶属于该事件中）
+         * 注：若没有，则生成一个保存在_rand中（即当前事件获取一次随机数，需要保存下来）
+         */
+        getRand(): number;
+
+        insert(func: any, map: any): any;
+        insertAfter(func: any, map: any): any;
+
+        /**
+         * 备份该事件的信息到_backup。
+         * 注：删除已选择对象。
+         * @param skill 
+         */
+        backup(skill: any): void;
+        /**
+         * 回复备份数据_backup。
+         */
+        restore(): void;
+        /**
+         * 判断当前event.player是不是自己，
+         * 并且当前不处与自动状态中（托管）
+         * 并且当前不处于isMad混乱状态（应该是某些模式，卡牌特有的效果）
+         */
+        isMine(): boolean;
+        /**
+         * 当前是否是联机中(联机模式)
+         */
+        isOnline(): boolean;
+        /**
+         * 判断当前事件（父节点）没有“_lianhuan”（连环）
+         */
+        notLink(): boolean;
+
+        /**
+         * 添加技能触发
+         * @param skill 
+         * @param player 
+         */
+        addTrigger(skill: string|string[], player: any): void;
+        /**
+         * 触发阶段，筛选阶段触发的技能。
+         * 创建“arrangeTrigger”排列触发事件。
+         * @param name 
+         */
+        trigger(name: string): void;
+        /**
+         * 删除某个阶段触发
+         * @param all 
+         * @param player 
+         */
+        untrigger(all: any, player: any): void;
+    }
+
+    //event的属性，不过大部分都是动态获取的
+    export interface Event {
+        //核心部分：
+        /** 事件名 */
+        name:string;
+        /** 是否完成事件，一般通过event.finish()结束事件 */
+        finished:boolean;
+        /** 事件准备即将执行的事件队列 */
+        next:Event[];
+        /** 事件完成后准备执行的事件队列 */
+        after:Event[];
+        /**
+         * 触发阶段数：
+         * 开始前Before：0，
+         * 时Begin：1，
+         * 后End：2，
+         * 结束后After：3，
+         * 忽略Omitted：1&&finished完成
+         */
+        _triggered:number;
+        /** 记录当前运行的步骤数 */
+        step:number;
+
+        //由于事件用于保存各种数据，在loop循环中传递，其各个属性，实质记录对象的意义都不大一样
+        //而且，由于主要是用于携带数据，因此，有许多数据都记录不了，只能具体看源码找出来了
+        /** 事件触发的玩家 */
+        player:Player;
+        /** 当前事件的源触发事件 */
+        _trigger:Event;
+        result:any;
+        _result:any;
+
+        /** 记录触发源玩家 */
+        source:Player;
+        /** 记录指定的目标玩家 */
+        target:Player;
+        /** 记录多个指定的目标玩家 */
+        targets:Player[];
+        /** 记录牌 */
+        card:Card;
+        /** 记录多张牌 */
+        cards:Card[];
+        /** 记录需要处理的skill技能 */
+        skill:string;
+        /** 是否强制性，自动标记 */
+        forced:boolean;
+        /** 记录一个number类型的数字，每个事件代表都不一样 */
+        num:number;
+
+        custom:{
+            add:any,
+			replace:any
+        }
+
+        filterButton:any;
+        selectButton:any;
+        filterTarget:any;
+        selectTarget:any;
+        filterCard:any;
+        selectCard:any;
+        position:any;
+
+        fakeforce:any;
+        _aiexclude:any;
+        complexSelect:any;
+        complexCard:any;
+        complexTarget:any;
+
+        ai1:any;
+        ai2:any;
+        
+        _cardChoice:Card[];
+        _targetChoice:Player[];
+        _skillChoice:string[];
+    }
 }

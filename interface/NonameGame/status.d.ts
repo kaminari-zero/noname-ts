@@ -1,3 +1,4 @@
+declare var _status:Status;
 interface Status {
     paused:boolean,
     paused2:boolean,
@@ -6,11 +7,7 @@ interface Status {
     clicked:boolean,
     auto:boolean,
     /** 游戏当前事件 */
-    event:{
-        finished:boolean,
-        next:any[],
-        after:any[]
-    },
+    event:GameEvent;
     ai:any,
     lastdragchange:any[],
     skillaudio:any[],

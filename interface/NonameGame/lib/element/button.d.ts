@@ -1,6 +1,6 @@
 declare namespace Lib.element {
 
-interface Button {
-    exclude(): any;
-}
+    interface Button extends HTMLDivElement {
+        exclude(): any;
+    }
 }

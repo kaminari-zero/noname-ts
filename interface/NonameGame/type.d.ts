@@ -729,11 +729,86 @@ type CardBaseOLData = [string,string,number,string,string];
  * 卡牌信息配置
  */
 interface ExCardData {
-    type: string;
+
+    //UI方面的:
+    /** 
+     * 指定独立设置该卡牌的背景（卡面）
+     * 可指定设置成其他卡牌的卡面（这样游戏会优先使用指定卡片名的image，默认使用当前卡片名的image）
+     */
+    cardimage?:string;
+    /** 
+     * 卡牌的卡面
+     * 注：需要fullskin为true
+     * 带“ext:”前缀的，其文件夹路径：extension/卡牌的image
+     *  没有，则路径是：卡牌的image
+     * 若值为“background”：则调用setBackground，设置对应类型的卡面；
+     * 若值为“card”：..........
+     * 注：判断比较复杂，有优先级顺序，之后在独立详细讨论
+     */
+    image?:string;
+    fullskin?:boolean;
+    /** 添加class：fullimage */
+    fullimage?:string;
+    /**
+     * 设置边框
+     * 其值：gold，silver
+     */
+    fullborder?:string;
+    /*
+     * 指定mode玩法时显示的图片
+     * 注：没有指定到image
+     * 若有，路径：'image/mode/'+该卡牌modeimage+'/card/'+卡牌名+'.png'；
+     * 否则，路径：'image/card/'+卡牌名'.png'
+     */
+    modeimage?:string;
+    /** 是否不显示名字，true为不显示 */
+    noname?:boolean;
+    /** 设置卡牌背景颜色 */
+    color?:string;
+    /** 设置阴影，例：'black 0 0 2px' */
+    textShadow?:string;
+    /** 设置信息，名字的透明度 */
+    opacity?:number;
+    /**
+     * 自定义info（显示花色，数字部分），没有则默认“花色 数字”
+     * 注：设置的是html片段
+     */
+    modinfo?:string;
+    /** 
+     * 增加额外显示的info
+     * 注：设置的是html片段，若没有则删除该区域（去区域是卡片的右下角，原用于显示范围，若有会和这部分抢位置）
+     */
+    addinfo?:string;
+    //有这些属性，便添加对应标签（估计是给炉石用的）
+    /** 史诗 */
+    epic?:any;
+    /** 创奇 */
+    legend?:any;
+    /** 黄金 */
+    gold?:any;
+    /** 唯一 */
+    unique?:any;
+
+    /** 类型 */
+    type?: string;
+    /** 子类型 */
+    subtype?:string;
+
+    /**
+     * 全局技能
+     * 该卡牌的技能属于全局技能
+     * 若有，则执行game.addGlobalSkill，添加进去
+     */
+    global?:string|string[];
+    /**
+     * 卡牌初始化方法
+     * 注：先执行完lib.element.card.inits列表的方法，再执行该方法
+     */
+    init?():void;
+
     enable: boolean;
     filterTarget: boolean;
     ai: ExAIData,
-    fullskin: boolean,
     
     viewAs?:any,
     /** 当前判断阶段被取消 */
@@ -743,7 +818,8 @@ interface ExCardData {
 
     /** 只可在以下指定mode使用（不指定应该是都可用） */
     mode?:string[],
-    
+
+
     /**
      * 在lose中使用
      * 若存在则设置在卡牌的destroyed
@@ -1038,6 +1114,12 @@ interface CardBaseUIData {
     nature:string;
 }
 
+/**
+ * 用于显示的简单卡牌结构2
+ * [suit花色,number数字,name卡牌名,nature伤害类型，......[tag列表]]
+ */
+type CardBaseUIData2 = [string,number,string,string];
+
 /** 判断阶段的事件reslut */
 interface JudgeResultData {
     card:string,
@@ -1049,7 +1131,7 @@ interface JudgeResultData {
 }
 
 /**
- * 当前游戏状况信息（联机模式下）
+ * 当前游戏状况信息（一般用于联机模式下保存数据用的结构）
  */
 interface AreanStateInfo{
     number:number,
@@ -1085,23 +1167,35 @@ type RestParmFun<T> = (...args) =>T;
  *  
  */
 type ContentFunc = (
-    event, 
-    step, 
-    source, 
-    player, 
-    target, 
-    targets, 
-    card, 
-    cards, 
-    skill, 
-    forced, 
-    num, 
-    trigger, 
+    event:GameEvent, 
+    step:number, 
+    source:Player, 
+    player:Player, 
+    target:Player, 
+    targets:Player[], 
+    card:Card, 
+    cards:Card[], 
+    skill:string, 
+    forced:boolean, 
+    num:number, 
+    trigger:GameEvent, 
     result, 
-    _status, 
-    lib, 
-    game, 
-    ui, 
-    get, 
-    ai
-    ) => void;
+    _status:Status, 
+    lib:Lib, 
+    game:Game, 
+    ui:UI, 
+    get:Get, 
+    ai:AI
+) => void;
+
+//一些主要对象简单话类型名：
+/** nogame的card类型 */
+type Card = Lib.element.Card;
+/** nogame的player类型 */
+type Player = Lib.element.Player;
+/** nogame的button类型 */
+type Button = Lib.element.Button;
+/** nogame的dialog类型 */
+type dialog = Lib.element.Button;
+/** nogame的event类型 */
+type GameEvent = Lib.element.Event;

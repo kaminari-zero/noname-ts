@@ -599,25 +599,41 @@ interface Get {
  * 一些条件判断
  */
 interface Is {
-    converted(event): any;
-    safari(): any;
-    freePosition(cards): any;
-    nomenu(name, item): any;
-    altered(skill): any;
-    node(obj): any;
-    div(obj): any;
-    map(obj): any;
-    set(obj): any;
-    object(obj): any;
-    singleSelect(func): any;
-    jun(name): any;
-    versus(): any;
-    mobileMe(player): any;
-    newLayout(): any;
-    phoneLayout(): any;
-    singleHandcard(): any;
-    linked2(player): any;
-    empty(obj): any;
-    pos(str): any;
-    locked(skill): any;
+    converted(event): boolean;
+    /** 是否是火狐流浪器 */
+    safari(): boolean;
+    /** 判断这些牌中，有没有不在h，e，j区域中，若都不在，则为true */
+    freePosition(cards:any[]): boolean;
+    /** 判断是否有菜单 */
+    nomenu(name:string, item): boolean;
+    altered(skill): boolean;
+    /** 判断当前对象是html文档节点 */
+    node(obj:any): boolean;
+    /** 判断当前对象是div节点 */
+    div(obj:any): boolean;
+    /** 判断当前对象是Map（es6） */
+    map(obj:any): boolean;
+    /** 判断当前对象是Set（es6） */
+    set(obj:any): boolean;
+    /** 判断当前对象是对象 */
+    object(obj:any): boolean;
+    singleSelect(func): boolean;
+    /** 是否是“君主” */
+    jun(name:string): boolean;
+    /** 是否是对决模式 */
+    versus(): boolean;
+    /** 判断自己当前是否是mobile（手机） */
+    mobileMe(player): boolean;
+    /** 判断game.layout不是“default” */
+    newLayout(): boolean;
+    /** 判断当前是手机布局 */
+    phoneLayout(): boolean;
+    singleHandcard(): boolean;
+    linked2(player): boolean;
+    /** 是否是空对象 */
+    empty(obj:any): boolean;
+    /** 判断该当前字符串是否只是有“h,e,j”构成 */
+    pos(str:string): boolean;
+    /** 判断该技能是否是强制触发的（强制触发：locked，trigger&&forced，mod） */
+    locked(skill:string): boolean;
 }
