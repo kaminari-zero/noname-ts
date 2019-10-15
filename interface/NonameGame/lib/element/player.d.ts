@@ -19,14 +19,17 @@ declare namespace Lib.element {
         $disableEquip(skill: any): any;
         enableEquip(pos: any): any;
         $enableEquip(skill: any): any;
-        isDisabled(arg: any): any;
-        isEmpty(num: any): any;
+        /** 判断'equip'+arg 的装备区是否可以使用 */
+        isDisabled(arg: number): boolean;
+        isEmpty(num: number|string): boolean;
         /**
          * 废除判定区
          * 使该玩家markSkill('_disableJudge')
          */
         disableJudge(): any;
+        
         //原有函数
+        //初始化相关函数
         /**
          * 玩家初始化
          */
@@ -38,8 +41,11 @@ declare namespace Lib.element {
 
         reinit(from: any, to: any, maxHp: any, online: any): any;
         uninit(): any;
-        getLeft(): any;
-        getTop(): any;
+
+        /** 获取offsetLeft（元素左侧距离参照元素左边界偏移量） */
+        getLeft(): number;
+        /** 获取offsetTop（元素上方距离参照元素上边界偏移量） */
+        getTop(): number;
         smoothAvatar(vice: any, video: any): any;
         changeSeat(position: any, video: any): any;
         send(): any;
@@ -80,9 +86,20 @@ declare namespace Lib.element {
          * 若遍历，直到找到上一个没有“undist”玩家
          */
         getPrevious(): any;
-        countUsed(card: any): any;
-        countSkill(skill: any): any;
-        getStockSkills(unowned: any, unique: any, hidden: any): any;
+        /**
+         * 获取当前回合卡牌使用次数
+         * @param card 若存在，则获取指定卡牌使用次数；若不存在，则获取所有卡牌使用次数
+         */
+        countUsed(card?: {name:string}): number;
+        /** 获取当前回合指定技能skill的使用次数 */
+        countSkill(skill: string): number;
+        /**
+         * 获取当前使用武将的存储的技能
+         * @param unowned 是否获取自己本身拥有的，如不获取（false）则删除不属于本身拥有的技能（正常下，武将隐藏时无法获得该武将技能）
+         * @param unique 是否是获取单独技能，如不是（false）则删除（带有unique，temp，sub字段）技能
+         * @param hidden 是否隐藏 true的话，还没显示的武将的技能也获取
+         */
+        getStockSkills(unowned?: boolean, unique?: boolean, hidden?: boolean): string[];
         /**
          * 获取当前玩家的牌(根据类型指定)
          * @param arg1 获取玩家身上牌的类型：h手牌，e装备牌，j判定牌，可以多个拼接
@@ -110,7 +127,7 @@ declare namespace Lib.element {
          * @param arg4 若为true，获取技能经过game.filterSkills过滤后的技能
          * @return 返回最后收集到的玩家的技能   
          */
-        getSkills(arg2?: boolean, arg3?: boolean, arg4?: boolean): any;
+        getSkills(arg2?: boolean, arg3?: boolean, arg4?: boolean): string[];
         get(arg1: any, arg2: any, arg3: any, arg4: any): any;
         syncStorage(skill: any): any;
         syncSkills(): any;
@@ -502,26 +519,70 @@ declare namespace Lib.element {
         needsToDiscard(num: any): any;
         distanceTo(target: any, method: any): any;
         distanceFrom(target: any, method: any): any;
-        hasSkill(skill: any, arg2: any, arg3: any, arg4: any): any;
-        hasStockSkill(skill: any, arg1: any, arg2: any, arg3: any): any;
-        hasZhuSkill(skill: any, player: any): any;
-        hasGlobalTag(tag: any, arg: any): any;
-        hasSkillTag(tag: any, hidden: any, arg: any, globalskill: any): any;
+        /**
+         * 判断玩家是否有指定技能skill。
+         * 默认判断玩家（除了玩家forbiddenSkills上的禁用技能）的：
+         *  武将技能skills+附加技能additionalSkills+临时技能tempSkills
+         * 注：使用了getSkills获取。
+         * @param skill
+         * @param arg2 若为true，获取技能附带隐藏技能hiddenSkills
+         * @param arg3 若为true，获取技能附带装备技能；
+         * @param arg4 若为true，获取技能经过game.filterSkills过滤后的技能
+         */
+        hasSkill(skill: string, arg2?: boolean, arg3?: boolean, arg4?: boolean): boolean;
+        /**
+         * 判断是否拥有玩家当前使用武将的存储的技能
+         * @param skill
+         * @param arg1 是否获取自己本身拥有的，如不获取（false）则删除不属于本身拥有的技能（正常下，武将隐藏时无法获得该武将技能）
+         * @param arg2 是否是获取单独技能，如不是（false）则删除（带有unique，temp，sub字段）技能
+         * @param arg3 是否隐藏 true的话，还没显示的武将的技能也获取
+         */
+        hasStockSkill(skill: string, arg1: boolean, arg2: boolean, arg3: boolean): boolean;
+        /**
+         * 判断当前玩家是否时该主公技直接拥有者
+         * 若当前玩家是主，又有该技能，则当前玩家是该技能的原拥有者
+         * @param skill 主公技名
+         * @param player 在某些回调方法内调用时，传入该方法的回调传入的palyer，用于判断是否时执行该方法的当前玩家（实际还是有点疑惑）
+         */
+        hasZhuSkill(skill: string, player?: Player): boolean;
+        /**
+         * 是否有全局技能标签tag(ai相关)
+         * @param tag 
+         * @param arg 
+         */
+        hasGlobalTag(tag: string, arg?: any): boolean;
+        /**
+         * 判断是否有指定的技能标签tag(ai相关)
+         * @param tag 技能标签
+         * @param hidden 若为true，获取技能附带隐藏技能hiddenSkills
+         * @param arg 
+         * @param globalskill 是否是全局技能
+         */
+        hasSkillTag(tag: string, hidden?: boolean, arg?: any, globalskill?: boolean): boolean;
         /**
          * 判断当前玩家是否有该名字的牌在判定区
          * @param name 
          */
         hasJudge(name: string): boolean;
-        hasFriend(): any;
-        hasUnknown(num: any): any;
-        isUnknown(player: any): any;
-        hasWuxie(): any;
-        hasSha(respond: any, noauto: any): any;
-        hasShan(): any;
+        hasFriend(): boolean;
+        hasUnknown(num: any): boolean;
+        isUnknown(player: any): boolean;
+        hasWuxie(): boolean;
+        hasSha(respond: any, noauto: any): boolean;
+        hasShan(): boolean;
         mayHaveShan(): any;
-        hasCard(name: any, position: any): any;
-        canEquip(name: any, replace: any): any;
-        getEquip(name: any): any;
+        hasCard(name: any, position: any): boolean;
+        /**
+         * 判断是否能使用该装备牌
+         * @param name 卡牌名
+         * @param replace 应该是标记是否是替换
+         */
+        canEquip(name: string, replace?: boolean): boolean;
+        /**
+         * 获取装备区的指定装备牌
+         * @param name 若是对象，需要带有name属性的对象；若是字符串，则是带有“equip”部分;若是number，则内部拼接结果“equip+name”
+         */
+        getEquip(name: string | { name: string }|number): Card;
         /**
          * 获得一张指定名字的判定牌
          * 若该判定牌是视为牌，则是视为牌名字，否则就是该判定牌的名字；
@@ -573,6 +634,7 @@ declare namespace Lib.element {
         name:string;
         /** 武将名2 */
         name2?:string;
+        name1?:string;
         /** 性别 */
         sex:string;
         /** 势力 */
@@ -588,17 +650,20 @@ declare namespace Lib.element {
         singleHp:boolean;
 
         nickname:string;
-        avatar
-        version
+        avatar: string;
+        version: string;
 
         /** 信息显示节点 */
         node:{
-            count
-            equips
-            intro
-            name
-            avatar
-            avatar2
+            name:HTMLDivElement;
+            name2:HTMLDivElement;
+            identity: HTMLDivElement;
+            hp: HTMLDivElement;
+            count: HTMLDivElement;
+            equips: HTMLDivElement;
+            intro: HTMLDivElement;
+            avatar: HTMLDivElement;
+            avatar2: HTMLDivElement;
         };
 
         /**
@@ -664,6 +729,7 @@ declare namespace Lib.element {
          */
         ai:PlayerAIInfo;
 
+        
     }
 }
 
