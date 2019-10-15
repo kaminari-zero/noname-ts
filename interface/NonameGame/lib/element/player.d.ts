@@ -35,6 +35,7 @@ declare namespace Lib.element {
          */
         init(character: string, character2: string, skill: string): Player;
 
+        //联机相关初始化
         initOL(name: any, character: any): any;
         uninitOL(): any;
         initRoom(info: any, info2: any): any;
@@ -42,31 +43,82 @@ declare namespace Lib.element {
         reinit(from: any, to: any, maxHp: any, online: any): any;
         uninit(): any;
 
+
         /** 获取offsetLeft（元素左侧距离参照元素左边界偏移量） */
         getLeft(): number;
         /** 获取offsetTop（元素上方距离参照元素上边界偏移量） */
         getTop(): number;
+        /** 【动画】化生 */
         smoothAvatar(vice: any, video: any): any;
+        /** 【动画】换位置 */
         changeSeat(position: any, video: any): any;
-        send(): any;
-        getId(): any;
-        chat(str: any): any;
-        say(str: any): any;
-        showGiveup(): any;
-        applySkills(skills: any): any;
+
+        /** 【联机】发送信息 */
+        send(...args): Player;
+        /** 【非联机】重新设置palyerid */
+        getId(): Player;
+        /** 【联机】聊天，发送聊天信息 */
+        chat(str: string): void;
+        /** 【动画】显示聊天信息 */
+        say(str: string): void;
+        /** 显示投降/放弃 */
+        showGiveup(): void;
+        /** 【联机】同步可使用技能 */
+        applySkills(skills: string[]): void;
         /**
-         * 获取玩家当前的状态信息
-         * 注：主要是联机同步信息用，将信息打包成json结果（不过不知为什么把div打包了）
+         *  【联机】获取玩家当前的状态信息
+         *  注：主要是联机同步信息用，将信息打包成json结果（不过不知为什么把div打包了）
          */
         getState(): PlayerStateInfo;
-        setNickname(str: any): any;
-        setAvatar(name: any, name2: any, video: any, fakeme: any): any;
-        setAvatarQueue(name: any, list: any): any;
-        flashAvatar(skill: any, name: any): any;
-        update(): any;
-        updateMark(i: any, storage: any): any;
-        updateMarks(connect: any): any;
-        num(arg1: any, arg2: any, arg3: any): any;
+        /** 【联机】设置nickname */
+        setNickname(str: string): Player;
+
+        /**
+         * 设置虚拟形象/化身
+         * @param name 设置前的原武将名
+         * @param name2 化身后的武将名
+         * @param video 是否记录进录像
+         * @param fakeme 
+         */
+        setAvatar(name: string, name2: string, video?: boolean, fakeme?: boolean): void;
+        /**
+         * 设置虚拟形象/化身 队列列表
+         * 注：按顺序取出队列的队头
+         * @param name 设置前的原武将名
+         * @param list 化生列表
+         */
+        setAvatarQueue(name: string, list: string[]): void;
+        /**
+         * 化身技能化身
+         * @param skill 化身技能名
+         * @param name 化身武将名
+         */
+        flashAvatar(skill: string, name: string): void;
+
+        /**
+         * 玩家信息更新
+         * 注：主要更新血量，手牌数，标记
+         */
+        update(): Player;
+        /**
+         * 更新指定标记
+         * @param i 指定标记名 
+         * @param storage 指定同步记录（报错到录像记录里）
+         */
+        updateMark(i: string, storage?: string): Player;
+        /**
+         * 更新所有标记
+         * @param connect 【联网】指定更新的标记名
+         */
+        updateMarks(connect?: string): void;
+        /**
+         * 获取指定区域卡牌/技能的数量
+         * 注：和player.get一样，用得比较少，简单用法player.num(string,string)获取指定数量
+         * @param arg1 若是“hej”任意组合，则是获取指定区域的牌；若为“s”则获取当前玩家包括全局技能的所有技能
+         * @param arg2 过滤条件1
+         * @param arg3 过滤条件2
+         */
+        num(arg1: string, arg2?: any, arg3?: any): number;
         /**
          *  画指引线
          * @param target 
@@ -79,13 +131,13 @@ declare namespace Lib.element {
          * 注：若当前有skill为“undist”，则没有下一个玩家；
          * 若遍历，直到找到下一个没有“undist”玩家
          */
-        getNext(): any;
+        getNext(): Player;
         /**
          * 获取当前玩家的上一个玩家（上家）
          * 注：若当前有skill为“undist”，则没有上一个玩家；
          * 若遍历，直到找到上一个没有“undist”玩家
          */
-        getPrevious(): any;
+        getPrevious(): Player;
         /**
          * 获取当前回合卡牌使用次数
          * @param card 若存在，则获取指定卡牌使用次数；若不存在，则获取所有卡牌使用次数
@@ -128,55 +180,129 @@ declare namespace Lib.element {
          * @return 返回最后收集到的玩家的技能   
          */
         getSkills(arg2?: boolean, arg3?: boolean, arg4?: boolean): string[];
-        get(arg1: any, arg2: any, arg3: any, arg4: any): any;
-        syncStorage(skill: any): any;
-        syncSkills(): any;
-        playerfocus(time: any): any;
-        setIdentity(identity: any): any;
-        insertPhase(skill: any, insert: any): any;
-        insertEvent(name: any, content: any, arg: any): any;
+        /**
+         * 获取技能/区域卡牌
+         * 注：下面参数的意义，读跟前一个参数相关，略乱 
+         * (虽然功能强大，但是项目内貌似已经有各种细分的实现方式，该方法并没有多少使用)
+         * 使用例子：手牌player.get("h");装备牌player.get("e");判定牌player.get("j")
+         * @param arg1 若为“hej”任意组合，在是获取指定区域的卡牌；若是“s”，则是获取技能
+         * @param arg2 过滤条件1
+         * @param arg3 过滤条件2
+         * @param arg4 过滤条件3
+         */
+        get(arg1: string, arg2?: any, arg3?: any, arg4?: any): any;
+        /** 添加录像记录，并更新所有标记信息 */
+        syncStorage(skill: string): void;
+        /** 【联机】通信同步技能 */
+        syncSkills(): void;
+        /** 【动画】播放当前玩家的成为焦点的动画（一个缩放动画） */
+        playerfocus(time: number): Player;
+        /** 设置当前显示的身份标签 */
+        setIdentity(identity?: string): Player;
+
+
+        //玩家操作事件（这些都是些关键操作，骚后仔细研究）
+        /**
+         * 玩家获得一个额外回合
+         * （从“phase”阶段开始）
+         * @param skill 技能名
+         * @param insert 是否直接插入当前行动回合，若为true，将其置于其插入event.next队列队头，在下一次loop立即执行
+         */
+        insertPhase(skill: string, insert: boolean): Event;
+        /**
+         * 在当前回合中插入一个事件
+         * @param name 事件名
+         * @param content 设置的content
+         * @param arg 设置事件的参数map
+         */
+        insertEvent(name: string, content: string|ContentFunc, arg: SMap<any>): Event;
         /**
          * 回合阶段
          * @param skill 
          */
-        phase(skill: any): any;
+        phase(skill: string,...args): Event;
         /**
          * 判断阶段
          */
-        phaseJudge(): any;
+        phaseJudge(...args): Event;
         /**
          * 抽牌阶段
          */
-        phaseDraw(): any;
+        phaseDraw(...args): Event;
         /**
          * 出牌阶段
          */
-        phaseUse(): any;
+        phaseUse(...args): Event;
         /**
          * 弃牌阶段
          */
-        phaseDiscard(): any;
+        phaseDiscard(...args): Event;
         /**
-         * 选将使用
-         * @param use 
+         * 选择使用
+         * @param use 若只有一个参数，则采用map方式入参
          */
-        chooseToUse(use: any): any;
-        chooseToRespond(): any;
+        chooseToUse(...args): Event;
+        /**
+         * 选择响应
+         * @param args 
+         */
+        chooseToRespond(...args): Event;
         /**
          * 选择弃牌
          */
-        chooseToDiscard(): any;
-        chooseToCompare(target: any, check: any): any;
-        chooseSkill(target: any): any;
-        discoverCard(list: any): any;
-        chooseCardButton(): any;
-        chooseVCardButton(): any;
-        chooseButton(): any;
-        chooseButtonOL(list: any, callback: any, ai: any): any;
-        chooseCardOL(): any;
-        chooseCard(): any;
-        chooseUseTarget(card: any, prompt: any, includecard: any): any;
-        chooseTarget(): any;
+        chooseToDiscard(...args): Event;
+        /**
+         * 发起拼点，选择拼点。
+         * 若多个目标，则content为：chooseToCompareMultiple
+         * 只有一个目标，则content为：chooseToCompare
+         * @param target 选择拼点的目标
+         * @param check 设置ai的行动方法
+         */
+        chooseToCompare(target: Player|Player[], check?: OneParmFun<Card,any>): Event;
+        /**
+         * 选择获得一项技能
+         * @param target 
+         */
+        chooseSkill(target: any): Event;
+        /**
+         * 选择一张牌进行操作(使用之/获得之/装备之... ...)
+         * @param list 
+         */
+        discoverCard(list: string[]|Card[],...args): Event;
+        /**
+         * 创建选择卡牌按钮：
+         * 发起“chooseButton”事件；
+         */
+        chooseCardButton(...args): Event;
+        /**
+         * 创建选择虚拟卡牌按钮（vcard）
+         * 发起“chooseButton”事件；
+         */
+        chooseVCardButton(...args): Event;
+        /**
+         * 创建选择button，暂停等待选择结果
+         */
+        chooseButton(...args): Event;
+
+        //联机专用选择按钮，选择卡牌
+        chooseButtonOL(list: any, callback: any, ai: any): Event;
+        chooseCardOL(...args): Event;
+
+        /**
+         * 发起选择卡牌
+         */
+        chooseCard(...args): Event;
+        /**
+         * 选择使用的目标
+         * @param card 
+         * @param prompt 
+         * @param includecard 
+         */
+        chooseUseTarget(card: any, prompt: any, includecard: any,...args): Event;
+        /**
+         * 发起选择目标
+         */
+        chooseTarget(...args): Event;
         chooseCardTarget(choose: any): any;
         chooseControlList(): any;
         chooseControl(): any;
@@ -192,29 +318,29 @@ declare namespace Lib.element {
         canMoveCard(withatt: any): any;
         moveCard(): any;
         /**
-         * 处理使用event.result
+         * 处理使用event.result,根据结果决定是否useCard或者useSkill
          * @param result 
          * @param event 
          */
-        useResult(result: any, event: any): any;
+        useResult(result: any, event: any): Event;
         /**
          * 使用卡牌
          */
-        useCard(): any;
+        useCard(...args): Event;
         /**
          * 使用技能
          */
-        useSkill(): any;
+        useSkill(...args): Event;
         /**
          * 抽牌
          */
-        draw(): any;
+        draw(...args): Event;
         randomDiscard(): any;
         randomGain(): any;
         /**
          * 弃牌
          */
-        discard(): any;
+        discard(...args): Event;
         respond(): any;
         swapHandcards(target: any, cards1: any, cards2: any): any;
         directequip(cards: any): any;
@@ -223,82 +349,73 @@ declare namespace Lib.element {
         /**
          * 获得牌
          */
-        gain(): any;
+        gain(...args): Event;
         /**
          * 当前玩家给牌给目标玩家
          * @param cards 要给的牌
          * @param target 目标玩家
          * @param visible 给出去的牌是否大家都可见 
          */
-        give(cards: any|any[], target: any, visible: boolean): any;
+        give(cards: any|any[], target: any, visible: boolean): void;
         /**
          * 失去牌
          */
-        lose(...args): any;
+        lose(...args): Event;
         /**
          * 收到伤害
          */
-        damage(...args): any;
+        damage(...args): Event;
         /**
          * 回复体力
          */
-        recover(...args): any;
+        recover(...args): Event;
         /**
          * 双将模式下的抽牌
          */
-        doubleDraw(): any;
+        doubleDraw(...args): Event;
         /**
          * 失去体力
          * @param num 
          */
-        loseHp(num: any): any;
+        loseHp(num: any,...args): Event;
         /**
          * 失去体力上限
          */
-        loseMaxHp(): any;
+        loseMaxHp(...args): Event;
         /**
          * 增加体力上限
          */
-        gainMaxHp(): any;
+        gainMaxHp(...args): Event;
         /**
          * 血量改变
          * @param num 
          * @param popup 
          */
-        changeHp(num: any, popup: any): any;
+        changeHp(num: any, popup: any,...args): Event;
         /**
          * 护甲改变
          * （不是三国杀常规模式下相关的）
          * @param num 改变的护甲数，默认为1
          * @param type 护甲类型
          */
-        changeHujia(num?: number, type?: any): any;
-        /**
-         * 随机获取一个buff
-         * （目前看起来和三国杀常规模式游戏没关系，不知为何在这）
-         */
-        getBuff(...num:number[]): any;
-        /**
-         * 随机获取一个debuff
-         * （目前看起来和三国杀常规模式游戏没关系，不知为何在这）
-         */
-        getDebuff(...num:number[]): any;
+        changeHujia(num?: number, type?: any,...args): Event;
         /**
          * 濒死阶段
          * @param reason 
          */
-        dying(reason: any): any;
+        dying(reason: any,...args): Event;
         /**
          * 死亡阶段
          * @param reason 
          */
-        die(reason: any): any;
+        die(reason: any,...args): Event;
         /**
          * 复活
          * @param hp 
          * @param log 
          */
-        revive(hp: number, log: boolean): any;
+        revive(hp: number, log: boolean,...args): Event;
+
         /**
          * 是否是“混乱”状态
          * 即判断是否含有“mad”技能
@@ -591,6 +708,16 @@ declare namespace Lib.element {
          */
         getJudge(name: string): any;
 
+        //获取buff，目前看起来和三国杀常规模式游戏没关系，不知为何在这
+        /**
+         * 随机获取一个buff
+         */
+        getBuff(...num:number[]): Player;
+        /**
+         * 随机获取一个debuff
+         */
+        getDebuff(...num:number[]): Player;
+
         //动画,UI相关的方法（前置$符）[不过也有些内部混如一些操作逻辑，没分离彻底]
         $drawAuto(cards: any, target: any): any;
         $draw(num: any, init: any, config: any): any;
@@ -653,18 +780,53 @@ declare namespace Lib.element {
         avatar: string;
         version: string;
 
-        /** 信息显示节点 */
+        /** 信息显示html节点 */
         node:{
+            /** 武将名 */
             name:HTMLDivElement;
+            /** 武将名2 */
             name2:HTMLDivElement;
+            nameol:HTMLDivElement;
+            /** 身份 */
             identity: HTMLDivElement;
+            /** 血量 */
             hp: HTMLDivElement;
+            /** 手牌数 */
             count: HTMLDivElement;
-            equips: HTMLDivElement;
-            intro: HTMLDivElement;
+            /** 化身1 */
             avatar: HTMLDivElement;
+            /** 化身2 */
             avatar2: HTMLDivElement;
+            
+            action: HTMLDivElement;
+            /** 锁链（铁索连环） */
+            chain: HTMLDivElement;
+            /** 边框 */
+            framebg: HTMLDivElement;
+            /** 手牌区1 */
+            handcards1: HTMLDivElement;
+            /** 手牌区2（貌似不是明牌，不知有什么用） */
+            handcards2: HTMLDivElement;
+            /** 判定区 */
+            judges: HTMLDivElement;
+            /** 装备区 */
+            equips: HTMLDivElement;
+            link: HTMLDivElement;
+            /** mark标记 */
+            marks: HTMLDivElement;
+            /** 翻面遮罩ui */
+            turnedover: HTMLDivElement;
+            /** 信息显示 */
+            intro: HTMLDivElement;
         };
+
+        /** 
+         * player的dataset:储存数据
+         * 其实质是html节点自带DOMStringMap，用于存储携带数据信息
+         */
+        dataset:{
+            position:string;
+        }
 
         /**
          * 跳过列表
@@ -717,6 +879,7 @@ declare namespace Lib.element {
         /**
          * 玩家的缓存信息区
          * （信息过多，之后再研究）
+         * 主要功能：用于标记技能，缓存一些技能的信息在玩家缓存信息里，方便整场游戏的调用
          */
         storage:SMap<any>;
         /**

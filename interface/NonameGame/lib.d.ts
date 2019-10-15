@@ -28,7 +28,8 @@ interface Lib {
     onover: any[];
     ondb: any[];
     ondb2: any[];
-    chatHistory: any[];
+    /** 聊天历史 */
+    chatHistory: [string,string][];
     arenaReady: any[];
     onfree: any[];
     /** 在牌堆里牌(指不区分数字，花色，伤害属性的牌) */

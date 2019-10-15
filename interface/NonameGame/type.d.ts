@@ -293,7 +293,9 @@ interface ExSkillData {
          * 当标记显示内容是文本时，
          * 例：标记显示内容为当前有多少个标记
          */
-        content:string|IntroContentFun,
+        content:string|IntroContentFun;
+        markcount?:number|TwoParmFun<any,Player,number>;
+        nocount?:boolean;
     };
     /** 
      * 子技能：
