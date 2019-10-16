@@ -295,7 +295,14 @@ interface ExSkillData {
          */
         content:string|IntroContentFun;
         markcount?:number|TwoParmFun<any,Player,number>;
+        /** 是否不启用技能标记计数 */
         nocount?:boolean;
+        /**
+         * 移除该标记时，在unmarkSkill执行
+         * 若值为字符串“throw”，该玩家缓存中该技能标记的为牌时，播放丢牌动画；
+         * 若是方法，则直接使用该回调方法处理。
+         */
+        onunmark?:TwoParmFun<any,Player,void>|string;
     };
     /** 
      * 子技能：
@@ -320,21 +327,24 @@ interface ExSkillData {
      * (视为)目标卡牌
      * 一般用于视为技能
      */
-    viewAs?:SMap<string>;
+    viewAs?:CardBaseUIData;
     ai?: ExAIData;
 
-    /**
-     * 失去技能时发动
-     * 当值为string时：
-     * storage
-     * 当值为true时，都是直接移除
-     */
-    onremove?:PlayerSkillFun<void>|string|string[]|boolean;
     /**
      * 获得技能时发动
      * @param player 
      */
     init?(player):void;
+    /**
+     * 失去技能时发动
+     * 当值为string时:
+     *  若为“storage”，删除player.storage中该技能的缓存；
+     *  若为“discard”，若player.storage[skill]缓存的是卡牌时，执行game.cardsDiscard，并播放丢牌动画，然后移除player.storage[skill]；
+     *  若为“lose”，和“discard”差不多，不过不播丢牌动画；
+     * 当值为true时，都是直接移除player.storage[skill]；
+     * 当值为字符串集合时，则是删除集合中对应player.storage（即删除多个指定storage）
+     */
+    onremove?:PlayerSkillFun<void>|string|string[]|boolean;
     /** 
      * ai如何选牌
      */
@@ -353,6 +363,7 @@ interface ExSkillData {
     check?(...arg):any;
     /**
      * 过滤发动条件，返回true则可以发动此技能
+     * 主要在filterTrigger中处理
      * @param event 事件 相当于trigger时机
      * @param player 
      */
@@ -435,6 +446,11 @@ interface ExSkillData {
      * @param event 
      */
     onChooseToUse?(event):void;
+
+    /** 技能响应前处理 */
+    prerespond?(result,player):void;
+    /** 技能响应（不知为何，联机无法启动） */
+    onrespond?(event,player):void;
 }
 
 /** 导入技能包的配置信息 */
@@ -613,23 +629,28 @@ interface ExModData {
     /** 
      * 是否能成为目标 
      * card：牌；
-     * player：使用牌的角色；t
-     * arget：玩家
+     * player：使用牌的角色；
+     * target：玩家
      */
     targetEnabled?(card, player, target): boolean;
     /**
-     * 可以指定任意目标
+     * 可以指定任意（范围内）目标
      * @param card 牌
      * @param player 玩家
      * @param target 目标
      */
-    targetInRange?(card, player, target):boolean;
+    targetInRange?(card, player, target):boolean|number;
     /**
      * 弃牌阶段时，忽略的手牌
      * @param card 
      * @param player 
      */
     ignoredHandcard?(card, player):boolean;
+
+    /** 过滤可以被丢弃的牌 */
+    canBeDiscarded?(card,player,target,eventName):boolean;
+    /** 过滤可以获得的牌 */
+    canBeGained?(card,player,target,eventName):boolean;
 }
 
 /** 选择按钮配置 */
@@ -808,34 +829,68 @@ interface ExCardData {
      */
     init?():void;
 
-    enable: boolean;
-    filterTarget: boolean;
-    ai: ExAIData,
-    
-    viewAs?:any,
-    /** 当前判断阶段被取消 */
-    cancel?:any,
-    /** 卡牌效果 */
-    effect?:any,
+    /**
+     * 是否能使用
+     */
+    enable?: boolean|ThreeParmFun<Card,Player,GameEvent,boolean>;
+    /**
+     * 可使用次数（每回合）
+     */
+    usable?: number|TwoParmFun<Card,Player,number>;
+    /** 是对自己使用 */
+    toself?:boolean;
+    /**
+     * 是否指定目标
+     * 在lib.filter.targetEnabled使用
+     */
+    filterTarget: boolean|ThreeParmFun<Card,Player,Target,boolean>;
+    /**
+     * 单一目标的卡
+     */
+    singleCard?:boolean;
 
+    /**
+     * 视为指定牌
+     */
+    viewAs?:CardBaseUIData,
+    /** 自动视为该指定牌 */
+    autoViewAs?:boolean,
     /** 只可在以下指定mode使用（不指定应该是都可用） */
     mode?:string[],
+    /**
+     * 需要选择多少个目标才能发动
+     * 选择的目标数：
+     * 为-1时，选择全部人
+     * 为数组时，这个数组就是选择目标数的区间
+     */
+    selectTarget?:number|[number,number]|TwoParmFun<Card,Player,boolean>;
 
-
+    /**
+     * 在targetEnabled2，targetEnabled3中使用
+     */
+    modTarget?:boolean|ThreeParmFun<Card,Player,Target,boolean>;
+    /** 距离（范围） */
+    range?:RangeData;
+    /** 超出范围？ */
+    outrange?:RangeData;
+    
     /**
      * 在lose中使用
      * 若存在则设置在卡牌的destroyed
      */
     destroy?:any,
-    autoViewAs?:any,
+
+    ai: ExAIData,
+    
+    /** 当前判断阶段被取消 */
+    cancel?:any,
+    /** 卡牌效果 */
+    effect?:any,
+
     /**
      * 在useCard创建事件中调用
      */
     changeTarget?(player,targets):void;
-    /**
-     * 单一目标的卡
-     */
-    singleCard?:boolean;
 
     /**
      * 多目标
@@ -896,6 +951,14 @@ interface ExCardData {
      * 应该是在执行该卡牌content之后执行的事件content
      */
     contentAfter?():any;
+
+    /**
+     * 多目标检测？
+     * 在player.canUse中执行，该方法结果为true，则canUse返回false
+     * @param card 
+     * @param player 
+     */
+    multicheck?(card,player):boolean;
 }
 
 /**
@@ -1107,13 +1170,20 @@ interface PackageData {
 }
 
 /**
- * 用于显示的简单卡牌结构
+ * 用于显示的简单卡牌结构(基本卡牌信息，作为基本的参数结构)
+ * （其实质就是Card对象分离的一部分，用力简单明了的显示，实际直接用card传参也行）
  */
 interface CardBaseUIData {
+    //基本结构
     name:string;
-    suit:string;
-    number:number;
-    nature:string;
+    suit?:string;
+    number?:number;
+    nature?:string;
+
+    //用于某些方法，用于过滤卡牌的额外结构
+    type?:string;
+    subtype?:string;
+    color?:string;
 }
 
 /**
@@ -1121,6 +1191,15 @@ interface CardBaseUIData {
  * [suit花色,number数字,name卡牌名,nature伤害类型，......[tag列表]]
  */
 type CardBaseUIData2 = [string,number,string,string];
+
+type RangeData = {
+    /** 进攻距离 */
+    attack?:number;
+    /** 防御距离 */
+    global?:number;
+
+    globalFrom?:number;
+}
 
 /** 判断阶段的事件reslut */
 interface JudgeResultData {
@@ -1195,6 +1274,8 @@ type ContentFunc = (
 type Card = Lib.element.Card;
 /** nogame的player类型 */
 type Player = Lib.element.Player;
+/** nogame的player类型->目标玩家 */
+type Target = Lib.element.Player;
 /** nogame的button类型 */
 type Button = Lib.element.Button;
 /** nogame的dialog类型 */

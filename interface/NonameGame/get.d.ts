@@ -364,19 +364,19 @@ interface Get {
      */
     select(select):any;
     /**
-     * 获得卡牌
+     * 获得当前事件中处理的卡牌
      * 根据
-     * _status.event.skill存在， 当前事件中的技能若有viewAs，则将选中牌；
+     * _status.event.skill存在， 当前事件中的技能若有viewAs，则返回选中牌；
      * _status.event._get_card存在，则返回_status.event._get_card；
-     * ui.selected.cards[0] ，若original为true，则直接返回该第一张牌；若不是则返回处理过cards；
+     * ui.selected.cards[0] ，若original为true，则直接返回该第一张牌；若不是则返回处理过card；
      * @param original 
      */
-    card(original?:boolean):any;
+    card(original?:boolean):Card;
     /**
      * 获取当前event的玩家player
      * 返回_status.event.player （算是个无用的方法）
      */
-    player():any;
+    player():Player;
     /**
      * 获取当前游戏内所有玩家
      * 
@@ -385,13 +385,13 @@ interface Get {
      * @param dead 是否获取死亡的角色（默认只获取正在游戏中角色），true则加入死亡角色
      * @param out 是否剔除已经退出游戏的角色（isOut），true则保留，false则剔除
      */
-    players(sort:Function|boolean,dead:boolean,out?:boolean):any;
+    players(sort:Function|boolean,dead:boolean,out?:boolean):Player[];
     /**
      * 获取卡牌所在的位置：
      * 位置：e装备区，j判定区，h手牌，c抽牌区，d弃牌区，s特殊区（special）
      * @param card 
      */
-    position(card):any;
+    position(card):string;
 
     /**
      * 获取技能的翻译名
@@ -425,7 +425,7 @@ interface Get {
      * @param num 原数字
      * @param two 是否显示“二”，还是显示“两”
      */
-    cnNumber(num:number,two?:boolean):any;
+    cnNumber(num:number,two?:boolean):string;
 
     /**
      * 获取当前对话面板已选中的按钮
@@ -433,14 +433,14 @@ interface Get {
      * 当前事件的对面面板对象的按钮组：_status.event.dialog.buttons;
      * @param sort 排序的方法
      */
-    selectableButtons(sort:Function):any;
+    selectableButtons(sort:Function):Button[];
     /**
      * 获取当前对话面板已选中的卡牌
      * 
      * 当前事件的玩家已选中的卡牌：_status.event.player.getCards('hej');
      * @param sort 排序的方法
      */
-    selectableCards(sort: Function):any;
+    selectableCards(sort: Function):Card[];
     /**
      * 获取ui上的技能列表
      * （ui.skills，ui.skills2，ui.skills3） 具体还不明了，后面研究
@@ -451,23 +451,23 @@ interface Get {
      * @param func 
      * @param player 需要获取技能的玩家
      */
-    gainableSkills(func,player):any;
+    gainableSkills(func?:ThreeParmFun<any,string,string,boolean>,player?:Player):string[];
     /**
      * 根据（武将）名字返回能获取的（武将）技能的技能列表
      * @param name 
-     * @param func 
+     * @param func 过滤方法
      */
-    gainableSkillsName(name:string, func):any;
+    gainableSkillsName(name:string, func?:ThreeParmFun<any,string,string,boolean>):string[];
     /**
      * 返回能获取的武将列表
-     * @param func 
+     * @param func 过滤方法
      */
-    gainableCharacters(func):any;
+    gainableCharacters(func?:TwoParmFun<any,string,boolean>):string[];
     /**
      * 获取当前已选中的（目标）玩家
      * @param sort 排序的方法
      */
-    selectableTargets(sort: Function):any;
+    selectableTargets(sort: Function):Player[];
     /**
      * 返回一个过滤用高阶方法。
      * 传入一个过滤列表，生成一个以该过滤列表为基准的过滤函数，该函数传入一个值，判断该值是否处于该列表内，属于则返回false，没有则返回true；
@@ -588,6 +588,13 @@ interface Get {
     skillthreaten(skill,player,target):any;
     order(item):any;
     result(item,skill):any;
+    /**
+     * (比较重要的方法，由于代码过多，骚后研究)
+     * @param target 
+     * @param card 
+     * @param player 
+     * @param player2 
+     */
     effect(target,card,player,player2):any;
     damageEffect(target,player,viewer,nature):any;
     recoverEffect(target,player,viewer):any;
@@ -629,7 +636,8 @@ interface Is {
     /** 判断当前是手机布局 */
     phoneLayout(): boolean;
     singleHandcard(): boolean;
-    linked2(player): boolean;
+    /** 是否使用“linked2”样式的连环 */
+    linked2(player:Player): boolean;
     /** 是否是空对象 */
     empty(obj:any): boolean;
     /** 判断该当前字符串是否只是有“h,e,j”构成 */

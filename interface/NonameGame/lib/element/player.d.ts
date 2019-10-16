@@ -120,12 +120,17 @@ declare namespace Lib.element {
          */
         num(arg1: string, arg2?: any, arg3?: any): number;
         /**
-         *  画指引线
-         * @param target 
-         * @param config 
+         *  画指引线（当前玩家到目标玩家）
+         * @param target 目标玩家
+         * @param config css画线的配置
          */
-        line(target: any, config: any): any;
-        line2(targets: any, config: any): any;
+        line(target: Player, config: any): void;
+        /**
+         * 画多个目标的指引线（当前玩家到多个目标玩家）
+         * @param targets 目标玩家列表
+         * @param config css画线的配置
+         */
+        line2(targets: Player[], config: any): void;
         /**
          * 获取当前玩家的下一个玩家（下家）
          * 注：若当前有skill为“undist”，则没有下一个玩家；
@@ -158,18 +163,52 @@ declare namespace Lib.element {
          * @param arg2 获取牌的详细过滤条件（若是字符串则是卡牌名，若是对象是个cardSimpInfo结构）
          */
         getCards(arg1: string, arg2: string | Object |OneParmFun<Card,boolean>): Card[];
-        getDiscardableCards(player: any, arg1: any, arg2: any): any;
-        getGainableCards(player: any, arg1: any, arg2: any): any;
-        getGainableSkills(func: any): any;
+        /**
+         * 获取指定玩家可以弃置的当前玩家的牌
+         * 执行lib.filter.canBeDiscarded,通过“canBeDiscarded”mod检测
+         * @param player 
+         * @param arg1 
+         * @param arg2 
+         */
+        getDiscardableCards(player: Player, arg1?: any, arg2?: any): Card[];
+        /**
+         * 获取指定玩家可以获得的当前玩家的牌
+         * 执行lib.filter.canBeGained,通过“canBeGained”mod检测
+         * @param player 
+         * @param arg1 
+         * @param arg2 
+         */
+        getGainableCards(player: Player, arg1?: any, arg2?: any): Card[];
+        /**
+         * 获得当前玩家可获得的技能
+         * （即name武将名，name1双将名1，name2双将名2）
+         * @param func 过滤方法
+         */
+        getGainableSkills(func?:ThreeParmFun<any,string,string,boolean>): string[];
         /**
          * 计算获取当前玩家的牌数(根据类型指定)
          * @param arg1 获取玩家身上牌的类型：h手牌，e装备牌，j判定牌，可以多个拼接
          * @param arg2 获取牌的详细过滤条件（若是字符串则是卡牌名，若是对象是个cardSimpInfo结构）
          */
         countCards(arg1: string, arg2: string | Object|OneParmFun<Card,boolean>): number;
-        countDiscardableCards(player: any, arg1: any, arg2: any): any;
-        countGainableCards(player: any, arg1: any, arg2: any): any;
-        getOriginalSkills(): any;
+        /**
+         * 获取获取指定玩家可以弃置的当前玩家的牌的数量
+         * @param player 
+         * @param arg1 
+         * @param arg2 
+         */
+        countDiscardableCards(player: Player, arg1?: any, arg2?: any): number;
+        /**
+         * 获取指定玩家可以获得的当前玩家的牌的数量
+         * @param player 
+         * @param arg1 
+         * @param arg2 
+         */
+        countGainableCards(player: Player, arg1?: any, arg2?: any): number;
+        /**
+         * 获取当前玩家所拥有（武将）的原始的技能（即武将原配置的技能）
+         */
+        getOriginalSkills(): string[];
         /**
          * 获取玩家的技能。
          * 默认获取玩家（除了玩家forbiddenSkills上的禁用技能）的：
@@ -244,7 +283,7 @@ declare namespace Lib.element {
         chooseToUse(...args): Event;
         /**
          * 选择响应
-         * @param args 
+         * 发起“respond”响应事件
          */
         chooseToRespond(...args): Event;
         /**
@@ -341,8 +380,18 @@ declare namespace Lib.element {
          * 弃牌
          */
         discard(...args): Event;
-        respond(): any;
-        swapHandcards(target: any, cards1: any, cards2: any): any;
+        /**
+         * 响应
+         * 触发“respond”阶段
+         */
+        respond(...args): Event;
+        /**
+         * 玩家和目标交换手牌
+         * @param target 目标玩家
+         * @param cards1 该玩家的手牌，若没有，默认全部
+         * @param cards2 目标玩家的手牌，若没有，默认全部
+         */
+        swapHandcards(target: Player, cards1?: Card[], cards2?: Card[]): Event;
         directequip(cards: any): any;
         directgain(cards: any): any;
         gainMultiple(targets: any, position: any): any;
@@ -420,14 +469,14 @@ declare namespace Lib.element {
          * 是否是“混乱”状态
          * 即判断是否含有“mad”技能
          */
-        isMad(): any;
+        isMad(): boolean;
         /**
          * 设置进入“混乱”状态
          * 即添加“mad”技能
          * 进入“混乱”状态的情况下，不能操作（自己的面板），player.isMine的结果也是false（不能确定当前玩家是自己）
          * @param end 
          */
-        goMad(end: any): any;
+        goMad(end: SMap<string>): any;
         /**
          * 接触“混乱”状态
          * 即移除“mad”技能
@@ -476,23 +525,85 @@ declare namespace Lib.element {
         _popup(): any;
         showTimer(time: any): any;
         hideTimer(): any;
-        markSkill(name: any, info: any, card: any): any;
-        unmarkSkill(name: any): any;
-        markSkillCharacter(id: any, target: any, name: any, content: any): any;
-        markCharacter(name: any, info: any, learn: any, learn2: any): any;
-        mark(name: any, info: any, skill: any): any;
-        unmark(name: any, info: any): any;
-        addLink(): any;
-        removeLink(): any;
-        canUse(card: any, target: any, distance: any, includecard: any): any;
-        hasUseTarget(card: any, distance: any, includecard: any): any;
+
+        //标记相关
+        /**
+         * 技能标记（显示，更新标记）
+         * @param name 标记名
+         * @param info 标记的显示信息
+         * @param card 若有则标记记录的是卡牌信息
+         */
+        markSkill(name: string, info?: any, card?: Card[]): Player;
+        /**
+         * 取消技能标记
+         * @param name 标记名
+         */
+        unmarkSkill(name: string): Player;
+        /**
+         * 技能武将标记(实际上，只有联机该方法才有意义，也是个联机方法)
+         * @param id 标记名
+         * @param target 
+         * @param name 
+         * @param content 
+         */
+        markSkillCharacter(id: string, target: {name:string}|string, name: any, content: any): Player;
+        /**
+         * 技能武将标记（用于标记武将，目标之类）
+         * @param name 武将名
+         * @param info 标记信息(即配置在技能信息的intro，标记的相关的配置信息)
+         * @param learn 
+         * @param learn2 
+         */
+        markCharacter(name: string|{name:string}, info: any, learn?: boolean, learn2?: boolean): HTMLDivElement;
+        /**
+         * 添加标记（UI）
+         * @param name 标记的内容，可以是字符串，可以是卡牌
+         * @param info 标记信息
+         * @param skill 
+         */
+        mark(name: any, info: any, skill: any): HTMLDivElement[]|HTMLDivElement;
+        /**
+         * 删除标记（UI）
+         * @param name 
+         * @param info 
+         */
+        unmark(name: any, info: any): void;
+
+        /** 添加“连环”UI */
+        addLink(): void;
+        /** 删除“连环”UI */
+        removeLink(): void;
+        /**
+         * 检测card是否可以使用
+         * @param card 卡牌名
+         * @param target 目标
+         * @param distance 是否检测距离,默认false时，则lib.filter.targetEnabled；若为true，则lib.filter.filterTarget
+         * @param includecard 进行卡牌检测（优先与上面distance），若为true，则执行lib.filter.cardEnabled，lib.filter.cardUsable相关检测
+         */
+        canUse(card: string|{name:string}, target: Player, distance?: boolean, includecard?: boolean): boolean;
+        /**
+         * 检测是否有可称为该card的目标
+         * @param card 卡牌名（也是用于canUse）
+         * @param distance 用于canUse，参考canUse的distance参数
+         * @param includecard 用于canUse，参考canUse的includecard参数
+         */
+        hasUseTarget(card: string|{name:string}, distance?: boolean, includecard?: boolean): boolean;
+        /**
+         * 获取使用卡牌的最小数值？
+         * @param card 
+         * @param distance 
+         * @param includecard 
+         */
         getUseValue(card: any, distance: any, includecard: any): any;
+
+        //随从相关（炉石玩法）
         addSubPlayer(cfg: any): any;
         removeSubPlayer(name: any): any;
         callSubPlayer(): any;
         toggleSubPlayer(): any;
         exitSubPlayer(remove: any): any;
         getSubPlayers(tag: any): any;
+
         /**
          * 增加技能触发
          * @param skill 技能名
@@ -522,8 +633,18 @@ declare namespace Lib.element {
         addEquipTrigger(card: any): any;
         removeEquipTrigger(card: any): any;
         removeSkillTrigger(skill: any, triggeronly: any): any;
-        /** 玩家失去技能/移除玩家的技能 */
-        removeSkill(skill: any | any[], flag?: boolean): any;
+        /**
+         * 玩家失去技能/移除玩家的技能
+         * @param skill 
+         * @param flag 
+         */
+        removeSkill(skill: string | string[], flag?: boolean): string;
+        /**
+         * 添加临时技能
+         * @param skill 
+         * @param expire 
+         * @param checkConflict 
+         */
         addTempSkill(skill: any, expire: any, checkConflict: any): any;
         attitudeTo(target: any): any;
         clearSkills(all: any): any;
@@ -672,7 +793,7 @@ declare namespace Lib.element {
          * 判断是否有指定的技能标签tag(ai相关)
          * @param tag 技能标签
          * @param hidden 若为true，获取技能附带隐藏技能hiddenSkills
-         * @param arg 
+         * @param arg 参数列表
          * @param globalskill 是否是全局技能
          */
         hasSkillTag(tag: string, hidden?: boolean, arg?: any, globalskill?: boolean): boolean;

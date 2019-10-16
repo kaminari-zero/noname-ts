@@ -248,9 +248,13 @@ interface Game {
      */
     expandSkills(skills):any;
     css(style):any;
-    hasPlayer(func):any;
     /**
-     * 计算玩家数
+     * 检测当前是否有符合条件的玩家
+     * @param func 过滤条件
+     */
+    hasPlayer(func:OneParmFun<Player,boolean>):boolean;
+    /**
+     * 计算符合条件的玩家数
      * @param func 回调函数，根据条件返回计数，若返回值为false则不计数，返回值为true默认+1，返回值为num，则增加num
      */
     countPlayer(func:(player)=>number|boolean):number;
