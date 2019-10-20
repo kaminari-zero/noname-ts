@@ -20,7 +20,12 @@ declare namespace Lib.element {
         enableEquip(pos: any): any;
         $enableEquip(skill: any): any;
         /** 判断'equip'+arg 的装备区是否可以使用 */
-        isDisabled(arg: number): boolean;
+        isDisabled(arg: number | string): boolean;
+        /**
+         * 判断指定装备区的指定类型区域是否为空的（没有装备）
+         * 例如：防具区（equip6）是否有防具
+         * @param num 
+         */
         isEmpty(num: number|string): boolean;
         /**
          * 废除判定区
@@ -323,7 +328,7 @@ declare namespace Lib.element {
          */
         chooseButton(...args): Event;
 
-        //联机专用选择按钮，选择卡牌
+        //【联机】联机专用选择按钮，选择卡牌
         chooseButtonOL(list: any, callback: any, ai: any): Event;
         chooseCardOL(...args): Event;
 
@@ -342,20 +347,84 @@ declare namespace Lib.element {
          * 发起选择目标
          */
         chooseTarget(...args): Event;
-        chooseCardTarget(choose: any): any;
-        chooseControlList(): any;
-        chooseControl(): any;
-        chooseBool(): any;
-        chooseDrawRecover(): any;
-        choosePlayerCard(): any;
-        discardPlayerCard(): any;
-        gainPlayerCard(): any;
-        showHandcards(str: any): any;
-        showCards(cards: any, str: any): any;
-        viewCards(str: any, cards: any): any;
-        viewHandcards(target: any): any;
-        canMoveCard(withatt: any): any;
-        moveCard(): any;
+        /**
+         * 选择卡牌与目标
+         * @param choose 
+         * @param args 
+         */
+        chooseCardTarget(choose: Event,...args): Event;
+        /**
+         * 选择列表的控制面板
+         * @param args 
+         */
+        chooseControlList(...args): Event;
+        /**
+         * 选择的控制面板
+         * @param args 
+         */
+        chooseControl(...args): Event;
+        /**
+         * 拥有“确认”，“取消”的选择面板
+         */
+        chooseBool(...args): Event;
+        /**
+         * 选择摸牌或者回血
+         * @param args 
+         */
+        chooseDrawRecover(...args): Event;
+        /**
+         * 选将目标玩家的牌（1张）
+         * 注：选择手牌时，时随机的
+         * @param args 
+         */
+        choosePlayerCard(...args): Event;
+        /**
+         * 弃置目标玩家的牌
+         * @param args 
+         */
+        discardPlayerCard(...args): Event;
+        /**
+         * 获得目标玩家的牌
+         * @param args 
+         */
+        gainPlayerCard(...args): Event;
+        /**
+         * 展示玩家的手牌
+         * @param str 
+         * @param args 
+         */
+        showHandcards(str: string, ...args): Event;
+        /**
+         * 玩家展示的牌
+         * @param cards 
+         * @param str 
+         * @param args 
+         */
+        showCards(cards: Card[], str: string, ...args): Event;
+        /**
+         * 展示卡牌（带一个确认按钮）
+         * @param str 
+         * @param cards 
+         * @param args 
+         */
+        viewCards(str: string, cards: Card[], ...args): Event;
+        /**
+         * 展示目标的手牌
+         * 注：通过调用player.viewCards实现
+         * @param target 
+         * @param args 
+         */
+        viewHandcards(target: Player, ...args): Event;
+        /**
+         * 是否有可移动牌的玩家（目标）
+         * 注：包括判定去和装备区的牌
+         * @param withatt 是否进行判断玩家之间的态度（get.attitude），若不是true则不需要判断
+         */
+        canMoveCard(withatt?: boolean): boolean;
+        /**
+         * 移动场上的卡牌（判定区和装备区）
+         */
+        moveCard(...args): Event;
         /**
          * 处理使用event.result,根据结果决定是否useCard或者useSkill
          * @param result 
@@ -374,8 +443,15 @@ declare namespace Lib.element {
          * 抽牌
          */
         draw(...args): Event;
-        randomDiscard(): any;
-        randomGain(): any;
+        /**
+         * 随机弃置x张牌（手牌和装备区）
+         */
+        randomDiscard(...args): Card[];
+        /**
+         * 随机会获得x张牌
+         * @param args 
+         */
+        randomGain(...args): Card[];
         /**
          * 弃牌
          */
@@ -392,9 +468,19 @@ declare namespace Lib.element {
          * @param cards2 目标玩家的手牌，若没有，默认全部
          */
         swapHandcards(target: Player, cards1?: Card[], cards2?: Card[]): Event;
-        directequip(cards: any): any;
-        directgain(cards: any): any;
-        gainMultiple(targets: any, position: any): any;
+        /** 直接装备（看起来好像时直接UI动画上的装备，实际情况到时看代码才知道） */
+        directequip(cards: Card[]): void;
+        /**
+         * 直接获得牌（加入到玩家手牌中）
+         * @param cards 
+         */
+        directgain(cards: Card[]): Player;
+        /**
+         * 获得多个目标的牌
+         * @param targets 
+         * @param position 
+         */
+        gainMultiple(targets?: Player[], position?: string): Event;
         /**
          * 获得牌
          */
@@ -476,15 +562,22 @@ declare namespace Lib.element {
          * 进入“混乱”状态的情况下，不能操作（自己的面板），player.isMine的结果也是false（不能确定当前玩家是自己）
          * @param end 
          */
-        goMad(end: SMap<string>): any;
+        goMad(end: SMap<string>): void;
         /**
          * 接触“混乱”状态
          * 即移除“mad”技能
          */
-        unMad(): any;
-        tempHide(): any;
-        addExpose(num: any): any;
-        equip(card: any, draw: any): any;
+        unMad(): void;
+        /** 添加临时技能：潜行 */
+        tempHide(): string;
+        /** [ai相关]暴露身份 */
+        addExpose(num: number): Player;
+        /**
+         * 使用装备
+         * @param card 
+         * @param draw 
+         */
+        equip(card: Card, draw: boolean): Event;
         /**
          * 添加判定牌
          * （当前玩家是被添加目标，移除源目标的添加牌的方法为靠get.owner，
@@ -508,23 +601,54 @@ declare namespace Lib.element {
         /**
          * 创建“judge”判定事件
          */
-        judge(): any;
-        turnOver(bool: any): any;
-        out(skill: any): any;
-        in(skill: any): any;
-        link(bool: any): any;
-        skip(name: any): any;
-        wait(callback: any): any;
-        unwait(result: any): any;
-        logSkill(name: any, targets: any, nature: any, logv: any): any;
+        judge(...args): Event;
+        /**
+         * 翻面
+         * @param bool true，翻面；false翻回正面
+         */
+        turnOver(bool: boolean): Event;
+
+        /** 离开游戏 */
+        out(skill: number|string): void;
+        /** 进入游戏 */
+        in(skill: number | string): void;
+
+        /**
+         * 铁锁连环
+         * @param bool 
+         */
+        link(bool: boolean): Event;
+        /**
+         * 跳过阶段
+         * @param name 阶段名
+         */
+        skip(name: string): void;
+
+        //【联机】等待与取消等待
+        wait(callback: Function): void;
+        unwait(result: any): void;
+
+        /**
+         * 技能日志
+         * @param name 技能名
+         * @param targets 目标玩家
+         * @param nature 属性颜色
+         * @param logv 是否调用game.logv
+         */
+        logSkill(name: string, targets: Player|Player[], nature?: string, logv?: boolean): void;
+
+        //弹出信息相关会话提示面板
         unprompt(): any;
         prompt(str: any, nature: any): any;
         prompt_old(name2: any, className: any): any;
         popup(name: any, className: any): any;
         popup_old(name: any, className: any): any;
         _popup(): any;
-        showTimer(time: any): any;
-        hideTimer(): any;
+
+        /** 显示时间 */
+        showTimer(time: number): void;
+        /** 隐藏时间 */
+        hideTimer(): void;
 
         //标记相关
         /**
@@ -618,11 +742,11 @@ declare namespace Lib.element {
         addSkillLog(skill: any): any;
         /**
          * 玩家增加技能（获得技能）
-         * @param skill 
-         * @param checkConflict 
-         * @param nobroadcast 
+         * @param skill 技能名
+         * @param checkConflict 额外检测方法
+         * @param nobroadcast 是否向网络发布消失
          */
-        addSkill(skill: any, checkConflict: any, nobroadcast: any): any;
+        addSkill(skill: string | string[], checkConflict: NoneParmFum<void>, nobroadcast: boolean): string | string[];
         addAdditionalSkill(skill: any, skills: any, keep: any): any;
         removeAdditionalSkill(skill: any, target: any): any;
         awakenSkill(skill: any, nounmark: any): any;
@@ -641,12 +765,16 @@ declare namespace Lib.element {
         removeSkill(skill: string | string[], flag?: boolean): string;
         /**
          * 添加临时技能
-         * @param skill 
-         * @param expire 
-         * @param checkConflict 
+         * @param skill 技能名
+         * @param expire 持续到某时机
+         * @param checkConflict 额外检测方法
          */
-        addTempSkill(skill: any, expire: any, checkConflict: any): any;
-        attitudeTo(target: any): any;
+        addTempSkill(skill: string, expire: string|string[], checkConflict: NoneParmFum<void>): string;
+        /**
+         * 获取当前玩家与目标玩家直接的ai态度（attitude）
+         * @param target 
+         */
+        attitudeTo(target: Player): number;
         clearSkills(all: any): any;
         checkConflict(skill: any): any;
         /**
@@ -817,7 +945,7 @@ declare namespace Lib.element {
          */
         canEquip(name: string, replace?: boolean): boolean;
         /**
-         * 获取装备区的指定装备牌
+         * 获取装备区的指定位置/名字装备牌
          * @param name 若是对象，需要带有name属性的对象；若是字符串，则是带有“equip”部分;若是number，则内部拼接结果“equip+name”
          */
         getEquip(name: string | { name: string }|number): Card;
@@ -838,6 +966,7 @@ declare namespace Lib.element {
          * 随机获取一个debuff
          */
         getDebuff(...num:number[]): Player;
+        
 
         //动画,UI相关的方法（前置$符）[不过也有些内部混如一些操作逻辑，没分离彻底]
         $drawAuto(cards: any, target: any): any;
@@ -900,6 +1029,10 @@ declare namespace Lib.element {
         nickname:string;
         avatar: string;
         version: string;
+
+        //player.out
+        outCount:number;
+        outSkills:string[];
 
         /** 信息显示html节点 */
         node:{
