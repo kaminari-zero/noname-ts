@@ -345,6 +345,8 @@ interface ExSkillData {
      * 当值为字符串集合时，则是删除集合中对应player.storage（即删除多个指定storage）
      */
     onremove?:PlayerSkillFun<void>|string|string[]|boolean;
+    /** 在执行player.disableSkill丧失技能时，若该属性为true，则执行技能的onremove */
+    ondisable?:boolean;
     /** 
      * ai如何选牌
      */
@@ -913,6 +915,11 @@ interface ExCardData {
      * 用于设置“lose_+name”事件的content，即丢失某牌事件
      */
     onLose?:any;
+    /** 
+     * 在removeEquipTrigger中使用，
+     * 在移除后，若该属性为true且onLose存在，则创建“lose_卡牌名”事件，设置onLose为content
+     */
+    clearLose?:boolean;
     
     /**
      * 在lose中调用
@@ -959,6 +966,9 @@ interface ExCardData {
      * @param player 
      */
     multicheck?(card,player):boolean;
+
+    /** 锁定技(卡牌也有，但是可能不叫锁定技，而是指一种强制性的效果) */
+    mod?: ExModData;
 }
 
 /**

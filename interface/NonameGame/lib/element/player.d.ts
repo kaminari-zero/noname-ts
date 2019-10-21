@@ -7,18 +7,59 @@ declare namespace Lib.element {
      */
     interface Player {
         //新函数
-        chooseToDuiben(target: any): any;
-        chooseToPSS(target: any): any;
-        chooseToEnable(): any;
-        chooseToDisable(horse: any): any;
-        countDisabled(): any;
-        isPhaseUsing(notmeisok: any): any;
-        swapEquip(target: any): any;
-        canCompare(target: any): any;
-        disableEquip(pos: any): any;
-        $disableEquip(skill: any): any;
-        enableEquip(pos: any): any;
-        $enableEquip(skill: any): any;
+        /**
+         * 选择对策（进攻/防御）
+         * 注：应该是非三国杀常规玩法
+         * @param target 
+         */
+        chooseToDuiben(target: Player): Event;
+        /**
+         * 发起石头，剪刀，布
+         * @param target 
+         */
+        chooseToPSS(target: Player): Event;
+        /**
+         * 选择恢复一个装备栏
+         */
+        chooseToEnable(): Event;
+        /**
+         * 选择废除一个装备栏
+         * @param horse 
+         */
+        chooseToDisable(horse?: boolean): Event;
+        /**
+         * 获取当前玩家已经废除的装备栏的数量
+         */
+        countDisabled(): number;
+        /**
+         * 判断是否是当前玩家的“出牌阶段”中
+         * @param notmeisok 若是true，则强制返回false
+         */
+        isPhaseUsing(notmeisok?: boolean): boolean;
+        /**
+         * 交换玩家和目标装备区中的牌（所有）
+         * @param target 
+         */
+        swapEquip(target: Player): Event;
+        /**
+         * 判断当前玩家是否能与目标玩家拼点（必须双方都持有手牌）
+         * @param target 
+         */
+        canCompare(target: Player): boolean;
+        /**
+         * 废除一个指定装备栏
+         * @param pos 
+         */
+        disableEquip(pos: number|string): Event;
+        /** 【动画】废除装备栏动画 */
+        $disableEquip(skill: string): Player;
+        /**
+         * 恢复一个指定装备栏
+         * @param pos 
+         */
+        enableEquip(pos: number|string): Event;
+        /** 【动画】恢复装备栏动画 */
+        $enableEquip(skill: string): Player;
         /** 判断'equip'+arg 的装备区是否可以使用 */
         isDisabled(arg: number | string): boolean;
         /**
@@ -45,8 +86,18 @@ declare namespace Lib.element {
         uninitOL(): any;
         initRoom(info: any, info2: any): any;
 
-        reinit(from: any, to: any, maxHp: any, online: any): any;
-        uninit(): any;
+        /**
+         * 重新初始化
+         * @param from 原武将的名字（和玩家当前所显示的武将名一致，包括双将）
+         * @param to 将要更新成对应武将的名字
+         * @param maxHp 若是数组的话，则第一个为血量，第二为最大血量；若是false，则默认0；若为“nosmooth”，则默认使用当前的；
+         * @param online 是否在线（没什么用），若为true，则不更新UI信息
+         */
+        reinit(from: string, to: string, maxHp?: number|string|[number,number], online?: boolean): void;
+        /**
+         * 重置清楚玩家Player的信息
+         */
+        uninit(): Player;
 
 
         /** 获取offsetLeft（元素左侧距离参照元素左边界偏移量） */
@@ -728,6 +779,7 @@ declare namespace Lib.element {
         exitSubPlayer(remove: any): any;
         getSubPlayers(tag: any): any;
 
+        //技能相关
         /**
          * 增加技能触发
          * @param skill 技能名
@@ -743,20 +795,68 @@ declare namespace Lib.element {
         /**
          * 玩家增加技能（获得技能）
          * @param skill 技能名
-         * @param checkConflict 额外检测方法
+         * @param checkConflict 额外检测方法(检测冲突)
          * @param nobroadcast 是否向网络发布消失
          */
         addSkill(skill: string | string[], checkConflict: NoneParmFum<void>, nobroadcast: boolean): string | string[];
-        addAdditionalSkill(skill: any, skills: any, keep: any): any;
-        removeAdditionalSkill(skill: any, target: any): any;
-        awakenSkill(skill: any, nounmark: any): any;
-        restoreSkill(skill: any, nomark: any): any;
-        disableSkill(skill: any, skills: any): any;
-        enableSkill(skill: any): any;
-        checkMarks(): any;
-        addEquipTrigger(card: any): any;
-        removeEquipTrigger(card: any): any;
-        removeSkillTrigger(skill: any, triggeronly: any): any;
+        /**
+         * 添加额外技能（一个技能内同时拥有多个相关技能）
+         * @param skill 技能名
+         * @param skills 添加的额外技能（保存在player.additionalSkills[skill]中）
+         * @param keep 是否保持原来的额外技能
+         */
+        addAdditionalSkill(skill: string, skills: string|string[], keep: boolean): Player;
+        /**
+         * 移除额外技能（一个技能内同时拥有多个相关技能）
+         * @param skill 技能
+         * @param target 
+         */
+        removeAdditionalSkill(skill: string, target: string): Player;
+        /**
+         * 限定技能
+         * (应该是包括了限定技，觉醒技)
+         * @param skill 技能名
+         * @param nounmark 是否没有技能标记，true则没有
+         */
+        awakenSkill(skill: string, nounmark?: boolean): Player;
+        /**
+         * 恢复限定技能（重置回能使用）
+         * @param skill 技能名
+         * @param nomark 
+         */
+        restoreSkill(skill: string, nomark?: boolean): Player;
+        /**
+         * 丧失技能
+         * （skill是作为丧失的技能，skills是作为拥有该skill技能的技能，也就是只失去其中一个子技能）
+         * @param skill 丧失的技能名
+         * @param skills 这个作为disabledSkills的key，拥有该技能的技能
+         */
+        disableSkill(skill: string, skills: string|string[]): Player;
+        /**
+         * 恢复丧失技能（变成可用）
+         * @param skill 丧失技能名
+         */
+        enableSkill(skill: string): Player;
+        /**
+         * 检查技能标记是否应该存在，若有不该存在则移除
+         */
+        checkMarks(): Player;
+        /**
+         * 添加装备卡牌的触发
+         * @param card 指定一张卡牌，若不指定则默认装备区的所有卡牌
+         */
+        addEquipTrigger(card?: Card): Player;
+        /**
+         * 移除装备卡牌的触发
+         * @param card 指定一张卡牌，若不指定则默认装备区的所有卡牌
+         */
+        removeEquipTrigger(card?: Card): Player;
+        /**
+         * 移除技能的触发
+         * @param skill 技能名
+         * @param triggeronly 是否仅触发一次
+         */
+        removeSkillTrigger(skill: string, triggeronly?: boolean): Player;
         /**
          * 玩家失去技能/移除玩家的技能
          * @param skill 
@@ -767,16 +867,27 @@ declare namespace Lib.element {
          * 添加临时技能
          * @param skill 技能名
          * @param expire 持续到某时机
-         * @param checkConflict 额外检测方法
+         * @param checkConflict 额外检测方法(检测冲突)
          */
         addTempSkill(skill: string, expire: string|string[], checkConflict: NoneParmFum<void>): string;
+        /**
+         * 清除技能
+         * @param all 是否清除所有的额外技能，临时技能（temp），若是true则清除
+         * @param args 指定排除清除的技能名（任意）
+         */
+        clearSkills(all?: boolean,...args): string[];
+        /**
+         * 检测冲突（检测禁用技能列表forbiddenSkills）
+         * @param skill 若有该参数，则从forbiddenSkills禁用技能列表中移除该技能
+         */
+        checkConflict(skill?: string): void;
+
+
         /**
          * 获取当前玩家与目标玩家直接的ai态度（attitude）
          * @param target 
          */
         attitudeTo(target: Player): number;
-        clearSkills(all: any): any;
-        checkConflict(skill: any): any;
         /**
          * 获取当前玩家的保存的统计数据
          * 目前主要保存的值：
@@ -786,18 +897,68 @@ declare namespace Lib.element {
          * @param key 当轮的统计数据的key，若没有，则获取当轮的统计数据
          */
         getStat(key?: string): StatInfo;
-        queue(time: any): any;
-        getCardUsable(card: any, pure: any): any;
-        getAttackRange(raw: any): any;
-        getGlobalFrom(): any;
-        getGlobalTo(): any;
+
+        queue(time?: number): void;//UI相关
+
+        /**
+         * 获取该卡牌还能使用的次数
+         * 注：使用了“cardUsable”锁定技mod检测
+         * @param card 
+         * @param pure 
+         */
+        getCardUsable(card: string|{name:string}, pure: any): number;
+        /**
+         * 获取当前玩家的攻击范围（一般是“杀”可指定的目标的范围）
+         * 注：使用了“attackFrom”锁定技mod检测，raw为true时，同时使用了“globalFrom”锁定技mod检测
+         * @param raw 是否加上全局的进攻距离（globalFrom）的计算，若不是true，则按照默认距离0来计算（攻击范围和全局进攻距离在三国杀里是不同概念的）
+         */
+        getAttackRange(raw?: boolean): number;
+        /**
+         * 获取当前玩家的（全局）防御范围
+         * 注：使用了“globalFrom”锁定技mod检测
+         */
+        getGlobalFrom(): number;
+        /**
+         * 获取当前玩家的（全局）进攻距离（可选取距离内目标的范围）
+         * 注：使用了“globalTo”锁定技mod检测
+         */
+        getGlobalTo(): number;
+        /**
+         * 获取当前玩家的手牌上限
+         * 注：使用了“maxHandcard”锁定技mod检测
+         */
         getHandcardLimit(): any;
-        getEnemies(func: any): any;
-        getFriends(func: any): any;
-        isEnemyOf(): any;
-        isFriendOf(player: any): any;
-        isFriendsOf(player: any): any;
-        isEnemiesOf(player: any): any;
+
+        /**
+         * 获取属于当前玩家“敌对”的玩家(不同模式敌对玩家形式是不同的)
+         * @param func 过滤玩家的方法
+         */
+        getEnemies(func?: OneParmFun<Player,boolean>): Player[];
+        /**
+         * 获取属于当前玩家“同伴”的玩家(不同模式同伴玩家形式是不同的)
+         * @param func 若是方法，则是过滤玩家的方法；若是布尔值（不管是否true，false），都是忽略过滤方法，默认身份判断，若是true，返回的玩家包括当前玩家，否则不包括
+         */
+        getFriends(func?: OneParmFun<Player,boolean>|boolean): Player[];
+        /**
+         * 判断目标玩家是否是当前玩家的“敌人”
+         */
+        isEnemyOf(target?:Player): boolean;
+        /**
+         * 判断目标玩家是否是当前玩家的“同伴”
+         * @param player 
+         */
+        isFriendOf(player: Player): boolean;
+        /**
+         * 判断当前玩家是否是指定玩家的“同伴”
+         * @param player 
+         */
+        isFriendsOf(player: Player): boolean;
+        /**
+         * 判断当前玩家是否是指定玩家的“敌人”
+         * @param player 
+         */
+        isEnemiesOf(player: Player): boolean;
+
         /**
          * 当前玩家是否还存活，存活则返回true
          */
@@ -858,14 +1019,24 @@ declare namespace Lib.element {
          * @param equal 是否包括相等
          */
         isMinEquip(equal: boolean): boolean;
-        isLinked(): any;
-        isTurnedOver(): any;
+        /**
+         * 判断当前玩家是否是被“连锁”的状态
+         */
+        isLinked(): boolean;
+        /**
+         * 判断当前玩家是否是“翻面”的状态
+         */
+        isTurnedOver(): boolean;
         /**
          * 判定当前玩家是否退出（离开）
          */
         isOut(): any;
-        isMin(distance: any): any;
-        isIn(): any;
+
+        /** 不太清楚是什么效果,大概上：和炉石，塔防，斗地主玩法......相关牌的标记 */
+        isMin(distance?: boolean): boolean;
+
+        /** 当前玩家是否还在游戏中（非死亡，非离开，非移除） */
+        isIn(): boolean;
         /**
          * 当前player的class标记是否有“unseen”，“unseen2”
          * 应该是标记是否可见/隐藏的标记，后面继续研究
@@ -873,18 +1044,49 @@ declare namespace Lib.element {
          * @param num 
          */
         isUnseen(num: number): boolean;
-        isUnderControl(self: any, me: any): any;
-        isOnline(): any;
-        isOnline2(): any;
-        isOffline(): any;
-        checkShow(skill: any, showonly: any): any;
         /**
-         * 弃牌阶段是，计算需要弃置的牌
+         * 判断底下的控制面板（即当前操作玩家自己的面板，在游戏的底边）是否是该玩家的
+         * @param self 是否是自己（当前玩家），若是自己，则当前玩家就是目标me玩家，则直接返回true
+         * @param me 指定玩家，若不填,则默认是game.me（当前操作，运行游戏的玩家）
+         */
+        isUnderControl(self?: boolean, me?: Player): boolean;
+
+        /**
+         * 是否是联机中，即在线（多了个判断是否不是在自动，即托管）
+         */
+        isOnline(): boolean;
+        /** 是否是联机中，即在线（少了一些判断条件） */
+        isOnline2(): boolean;
+        /** 是否已经离线 */
+        isOffline(): boolean;
+
+        /**
+         * 检查技能是否已经显示（一般用于双将玩法下，具体日后讨论）
+         * @param skill 
+         * @param showonly 
+         * @return 返回false就是相当于null，否则返回“main”（主），“vice”（副）
+         */
+        checkShow(skill: string, showonly?: boolean): string;
+
+        /**
+         * 弃牌阶段时，计算需要弃置的牌
+         * 注：使用了“ignoredHandcard”锁定技mod检测，同时调用了player.getHandcardLimit获得手牌上限
          * @param num 
          */
         needsToDiscard(num: any): any;
-        distanceTo(target: any, method: any): any;
-        distanceFrom(target: any, method: any): any;
+        /**
+         * 获得当前玩家到指定目标玩家的距离是多少
+         * @param target 
+         * @param method 没有则默认防御距离，其值：raw，pure，absolute，attack
+         */
+        distanceTo(target: Player, method?: string): number;
+        /**
+         * 获取指定目标玩家到当前玩家的距离是多少
+         * @param target 
+         * @param method 没有则默认防御距离，其值：raw，pure，absolute，attack
+         */
+        distanceFrom(target: Player, method?: string): number;
+
         /**
          * 判断玩家是否有指定技能skill。
          * 默认判断玩家（除了玩家forbiddenSkills上的禁用技能）的：
@@ -918,7 +1120,7 @@ declare namespace Lib.element {
          */
         hasGlobalTag(tag: string, arg?: any): boolean;
         /**
-         * 判断是否有指定的技能标签tag(ai相关)
+         * 【AI】判断是否有指定的技能标签tag(ai相关)
          * @param tag 技能标签
          * @param hidden 若为true，获取技能附带隐藏技能hiddenSkills
          * @param arg 参数列表
@@ -930,14 +1132,42 @@ declare namespace Lib.element {
          * @param name 
          */
         hasJudge(name: string): boolean;
+        /** 【AI】当前游戏玩家中，有对当前玩家态度（attitude）友好的玩家 */
         hasFriend(): boolean;
-        hasUnknown(num: any): boolean;
-        isUnknown(player: any): boolean;
+        /**
+         * 【AI】当前是否还有未知身份的玩家
+         * 注：非身份，国战的玩法模式，直接返回false
+         * @param num 指定要确认的数量，默认是0
+         */
+        hasUnknown(num?: number): boolean;
+        /**
+         * 【AI】指定目标玩家是否身份未知
+         * 注：非身份，国战的玩法模式，直接返回false
+         * @param player 
+         */
+        isUnknown(player: Player): boolean;
+        /**
+         * 当前玩家是否有“无懈可击”
+         */
         hasWuxie(): boolean;
-        hasSha(respond: any, noauto: any): boolean;
+        /**
+         * 当前玩家是否有“杀”
+         * @param respond 是“响应respond”，还是“使用use”，这个和AI相关，若技能有对应tag标签，会自动执行
+         * @param noauto 与“yuchanqian”这个技能相关，基本可以无视
+         */
+        hasSha(respond?: boolean, noauto?: any): boolean;
+        /**
+         * 当前玩家是否有“闪”
+         */
         hasShan(): boolean;
-        mayHaveShan(): any;
-        hasCard(name: any, position: any): boolean;
+        /** 当前玩家是否有“闪”（和hasShan逻辑一致，基本算冗余） */
+        mayHaveShan(): boolean;
+        /**
+         * 当前玩家是否有（指定区域的）指定牌
+         * @param name 卡牌名，可以是一个过滤的卡牌的方法
+         * @param position 指定要检测的区域，默认是所有区域
+         */
+        hasCard(name: string|OneParmFun<Card,boolean>, position?: string): boolean;
         /**
          * 判断是否能使用该装备牌
          * @param name 卡牌名
@@ -1111,8 +1341,8 @@ declare namespace Lib.element {
          */
         hiddenSkills:string[];
         /**
-         * 玩家已发动的觉醒技
-         * 主要添加时机：玩家启动觉醒技后调用player.awakenedSkills
+         * 玩家已发动的 限定技/觉醒技
+         * 主要添加时机：玩家启动 限定技/觉醒技 后调用player.awakenedSkills
          */
         awakenedSkills:string[];
         /**
