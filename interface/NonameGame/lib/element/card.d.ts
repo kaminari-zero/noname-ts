@@ -14,13 +14,15 @@ declare namespace Lib.element {
          * 将当前card，添加到排除列表event._aiexclude中
          */
         aiexclude(): void;
+        
+        //暂时没用上，暂不知其具体是什么功能
         getSource(name: string): boolean;
         
         //card的UI，动画操作
-        updateTransform(bool: any, delay: any): void;
-        moveDelete(player: any): any;
-        moveTo(player: any): any;
-        /** 复制一个当前节点 */
+        updateTransform(bool: boolean, delay: number): void;
+        moveDelete(player: Player): void;
+        moveTo(player: Player): Card;
+        /** 复制一个当前卡牌节点（即复制当前卡牌的副本） */
         copy(): Card;
 
         /**

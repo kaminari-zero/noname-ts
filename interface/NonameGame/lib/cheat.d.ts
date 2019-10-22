@@ -4,7 +4,8 @@ declare namespace Lib {
      */
     interface Cheat {
         /** 将游戏内部的对象暴露到全局中 */
-        i(): any;
+        i(): void;
+        /** 让除了“主”之外的自己一个下家立即死亡（die） */
         dy(): any;
         x(): any;
         cfg(): any;

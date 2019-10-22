@@ -1,4 +1,7 @@
 declare var game:Game;
+/**
+ * 游戏主逻辑相关方法
+ */
 interface Game {
     /**
      * 卡牌弃置
@@ -68,9 +71,13 @@ interface Game {
     multiDownload2(list,onsuccess,onerror,onfinish,process,dev):any;
     multiDownload(list,onsuccess,onerror,onfinish,process,dev):any;
     fetch(url,onload,onerror,onprogress):any;
+
+    //录像相关
     playVideo(time,mode):any;
     playVideoContent(video):any;
+    /** 录像的content方法 */
     videoContent:VideoContent;
+
     reload():any;
     reload2():any;
     /** 退出游戏 */
@@ -262,15 +269,20 @@ interface Game {
     findPlayer(func):any;
     findCards(func,all):any;
     countGroup():any;
+
+
     /** 正在游戏中的玩家 */
-    players:[];
+    players:Player[];
     /** 死亡玩家 */
-    dead:[];
+    dead:Player[];
     imported:[];
     playerMap:{};
-    phaseNumber:0;
-    roundNumber:0;
-    shuffleNumber:0;
+    /** 回合数 */
+    phaseNumber:number;
+    /** 轮数（即从开始玩家开始轮流执行过一次回合后，算一轮） */
+    roundNumber:number;
+    /** 洗牌次数 */
+    shuffleNumber:number;
 }
 
 /**

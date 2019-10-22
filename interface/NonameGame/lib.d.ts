@@ -1,4 +1,7 @@
 declare var lib:Lib;
+/**
+ * 游戏内的主要信息储存区域，与核心游戏方法对象
+ */
 interface Lib {
     configprefix: string;
     versionOL: number;
@@ -83,12 +86,20 @@ interface Lib {
     init: Lib.Init;
     cheat: Lib.Cheat;
     translate: SMap<string>;
+
+    /** 游戏内核心元素 */
     element: {
+        /** 游戏内预定义事件使用的content方法 */
         content: Lib.element.Content;
+        /** 玩家 */
         player: Lib.element.Player;
+        /** 卡牌 */
         card: Lib.element.Card;
+        /** 按钮 */
         button: Lib.element.Button;
+        /** 事件 */
         event: Lib.element.Event;
+        /** 会话面板 */
         dialog: Lib.element.Dialog;
         control: Lib.element.Control;
         client: Lib.element.Client;
@@ -102,7 +113,9 @@ interface Lib {
     card: {
         list: any[];
     },
-    filter: Lib.Filter,
+    /** 游戏内自定义的过滤方法 */
+    filter: Lib.Filter;
+    /** 游戏内自定义的sort排序方法 */
     sort: Lib.Sort;
     /**
      * 技能数据中心
@@ -172,16 +185,23 @@ interface Lib {
      */
     character: any;
     perfectPair: any;
+    /** 卡堆数据中心 */
     cardPile: any;
+
+    /** 【联网】消息中心 */
     message: {
         server: Lib.message.Server;
         client: Lib.message.Client;
     };
+
+    /** 花色的常量列表 */
     suit: string[];
+    /** 国家势力的常量列表 */
     group: string[];
+    /** 属性伤害的常量列表 */
     nature: string[];
     linked: string[];
-    /** 势力配置 */
+    /** 势力的样式配置（颜色UI） */
     groupnature: SMap<string>;
     
 }
