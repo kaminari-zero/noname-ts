@@ -200,12 +200,30 @@ interface ExSkillData {
     
     /** 技能按钮名字，不写则默认为此技能的翻译 */
     name?:string;
+
     /**
      * 配音：
-     * 为数字事，数字为配音数量索引，从1开始，使用无名杀目录\audio\skill内的配音
-     * 为字符串时，使用无名杀录目\extension\扩展名内的配音，命名方法：技能名+这是第几个配音
+     * 主要分为：audioname（默认技能名），audioinfo（默认info.audio）
+     * 
+     * 若为字符串时，带有“ext:”，则使用无名杀录目\extension\扩展名内的配音（扩展的配音），命名方法：技能名+这是第几个配音
+     * 否则，该字符串指代的是另一个技能的名字，若该技能名存在，则audioinfo为该技能的audio;
+     * 若为数组，则是[audioname,audioinfo]，分布覆盖原有的值。
+     * audioinfo为数字时，数字为配音数量索引（同一技能有多个配音），从1开始，使用无名杀目录\audio\skill内的配音（audioname1~audioinfo序号）;
+     * audioinfo为布尔值true或者字符串非空时，执行game.playSkillAudio(audioname)，使用无名杀目录\audio\skill内的配音;
+     *  否则，若为false，空字符串，null结果，则不播音，
+     * 若info.audio:true，则使用game.playSkillAudio(audioname)。
      */
-    audio?:number|string;
+    audio?:number|string|boolean|[string,number];
+    /** 
+     * 指定武将名的音频。
+     * 
+     * 强制使用该audioname覆盖上面解析出来的audioname，其解析出来的audioname为“audioname_玩家武将名”,
+     * 最终路径为：无名杀目录\audio\“audioname_玩家武将名”
+     */
+    audioname?:string[];
+    /** 强制播放音频 */
+    forceaudio?:boolean;
+
     /** 
      * 技能组：
      * 拥有这个技能时相当于拥有技能组内的技能
@@ -693,6 +711,8 @@ interface ChooseButtonConfigData {
 interface CharacterConfigData extends ExCommonConfig {
     /** 该武将包是否可以联机 */
     connect:boolean;
+    /** 联机武将禁用列表 */
+    connectBanned?:string[];
 
     /** 
      * 武将基本配置信息
@@ -703,9 +723,18 @@ interface CharacterConfigData extends ExCommonConfig {
     /** 武将标题（用于写称号或注释） */
     characterTitle?:SMap<string>;
     /** 技能 */
-    skill:SMap<ExSkillData>;
+    skill?:SMap<ExSkillData>;
     /** 珠联璧合武将 */
     perfectPair?:SMap<string[]>;
+    /** 指定武将的过滤方法（传入一个mode，用于过滤玩法模式） */
+    characterFilter?:SMap<OneParmFun<string,boolean>>;
+    /** 用于筛选（具体日后讨论） */
+    characterSort?:SMap<SMap<string[]>>;
+    
+    /** 该武将包独有的卡牌（或者是特殊卡牌） */
+    card?:SMap<ExCardData>;
+    /** 定义自定义卡牌类型的排序用的优先级 */
+    cardType?:SMap<number>;
 }
 
 /** 
@@ -1202,6 +1231,7 @@ interface CardBaseUIData {
  */
 type CardBaseUIData2 = [string,number,string,string];
 
+/** 范围信息 */
 type RangeData = {
     /** 进攻距离 */
     attack?:number;
@@ -1289,6 +1319,6 @@ type Target = Lib.element.Player;
 /** nogame的button类型 */
 type Button = Lib.element.Button;
 /** nogame的dialog类型 */
-type dialog = Lib.element.Button;
+type Dialog = Lib.element.Button;
 /** nogame的event类型 */
 type GameEvent = Lib.element.Event;

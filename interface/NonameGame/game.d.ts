@@ -9,47 +9,108 @@ interface Game {
      * 该事件逻辑是遍历cards，调用它们的discard舍弃；
      * @param cards 
      */
-    cardsDiscard(cards):any;
-    online:false;
-    onlineID:null;
-    onlineKey:null;
-    showHistory(pause):any;
-    createBackground(src,blur):any;
-    changeLand(url,player):any;
-    checkFileList(updates,proceed):any;
-    replaceHandcards():any;
-    removeCard(name):any;
-    randomMapOL(type):any;
-    closeMenu():any;
-    closeConnectMenu():any;
-    closePopped():any;
-    broadcast():any;
-    broadcastAll():any;
-    syncState():any;
-    updateWaiting():any;
-    waitForPlayer(func):any;
-    countDown(time,onEnd):any;
-    countChoose(clear):any;
-    stopCountChoose():any;
-    connect(ip,callback):any;
-    send():any;
-    sendTo(id,message):any;
-    createServer():any;
-    playAudio():any;
-    trySkillAudio(skill,player,directaudio):any;
-    playSkillAudio(name,index):any;
-    playBackgroundMusic():any;
+    cardsDiscard(cards:Card|Card[]):Event;
+
+    //【联机】相关属性
+    online:boolean;
+    onlineID:string;
+    onlineKey:string;
+
     /**
-     * 导入扩展
+     * 显示历史信息UI
+     * @param pause 是否显示“已暂停”
+     */
+    showHistory(pause?:boolean):void;
+    /** 创建背景 */
+    createBackground(src:string,blur:boolean):HTMLElement;
+    /** 改变场地（特殊卡牌，特殊玩法的功能） */
+    changeLand(url:string,player:Player):void;
+    /** 检查文件更新 */
+    checkFileList(updates,proceed):void;
+
+    /** 【事件】置换手牌 */
+    replaceHandcards(...args):void;
+    /** 移除指定名字的卡牌（从lib.card.list，和ui.cardPile卡堆中移除） */
+    removeCard(name:string):void;
+
+    //联网相关
+    randomMapOL(type):void;
+
+    /** 关闭菜单 */
+    closeMenu():void;
+    closeConnectMenu():void;
+    closePopped():void;
+
+
+    //【联机】联机核心相关（重点）
+    /** 向所有连接中的客户端发送通信（不包括自己），参数：第一个是回调方法，后面是对应方法的参数 */
+    broadcast(...args):void;
+    /** 向所有客户端通信（包括自己，发出通信后，自己执行一次函数和参数） */
+    broadcastAll(...args):void;
+    /** 同步state状态 */
+    syncState():void;
+    updateWaiting():void;
+    /** 等待玩家加入 */
+    waitForPlayer(func):void;
+    /** 倒计时 */
+    countDown(time:number,onEnd:Function):void;
+    /** 选择计时 */
+    countChoose(clear?):void;
+    /** 停止选择计时 */
+    stopCountChoose():void;
+    /** 连接服务器 */
+    connect(ip:string,callback:OneParmFun<boolean,void>):void;
+    /** 发送信息到服务器中 */
+    send(...args):void;
+    /** 发送信息到指定ip */
+    sendTo(id:string,message:any):void;
+    /** 创建服务器（创建房间） */
+    createServer():void;
+
+    //播放声音
+    /**
+     * 【核心】播放声音。
+     * 
+     * 参数列表：（可以调整顺序，但是建议还是按照正常顺序）
+     *  若参数有字符串类型，将按照“/字符串”拼接起来（可以多个字符串参数，按从左到右拼接），
+     *      最终拼接：lib.assetURL+'audio'+参数拼接起来的路径+（'.mp3'/'.ogg'/''）；
+     *      其中，若参数列表，第二个参数为“video”，则为录像中需要播音，一般不用考虑这个，可以无视；
+     *  若参数是方法类型，则是声音类的onerror回调函数，在播放声音出现异常时回调。
+     */
+    playAudio(...args):HTMLAudioElement;
+    /**
+     * 播放技能声音
+     * （主要解析技能的audio属性寻找对应文件播放）
+     * @param skill 技能名
+     * @param player 是否指定玩家的武将（需要技能有audioname）
+     * @param directaudio 没什么用，无视，若技能的direct为true，可以让directaudio为true，跳过技能配置的判断
+     */
+    trySkillAudio(skill:string,player?:Player,directaudio?:boolean):void;
+    /**
+     * 播放技能的声音2
+     * 注：播放失败时，会重复寻找播放名.ogg,播放名+序号.mp3,播放名+序号.ogg，都不行就没用声音
+     * @param name 播放的名字
+     * @param index 序号
+     */
+    playSkillAudio(name:string,index?:number):void;
+    /**
+     * 播放背景音
+     * 注：主要播放的是配置里的背景音。
+     */
+    playBackgroundMusic():void;
+
+
+    /**
+     * 【核心】导入扩展
      * @param type 导入扩展的类型
      * @param content 导入扩展的内容
      */
-    import(type: string, content: ExtensionFunc):any;
+    import(type: string, content: ExtensionFunc):void;
     /**
-     * 读取扩展信息
+     * 【核心】读取扩展信息
      * @param obj 
      */
-    loadExtension(obj: ExtensionFunc):any;
+    loadExtension(obj: ExtensionFunc):void;
     /**
      * 导入扩展：（25693-25900）
      * 若不存在window.JSZip，则先加载JSZip，加载完后再重新执行一遍game.importExtension。
@@ -59,7 +120,7 @@ interface Game {
      * @param exportext 
      * @param pkg 
      */
-    importExtension(data,finishLoad,exportext,pkg):any;
+    importExtension(data,finishLoad,exportext,pkg):void;
     /**
      * 导出：（25091-25932）
      * 如果当前是在移动端，则直接导出到移动端相关的文件夹内。
@@ -67,33 +128,18 @@ interface Game {
      * @param textToWrite 
      * @param name 
      */
-    export(textToWrite,name):any;
-    multiDownload2(list,onsuccess,onerror,onfinish,process,dev):any;
-    multiDownload(list,onsuccess,onerror,onfinish,process,dev):any;
+    export(textToWrite,name):void;
+
+    //下载相关  用于更新信息
+    multiDownload2(list,onsuccess,onerror,onfinish,process,dev):void;
+    multiDownload(list,onsuccess,onerror,onfinish,process,dev):void;
     fetch(url,onload,onerror,onprogress):any;
 
     //录像相关
-    playVideo(time,mode):any;
-    playVideoContent(video):any;
+    playVideo(time,mode):void;
+    playVideoContent(video):void;
     /** 录像的content方法 */
     videoContent:VideoContent;
-
-    reload():any;
-    reload2():any;
-    /** 退出游戏 */
-    exit():any;
-    /**
-     * 打开链接
-     * 若是安卓或者ios客户端，则用iframe或者内置流浪器打开；
-     * h5端直接跳转该链接
-     * @param url 
-     */
-    open(url):any;
-    reloadCurrent():any;
-    update(func):any;
-    unupdate(func):any;
-    stop():any;
-    run():any;
     /**
      * 添加进录像里
      * 添加操作进lib.video中，当局游戏的操作，都会记录在里面（需要手动调用添加操作）；
@@ -103,39 +149,93 @@ interface Game {
      * @param player 
      * @param content 
      */
-    addVideo(type,player,content):any;
-    draw(func):any;
-    vibrate(time):any;
-    prompt():any;
-    alert(str):any;
-    print():any;
+    addVideo(type,player,content):void;
+
+
+    //重来
+    reload():void;
+    reload2():void;
+
+    /** 退出游戏 */
+    exit():void;
+    /**
+     * 打开链接
+     * 若是安卓或者ios客户端，则用iframe或者内置流浪器打开；
+     * h5端直接跳转该链接
+     * @param url 
+     */
+    open(url):void;
+    /** 再战 */
+    reloadCurrent():void;
+
+    //更新与更新相关动画逻辑
+    update(func:Function):Function;
+    unupdate(func:Function):void;
+    stop():void;
+    run():void;
+    draw(func:Function):void;
+
+    /** 震动 */
+    vibrate(time:number):void;
+    /** h5的prompt，用于显示可提示用户进行输入的对话框 */
+    prompt():void;
+    /** 提示框（调用了game.prompt） */
+    alert(str:string):void;
+    /** 需要打印的信息（打印的信息在 菜单->其他->命令 中打印） */
+    print(...args):void;
+
     animate:Animate;
+
+
     /**
      * 画线
      * @param path 起始位置的信息
+     * @param config 画线的配置,若是字符串，则是颜色：fire，thunder，green，drag
      */
-    linexy(path, config?: number | LineConfig,node?:any):any;
-    _linexy(path):any;
-    /** 创建游戏内触发事件 */
-    createTrigger(name,skill,player,event):any;
-    /** 创建游戏内事件 */
-    createEvent(name,trigger,triggerevent):any;
-    addCharacter(name,info):any;
-    addCharacterPack(pack,packagename):any;
-    addCard(name,info,info2):any;
-    addCardPack(pack,packagename):any;
-    addSkill(name,info,translate,description):any;
-    addMode(name,info,info2):any;
-    addGlobalSkill(skill,player):any;
-    removeGlobalSkill(skill):any;
-    resetSkills():any;
+    linexy(path:number[], config?: string| LineConfig,node?:HTMLDivElement):HTMLDivElement;
+    /** 画线2  目前项目未发现使用 */
+    _linexy(path:number[], config?: string| LineConfig,flag?:boolean):void;
+
+    /** 【核心】创建游戏内触发事件 */
+    createTrigger(name:string,skill:string,player:Player,event:GameEvent):void;
+    /** 【核心】创建游戏内事件 */
+    createEvent(name:string,trigger?:boolean,triggerevent?:GameEvent):GameEvent;
+
+    //用于在onload->proceed2，解析lib.extensions中的数据：
+    /** 添加武将（未使用） */
+    addCharacter(name:string,info:any):void;
+    /** 添加武将包 */
+    addCharacterPack(pack:SMap<HeroData>,packagename?:string):void;
+    /** 添加卡牌（未使用） */
+    addCard(name:string,info:ExCardData,info2?:any):void;
+    /** 添加卡包 */
+    addCardPack(pack,packagename):void;
+    /** 添加技能 */
+    addSkill(name:string,info:ExSkillData,translate:string,description:string):void;
+    /** 添加玩法mode */
+    addMode(name:string,info:any,info2:any):void;
+
+    /**
+     * 添加全局技能
+     * （该添加的技能，是游戏中添加，而不是配置添加）
+     * @param skill 技能名
+     * @param player 若有该参数，则添加到lib.skill.globalmap中，目前似乎没怎么使用lib.skill.globalmap，
+     */
+    addGlobalSkill(skill:string,player?:Player):boolean;
+    /**
+     * 移除全局技能
+     * @param skill 技能名
+     */
+    removeGlobalSkill(skill):void;
+    /** 重置所有玩家的技能 */
+    resetSkills():void;
     removeExtension(extname,keepfile):any;
     addRecentCharacter():any;
     createCard(name,suit,number,nature):any;
     forceOver(bool,callback):any;
-    /** 游戏结束 */
+    /** 【核心】游戏结束 */
     over(result):any;
-    /** 游戏循环（核心） */
+    /** 【核心】游戏循环（核心） */
     loop():any;
     /**
      * 暂停游戏循环
@@ -275,8 +375,10 @@ interface Game {
     players:Player[];
     /** 死亡玩家 */
     dead:Player[];
-    imported:[];
-    playerMap:{};
+    /** 暂时未见使用 */
+    imported:any[];
+    /** 保存当前游戏玩家map，key为玩家id */
+    playerMap:SMap<Player>;
     /** 回合数 */
     phaseNumber:number;
     /** 轮数（即从开始玩家开始轮流执行过一次回合后，算一轮） */

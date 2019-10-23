@@ -6,8 +6,10 @@ interface Status {
     over:boolean,
     clicked:boolean,
     auto:boolean,
-    /** 游戏当前事件 */
+
+    /** 【核心】游戏当前事件 */
     event:GameEvent;
+    
     ai:any,
     lastdragchange:any[],
     skillaudio:any[],
@@ -22,4 +24,7 @@ interface Status {
     video:boolean;
     /** delay延时游戏的setTimeout标记 */
     timeout:number;
+
+    /** 当前播放的音乐 */
+    currentMusic:string;
 }
