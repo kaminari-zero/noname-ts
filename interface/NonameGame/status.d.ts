@@ -27,4 +27,7 @@ interface Status {
 
     /** 当前播放的音乐 */
     currentMusic:string;
+
+    /** 等待window.location.reload执行，在reload2中重置该标记 */
+    waitingToReload:boolean;
 }

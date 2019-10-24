@@ -963,7 +963,7 @@ interface ExCardData {
      * 判断是否通过判断条件
      * @param card 
      */
-    judge?(card):number;
+    judge?:OneParmFun<Card,number>;
 
     changeTarget?():void;
 
@@ -1247,7 +1247,7 @@ interface JudgeResultData {
     number:number,
     suit:string,
     color:string,
-    judge:any,
+    judge:OneParmFun<Card,number>,
     node:any,
 }
 
@@ -1322,3 +1322,6 @@ type Button = Lib.element.Button;
 type Dialog = Lib.element.Button;
 /** nogame的event类型 */
 type GameEvent = Lib.element.Event;
+
+/** nogame的选择范围类型 */
+type Select = [number,number];

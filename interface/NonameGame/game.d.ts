@@ -243,103 +243,221 @@ interface Game {
     addRecentCharacter(...args:string[]):void;
     /**
      * 创建一张卡牌
-     * @param name 卡牌名,也可以是一个带有这4个属性的对象，若是则覆盖这4个属性的值
+     * @param name 卡牌名,也可以是一个带有这4个属性的对象，若是则覆盖这4个属性的值，此时，第二个参数可以是“noclick”
      * @param suit 花色，若没有，先看卡牌信息中有不，否则随机；若值是“black”，则随机黑色的两种花色；若值是“red”，则随机红色的两种花色
      * @param number 数字，若没有，先看卡牌信息中有不，否则随机1~13；
      * @param nature 伤害属性，若没有，则获取卡牌信息的
      */
-    createCard(name: string | CardBaseUIData2, suit?:string, number?:number, nature?:string): Card;
-    forceOver(bool,callback):any;
-    /** 【核心】游戏结束 */
-    over(result):any;
+    createCard(name: string | CardBaseUIData, suit?:string, number?:number, nature?:string): Card;
+    /**
+     * 强制结束游戏。
+     * 
+     * 创建“finish_game”事件，设置content为“forceOver”。
+     * @param bool 游戏结果:参考game.over的参数，额外：若值是“noover”，则不执行game.over
+     * @param callback 
+     */
+    forceOver(bool?:boolean|string,callback?:Function):void;
+    /**
+     * 【核心】游戏结束
+     * @param result 值：true战斗胜利，false战斗失败，undefined战斗结束(可以不填)，"平局"（可以直接填字符串）
+     */
+    over(result?:boolean|string):void;
     /** 【核心】游戏循环（核心） */
-    loop():any;
+    loop():void;
     /**
      * 暂停游戏循环
      */
-    pause():any;
+    pause():void;
     /**
      * 暂停游戏循环2（ui相关）
      */
-    pause2():any;
+    pause2():void;
     /** 
      * 游戏继续
      * 设置pause为false，重新loop
      */
-    resume():any;
+    resume():void;
      /** 
       * 游戏继续2
       * 设置pause2为false，重新loop
       */
-    resume2():any;
+    resume2():void;
     /**
      * 游戏延迟
      * 延迟结束后继续游戏(先暂停游戏循环loop，待x秒后resume继续游戏)
      * @param time 延迟时间（lib.config.duration）倍率
      * @param time2 额外增加的延时时间（不参与倍率计算）
      */
-    delay(time?:number,time2?:number):any;
+    delay(time?:number,time2?:number):void;
     /**
      * 游戏延迟2
      * 根据lib.config.game_speed（游戏的流程速度）：vslow，slow，fast，vfast，vvfast，调整游戏延迟时间的倍率；
      * @param time 延迟的时间
      * @param time2 额外增加的延时时间（不参与倍率计算）
      */
-    delayx(time,time2):any;
+    delayx(time?:number,time2?:number):void;
     /**
      * 检测当前需要选中，并且在ui上做出选中处理
+     * 
      * 主要是根据event的数据作为依据，若没有，则默认使用_status.event
      * @param event 
      */
-    check(event?):any;
+    check(event?:GameEvent):boolean;
     /**
      * 取消选中
-     * 其参数若为空，默认取消所有，若有指定的类型，则只取消该类型的选中
-     * @param type 其类型可以card,target,button
+     * 
+     * 其参数若为空，默认取消所有相关的选中，若有指定的类型，则只取消该类型的选中
+     * @param type 其类型可以"card","target","button"
      */
-    uncheck(type:string):any;
-    uncheck():any;
-    swapSeat(player1,player2,prompt,behind,noanimate):any;
-    swapPlayer(player,player2):any;
-    swapControl(player):any;
-    swapPlayerAuto(player):any;
-    findNext(player):any;
-    loadModeAsync(name,callback):any;
-    switchMode(name,configx):any;
-    loadMode(mode):any;
-    loadPackage():any;
-    phaseLoop(player):any;
-    gameDraw(player,num):any;
-    chooseCharacterDouble():any;
-    updateRoundNumber():any;
-    asyncDraw(players,num,drawDeck,bottom):any;
-    asyncDrawAuto(players,num,drawDeck):any;
-    finishSkill(i,sub):any;
-    finishCards():any;
+    uncheck(type?:string):void;
+
+    //交换
+    /**
+     * 交换位置
+     * @param player1 
+     * @param player2 
+     * @param prompt 是否打印日志
+     * @param behind 是否移至player2座位之后
+     * @param noanimate 是否有动画，true有动画
+     */
+    swapSeat(player1:Player,player2:Player,prompt?:boolean,behind?:boolean,noanimate?:boolean):void;
+    /**
+     * 交换玩家
+     * @param player 
+     * @param player2 
+     */
+    swapPlayer(player:Player,player2?:Player):void;
+    /**
+     * 交换control（控制权，控制UI）
+     * @param player 
+     */
+    swapControl(player:Player):void;
+    /**
+     * 自动选择交换玩家的方式?
+     * 
+     * 实质上是，如果有game.modeSwapPlayer（mode玩法内自己实现）实现，则使用该方法，否则默认使用game.swapPlayer
+     * @param player 
+     */
+    swapPlayerAuto(player:Player):void;
+
+    /**
+     * 获取目标玩家的下一个玩家（按住座位位置player.dataset.position）
+     * @param player 
+     */
+    findNext(player:Player):Player;
+
+
+    /**
+     * 同步读取mode玩法
+     * @param name 
+     * @param callback 必须，加载完mode玩法js后回调执行
+     */
+    loadModeAsync(name:string,callback:OneParmFun<ExModeConfigData,void>):void;
+    /**
+     * 切换玩法mode
+     * @param name 
+     * @param configx 
+     */
+    switchMode(name:string,configx:SMap<any>):void;
+    /**
+     * 读取玩法mode。
+     * 创建“loadMode”事件，加载指定mode的js。
+     * @param mode 
+     */
+    loadMode(mode:string):void;
+    /**
+     * 读取包。
+     * 创建“loadPackage”事件，加载读取武将包，卡包
+     * @param args 传入多个“路径/文件名”字符串，按照装顺序依次加载
+     */
+    loadPackage(...args:string[]):void;
+
+    /**
+     * 【事件】开始指定玩家的“游戏回合”（phaseLoop）
+     * @param player 
+     */
+    phaseLoop(player:Player):void;
+    /**
+     * 【事件】开始指定玩家的“游戏开始抽牌事件”（gameDraw）
+     * @param player 默认自己
+     * @param num 默认4
+     */
+    gameDraw(player?:Player,num?:number):void;
+    /** 选择双将 */
+    chooseCharacterDouble(...args):void;
+
+    /** 【联机】更新 轮数 与剩余牌数 的ui显示*/
+    updateRoundNumber():void;
+    /**
+     * 多个玩家同时抽牌
+     * @param players 要抽牌的玩家列表
+     * @param num 如果是一个number，则同时抽x张牌；若是数组，则对应每个玩家抽对应数组里的数目；若是方法，则根据玩家返回要抽的牌；
+     * @param drawDeck 从牌堆中获取x张牌，需要玩法mode实现了player.getDeckCards
+     * @param bottom 是否从牌堆底抽牌
+     */
+    asyncDraw(players:Player[],num:number|number[]|OneParmFun<Player,number>,drawDeck?:{drawDeck:number},bottom?:boolean):void;
+    /** 多个玩家同时抽牌2（冗余方法，并没有什么卵用） */
+    asyncDrawAuto(players:Player[],num:number|number[]|OneParmFun<Player,number>,drawDeck?:{drawDeck:number}):void;
+
+    /**
+     * 解析技能
+     * @param i 
+     * @param sub 是否是子技能，true则为是（如果是子技能，则不解析subSkill）
+     */
+    finishSkill(i:string,sub?:boolean):void;
+    /**
+     * 解析技能与卡牌（实质是解析lib.card，lib.skill）
+     */
+    finishCards():void;
     /**
      * 检查是否有锁定技，并且执行锁定技，修改一些值和触发一些效果
+     * 
+     * 其参数列表：
+     *  第一个至倒数第3个参数：作为mod锁定技的参数，
+     *      注：其中倒数第3个参数（不为对象时），一般作为默认值（mod返回结果为0，false，null...时），最后的结果（非undefined结果）
+     *  倒数第2个参数：为mod锁定技名，通过它索引技能配置的mod锁定技
+     *  最后一个参数：为触发mod锁定技的玩家，提供该玩家的技能，寻找它拥有的mod锁定技。
+     *      注：按照目前代码逻辑来看，如果玩家拥有技能存在多个同名mod，将会触发最终符合条件的结果（也有可能是不断累积结果，看实现）
      * @param args 
+     * @return 返回倒数第3个参数
      */
     checkMod(...args):any;
     /**
-     * 准备场地:
+     * 准备游戏场景:
      * 基本流程：
      *  准备显示历史面板 game.showHistory(false)
      *  创建玩家 ui.create.players(num)
      *  创建自身 ui.create.me()
      *  同步创建卡牌 ui.create.cardsAsync()
-     *  卡牌创建完成 game.finishCards()
+     *  卡牌与技能信息解析 game.finishCards()
      * @param num 玩家人数
      */
-    prepareArena(num?:number):any;
-    clearArena():any;
+    prepareArena(num?:number):void;
+    /** 清除游戏场景 */
+    clearArena():void;
+    /** 【联机】清除连接 */
     clearConnect():any;
-    log():any;
-    logv(player,card,targets,event,forced,logvid):any;
-    putDB(type,id,item,callback):any;
-    getDB(type,id,callback):any;
-    deleteDB(type,id,callback):any;
-    save(key,value,mode):any;
+    /**
+     * 打印日志（历史记录）
+     * 
+     * 参数列表类型：
+     *  player/players,默认高亮为蓝色文本
+     *  card/cards/{name:string},默认高亮为黄色文本
+     *  object,即对象为普通对象（json结构），如果携带logvid，则设置logvid
+     *  string:开头结尾有【】，则默认高亮为绿色文本；开头有“#b,#y,#g”，则显示蓝，黄，绿文本；否则直接显示该文本
+     *  其余类型参数，直接拼接
+     */
+    log(...args):void;
+    /** 【UI】根据logvid打印历史信息 */
+    logv(player,card,targets,event,forced,logvid):HTMLDivElement;
+
+    //保存到数据库中
+    putDB(type,id,item,callback):void;
+    getDB(type,id,callback):void;
+    deleteDB(type,id,callback):void;
+    save(key,value,mode):void;
+
+
     showChangeLog():any;
     showExtensionChangeLog(str,extname):any;
     /**

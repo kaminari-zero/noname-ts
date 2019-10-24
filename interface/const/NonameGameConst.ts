@@ -321,14 +321,18 @@ namespace NG {
         Black = "black",
     }
 
-    /** 卡牌类型 */
+    /** 卡牌类型（包括子类型） */
     enum CardType {
         /** 基本牌 */
         Basic = "basic",
-        /** 锦囊牌 */
+        /** 锦囊牌（指非延时锦囊） */
         Trick = "trick",
         /** 延时锦囊牌 */
         Delay = "delay",
+        /** 装备牌 */
+        Equip = "equip",
+
+        //子类型
         /** 武器 */
         Equip1 = "equip1",
         /** 防具 */
@@ -349,6 +353,33 @@ namespace NG {
         Thunder = "thunder",
         /** 火属性 */
         Fire = "fire",
+        /** 毒 */
+    }
+
+    /**
+     * 常用的类型常量
+     */
+    enum TypeConst {
+        /** 位置 */
+        POSITION = "position",
+        /** 玩家 */
+        PLAYER = "player",
+        /** 玩家列表 */
+        PLAYERS = "players",
+        /** 卡牌 */
+        CARD ="card",
+        /** 卡牌列表 */
+        CARDS ="cards",
+        /** 伤害属性 */
+        NATURE = "nature",
+        /** 选择范围 */
+        SELECT = "select",  
+        /** 确认坐标的2对xy值 */
+        DIV_POSITION = "divposition",
+        /** 按钮 */
+        BUTTON = "button",
+        /** 会话面板 */
+        DIALOG = "dialog"
     }
 
     // subCardType 卡牌子类型

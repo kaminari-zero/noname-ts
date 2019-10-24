@@ -307,37 +307,37 @@ interface Get {
      * 若card有cards属性，该card.cards的类型为“cards”，且该card不是“muniu”，则按上面“cards”方式返回花色；
      * @param card 
      */
-    suit(card):string;
+    suit(card:Card|Card[]):string;
     /**
      * 获取卡牌颜色color
      * 卡牌颜色：black黑色，red红色，none
      * 其逻辑与get.suit一致，实质也是调用get.suit
      * @param card 
      */
-    color(card):string;
+    color(card:Card|Card[]):string;
     /**
      * 获取卡牌的数字number
      * @param card 
      */
-    number(card):number;
+    number(card:Card):number;
     /**
      * 获取卡牌的nature（伤害属性）
      * nature：fire火，thunder雷，poison毒
      * @param card 
      */
-    nature(card):string;
+    nature(card:Card):string;
     /**
      * 获取（牌堆顶的）牌
      * @param num 
      */
-    cards(num):any;
+    cards(num?:number):Card[];
     /**
      * 获取卡牌的judge（判定牌的判断条件）
      * 若该卡牌有viewAs（视为牌），则返回视为牌的judge；
      * 否则，直接返回该牌的judge
      * @param card 
      */
-    judge(card):any;
+    judge(card:Card):OneParmFun<Card,number>;
     /**
      * 获得玩家from到to之间的距离
      * 具体距离类型，到时详细研究代码分析：
@@ -350,7 +350,7 @@ interface Get {
      * @param to 目标玩家
      * @param method 获取距离的类型：raw，pure，absolute，attack，默认防御距离
      */
-    distance(from,to,method?:string):number;
+    distance(from:Player,to:Player,method?:string):number;
     /**
      * 获取item的信息
      * @param item 若传入的参数是字符串，则返回lib.skill[item]；若传入的参数是一个对象（拥有name属性），则返回lib.card[item.name]；
@@ -362,7 +362,7 @@ interface Get {
      * @param select 
      * @return [number,number] 数组第一个目标数（可选目标数），数组第二个值为进攻范围，若为-1，则无距离限制
      */
-    select(select):any;
+    select(select:number|Select|NoneParmFum<number|Select>):Select;
     /**
      * 获得当前事件中处理的卡牌
      * 根据
