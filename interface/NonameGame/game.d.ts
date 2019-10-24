@@ -229,9 +229,26 @@ interface Game {
     removeGlobalSkill(skill):void;
     /** 重置所有玩家的技能 */
     resetSkills():void;
-    removeExtension(extname,keepfile):any;
-    addRecentCharacter():any;
-    createCard(name,suit,number,nature):any;
+    /**
+     * 移除扩展
+     * @param extname 
+     * @param keepfile 
+     */
+    removeExtension(extname:string,keepfile?:boolean):void;
+    /**
+     * 添加最近使用武将
+     * （让其在武将列表的排序上靠前）
+     * @param args 任意武将名
+     */
+    addRecentCharacter(...args:string[]):void;
+    /**
+     * 创建一张卡牌
+     * @param name 卡牌名,也可以是一个带有这4个属性的对象，若是则覆盖这4个属性的值
+     * @param suit 花色，若没有，先看卡牌信息中有不，否则随机；若值是“black”，则随机黑色的两种花色；若值是“red”，则随机红色的两种花色
+     * @param number 数字，若没有，先看卡牌信息中有不，否则随机1~13；
+     * @param nature 伤害属性，若没有，则获取卡牌信息的
+     */
+    createCard(name: string | CardBaseUIData2, suit?:string, number?:number, nature?:string): Card;
     forceOver(bool,callback):any;
     /** 【核心】游戏结束 */
     over(result):any;
