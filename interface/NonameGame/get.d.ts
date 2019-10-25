@@ -15,18 +15,23 @@ interface Get {
      * 获取（牌堆底部的）牌
      * @param num 
      */
-    bottomCards(num):any;
+    bottomCards(num:number):Card[];
     /** 获取弃牌区的所有牌列表 */
-    discarded():any[];
+    discarded():Card[];
 
+    /** 卡牌UI的offset偏移量 */
     cardOffset():number;
+    /**
+     * 解析字符串，若有：#r,#p,#b,#g开头，则返回一个显示颜色的html，span标签片段
+     * @param str 
+     */
     colorspan(str:string):string;
     /**
      * 设置事件的prompt
      * @param next 
      * @param str 
      */
-    evtprompt(next,str:string):string;
+    evtprompt(next:GameEvent,str:string):void;
     /**
      * 自动视为指定牌。
      * 若指定视为牌，有autoViewAs，则返回重新整合后的视为牌;
@@ -35,19 +40,30 @@ interface Get {
      * @param card 指定视为牌
      * @param cards 待操作的卡牌集合
      */
-    autoViewAs(card,cards):any;
-    max(list,func,type):any;
-    min(list,func,type):any;
+    autoViewAs(card:{name:string}|Card,cards:Card[]):CardBaseUIData;
+    /**
+     * 获取这些数据中“最大”的一个
+     * @param list 目标列表
+     * @param func 主要是排序用的方法
+     * @param type 主要类型：list，item，默认空
+     */
+    max(list:any[],func:string|OneParmFun<any,number>,type?:string):any;
+    /** 获取这些数据中“最小”的一个 */
+    min(list:any[],func:string|OneParmFun<any,number>,type?:string):any;
     /**
      * 获取武将信息
      * @param name 武将名
-     * @param num 指定获取武将的信息：0："性别",1："势力",2：体力,3：["技能"],4：[额外信息]
+     * @param num 指定获取武将的信息：0："性别",1："势力",2：体力,3：["技能"],4：[额外信息];若不填，则返回武将信息
      */
-    character(name:string,num:number):any;
+    character(name:string,num?:number):any|HeroData;
     /** 获取武将介绍 */
     characterIntro(name:string):string;
-    /** 获取势力的classname */
-    groupnature(group,method):any;
+    /**
+     * 获取势力的classname
+     * @param group 
+     * @param method 是否显示原来的名字，字符串“raw”，则原生返回；若不填，则返回名字+“mm”
+     */
+    groupnature(group:string,method?:string):string;
     /**
      * 获取数字的符号(以-1负，0，1正表示)
      * @param num 
@@ -62,10 +78,10 @@ interface Get {
 
     /** 指定排序方式排序【当前项目内没有使用，是个冗余方法】 */
     sort(arr:any[],method:string):any[];
-    sortSeat(arr,target):any;
+    sortSeat(arr:any[],target):any[];
 
-    /** 生成zip压缩包 */
-    zip(callback):any;
+    /** 生成zip压缩包（回调传入一个JSZip对象） */
+    zip(callback:OneParmFun<any,void>):any;
     /**
      * 计算当前延迟x秒
      * 根据lib.config.game_speed，会获得当前模式的延迟值
@@ -80,11 +96,11 @@ interface Get {
      * @param target 目标玩家
      * @param player 源玩家
      */
-    prompt(skill:string,target,player):string;
+    prompt(skill:string,target:Player,player:Player):string;
     /** 在get.prompt基础上拼接“技能名_info”的信息 */
-    prompt2(skill:string,target,player):string;
+    prompt2(skill:string,target:Player,player:Player):string;
     /** 获取更新地址 */
-    url(master):any;
+    url(master):void;
     /**
      * 获取四舍五入后放大10的倍数的数值
      * @param num 目标数
@@ -94,7 +110,8 @@ interface Get {
     /**
      * 获取游戏配置“player_number”的最大玩家人数（若没有默认是2）
      */
-    playerNumber():any;
+    playerNumber():number;
+
     benchmark(func1,func2,iteration,arg):any;
 
     /**
@@ -102,13 +119,13 @@ interface Get {
      * @param obj 指定序列化对象
      * @param level 格式化空格倍数（不需要填，用于内部建立格式化字符串的）
      */
-    stringify(obj,level?:number):any;
+    stringify(obj:Object,level?:number):string;
     /**
      * 深复制对象
      * （对象结构过于复杂，可能会很慢）
      * @param obj 
      */
-    copy(obj):any;
+    copy(obj:any):any;
     /**
      * 获取牌堆(lib.inpile)里所有指定类型的牌
      * @param type 牌的类型（详情请看get.type）
@@ -131,33 +148,35 @@ interface Get {
      * @param filter 自定义过滤条件
      * @return 返回卡牌配置列表
      */
-    typeCard(type:string,filter?:OneParmFun<any,boolean>):any[];
+    typeCard(type:string,filter?:OneParmFun<any,boolean>):string[];
     /**
      * 获取卡牌配置信息（lib.card）中，可用的卡牌
      * 注：排除掉不是当前指定模式玩法的卡牌，有destroy配置，filter不通过的，没有“技能名_info”对应翻译...卡牌配置;
      * 以外，还排除禁用列表（lib.config.bannedcards）的卡牌
      * @param filter 自定义过滤条件
      */
-    libCard(filter:TwoParmFun<any,string,boolean>):any[];
+    libCard(filter:TwoParmFun<any,string,boolean>):ExCardData[];
     /** 获取ipv4 网络ip（只有在nodejs环境下才行） */
     ip():string;
-    modetrans(config,server):any;
+    /** 获取玩法mode的翻译 */
+    modetrans(config:any,server?:boolean):string;
     /**
-     * 获取ol（联网模式）下武将列表
+     * 【联机】获取ol（联网模式）下武将列表
      * 注：排除掉禁用列表，lib.filter.characterDisabled，自定义过滤条件func
      * @param func 自定义过滤条件
      */
-    charactersOL(func?:OneParmFun<any,boolean>):any[];
+    charactersOL(func?:OneParmFun<any,boolean>):HeroData[];
+
     /** 获取ip部分(去掉端口)字符串 */
     trimip(str:string):string;
     /** 获取当前玩法模式 */
     mode():string;
     /** 获取当前（ui.dialogs）指定id的会话面板 */
-    idDialog(id:number):any;
+    idDialog(id:number):Dialog;
     /** 获取当前游戏状况信息（联机模式下） */
     arenaState():AreanStateInfo;
-    /** 获取当前游戏skill状态信息（主要用于联机通信同步下） */
-    skillState(player?:any):any;
+    /** 【联机】获取当前游戏skill状态信息（主要用于联机通信同步下），返回玩家一部分数据 */
+    skillState(player?:Player):Player;
     /** 随机获取一个id */
     id():string;
     /**
@@ -167,7 +186,7 @@ interface Get {
      * @param skill 
      * @param unseen 
      */
-    zhu(player:string|object,skill?:string,unseen?:boolean):any;
+    zhu(player:string|object,skill?:string,unseen?:boolean):Player;
     /**
      * 获取指定玩法模式的指定config配置项
      * @param item config的配置项
@@ -175,8 +194,14 @@ interface Get {
      */
     config(item:string,mode?:string):any;
 
-    coinCoeff(list):any;
-    rank(name,num):any;
+    /** 金币的倍数（系数） */
+    coinCoeff(list):number;
+    /**
+     * 排行
+     * @param name 
+     * @param num 
+     */
+    rank(name:string|{name:string},num:boolean|number):number|string;
     skillRank(skill,type,grouped):any;
 
     targetsInfo(targets):any;

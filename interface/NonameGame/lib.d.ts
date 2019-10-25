@@ -17,10 +17,13 @@ interface Lib {
     assetURL: string;
     /** 更新日志 */
     changeLog: any[];
-    updates: any[];
-    canvasUpdates: any[];
+    /**
+     * 记录更新用的方法，在game.run中执行
+     */
+    updates: OneParmFun<number,boolean>[];
+    canvasUpdates: TwoParmFun<number,any,boolean>[];
     /** 录像信息 */
-    video: any[];
+    video: VideoData[];
     /**
      * 保存所有武将所拥有的的技能。
      * 在onload，loadPackage中添加保存。
@@ -41,16 +44,23 @@ interface Lib {
     /** 系列卡包（卡牌的系列集合） */
     cardPack: SMap<string[]>;
 
-    onresize: any[];
-    onphase: any[];
-    onwash: any[];
-    onover: any[];
+    /** 在updatex中，执行一些列onresize重新调整UI大小 */
+    onresize: NoParamFun<void>[];
+    /** 在“phaseLoop”事件执行该一系列onphase事件 */
+    onphase: NoParamFun<void>[];
+    /** 保存多个洗牌方法进行洗牌 */
+    onwash: NoParamFun<string>[];
+    /** gameover后执行的一些列结束方法 */
+    onover: OneParmFun<string,void>[];
+
+    //记录数据，读取数据库
     ondb: any[];
     ondb2: any[];
 
     /** 聊天历史 */
     chatHistory: [string,string][];
-    arenaReady: any[];
+    /** 主要在lib.init记录场景加载的系列方法，在ui.arena中取出执行 */
+    arenaReady: NoParamFun<void>[];
     /** 保存一些UI处理的方法，在合适时机取出来执行 */
     onfree: Function[];
     /** 在牌堆里牌(指不区分数字，花色，伤害属性的牌) */
@@ -109,6 +119,7 @@ interface Lib {
     /** 开始模式选择菜单配置 */
     mode: SMap<CommonMenuConfigData>;
 
+
     status: {
         running: boolean,
         canvas: boolean,
@@ -118,6 +129,11 @@ interface Lib {
         frameId: number,
         videoId: number,
         globalId: number,
+
+        date:Date;
+        dateDelayed:number;
+        dateDelaying:Date;
+
     };
     /** 
      * 帮助内容数据中心
@@ -193,62 +209,68 @@ interface Lib {
      * （所有扩展的skill都会集中到这里）
      */
     skill: {
-        /** 保存游戏内所有全局技能 */
-        global: any[];
+        /** 
+         * 保存游戏内所有全局技能
+         * 全局技能名命名常用："_","g_"开头
+         */
+        global: string[];
         /** 保存的技能信息与玩家之间的关系map,目前在项目内没看出有什么用 */
-        globalmap: any;
-        storage: any;
+        globalmap: SMap<Player[]>;
+        /** 本地缓存  */
+        storage: SMap<any>;
         /**
          * 不计入距离的计算且不能使用牌且不是牌的合法目标
          * （目前该标记直接标记到技能的group中，拥有该技能就是被隔离出游戏，目前还没见使用到这成员）
          * 目前在项目内没什么用，只有标记到技能的group中使用，用于免除某些阶段结算
          */
-        undist: any;
-        others: any;
-        zhu: any;
-        zhuSkill: any;
-        land_used: any;
+        undist: SMap<any>;
+        others: SMap<any>;
+        zhu: SMap<any>;
+        zhuSkill: SMap<any>;
+        land_used: SMap<any>;
 
         //以下皆为游戏内预设的全局特殊节能
-        unequip: ExSkillData,
-        subplayer: ExSkillData,
-        autoswap: ExSkillData,
-        dualside: ExSkillData,
-        _disableJudge: ExSkillData,
-        _disableEquip: ExSkillData,
-        fengyin: ExSkillData,
-        baiban: ExSkillData,
-        qianxing: ExSkillData,
-        mianyi: ExSkillData,
+        unequip: ExSkillData;
+        subplayer: ExSkillData;
+        autoswap: ExSkillData;
+        dualside: ExSkillData;
+        _disableJudge: ExSkillData;
+        _disableEquip: ExSkillData;
+        fengyin: ExSkillData;
+        baiban: ExSkillData;
+        qianxing: ExSkillData;
+        mianyi: ExSkillData;
         /**
          * 特殊技能：混乱
          * 标记技能
          * 进入“混乱”状态的情况下，不能操作（自己的面板），player.isMine的结果也是false（不能确定当前玩家是自己）
          */
-        mad: ExSkillData,
-        ghujia: ExSkillData,
+        mad: ExSkillData;
+        ghujia: ExSkillData;
         /**
          * 特殊技能：计算触发次数
          * 触发阶段：phaseAfter（回合结束之后）
          * 当技能存在“usable”每回合使用次数时，在创建技能事件时，添加该技能。
          * 其作用是，在回合结束时，清除player.storage.counttrigger触发技术。
          */
-        counttrigger: ExSkillData
-        _recovercheck: ExSkillData,
-        _turnover: ExSkillData,
-        _usecard: ExSkillData,
-        _discard: ExSkillData,
+        counttrigger: ExSkillData;
+        _recovercheck: ExSkillData;
+        _turnover: ExSkillData;
+        _usecard: ExSkillData;
+        _discard: ExSkillData;
         /**
          * 特殊技能：濒死阶段循环询问求救
          * 触发阶段：濒死阶段触发
          */
-        _save: ExSkillData,
-        _ismin: ExSkillData,
-        _chongzhu: ExSkillData,
-        _lianhuan: ExSkillData,
-        _lianhuan2: ExSkillData,
-        _lianhuan3: ExSkillData,
-        _lianhuan4: ExSkillData
+        _save: ExSkillData;
+        _ismin: ExSkillData;
+        _chongzhu: ExSkillData;
+        _lianhuan: ExSkillData;
+        _lianhuan2: ExSkillData;
+        _lianhuan3: ExSkillData;
+        _lianhuan4: ExSkillData;
+
+        [key:string]:SMap<any>|ExSkillData;
     };
 
     /**

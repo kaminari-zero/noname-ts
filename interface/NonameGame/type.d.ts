@@ -1223,6 +1223,8 @@ interface CardBaseUIData {
     type?:string;
     subtype?:string;
     color?:string;
+
+    cards?:Card[];
 }
 
 /**
@@ -1262,6 +1264,15 @@ interface AreanStateInfo{
     servermode:string,
     roomId:any,
     over:boolean
+}
+
+/** 录像数据 */
+type VideoData = {
+    type:string;
+    /** 坐位号 */
+    player:string;
+    delay:number;
+    content:any;
 }
 
 type CardAndPlayerFun<T> = (card,player) => T;
