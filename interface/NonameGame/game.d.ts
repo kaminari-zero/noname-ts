@@ -457,9 +457,11 @@ interface Game {
     deleteDB(type,id,callback):void;
     save(key,value,mode):void;
 
+    /** 显示更新信息 */
+    showChangeLog():void;
+    /** 显示扩展更新日志（没用上） */
+    showExtensionChangeLog(str,extname):void;
 
-    showChangeLog():any;
-    showExtensionChangeLog(str,extname):any;
     /**
      * 保存配置：（31499-31556）
      * 若存在lib.db，则保存在指定数据库中，若没有则缓存在本地中。
@@ -470,40 +472,103 @@ interface Game {
      * @param local 是否保存在本地,当local是string时，则key将拼接成：key+='_mode_config_'+local
      * @param callback 执行完保存后的回调
      */
-    saveConfig(key:string,value:any,local:boolean|string,callback:()=>void):any;
-    saveConfigValue(key):any;
-    saveExtensionConfig(extension,key,value):any;
-    getExtensionConfig(extension,key):any;
-    clearModeConfig(mode):any;
-    addPlayer(position,character,character2):any;
-    addFellow(position,character,animation):any;
+    saveConfig(key:string,value:any,local:boolean|string,callback:()=>void):void;
+    /** 保存配置（从lib.config读取key的值保存） */
+    saveConfigValue(key:string):void;
+    /** 保存扩展配置，key的结构为：“extension_扩展名_key” */
+    saveExtensionConfig(extension:string,key:string,value:any):void;
+    /** 获取扩展配置 */
+    getExtensionConfig(extension:string,key:string):any;
+    /** 清除mode玩法的配置 */
+    clearModeConfig(mode):void;
+
+    /**
+     * 添加玩家
+     * @param position 
+     * @param character 
+     * @param character2 
+     */
+    addPlayer(position:number,character?:string,character2?:string):Player;
+    /**
+     * 添加同伴
+     * @param position 
+     * @param character 
+     * @param animation 
+     */
+    addFellow(position: number, character?: string, animation?: string): Player;
+    /**
+     * 【事件】进入游戏事件（触发：enterGame进入游戏阶段触发）
+     * @param player 
+     */
     triggerEnter(player):any;
-    restorePlayer(player):any;
-    removePlayer(player):any;
-    replacePlayer(player,character,character2):any;
-    arrangePlayers():any;
-    filterSkills(skills,player):any;
+    /**
+     * 还原玩家
+     * @param player 
+     */
+    restorePlayer(player: Player): Player;
+    /**
+     * 移除玩家
+     * @param player 
+     */
+    removePlayer(player: Player):Player;
+    /**
+     * 替换玩家的武将
+     * @param player 
+     * @param character 
+     * @param character2 
+     */
+    replacePlayer(player:Player,character?:string,character2?:string):Player;
+    /** 重新排列玩家 */
+    arrangePlayers():void;
+
+    /**
+     * 过滤玩家的技能（过滤disabledSkills）
+     * @param skills 
+     * @param player 
+     */
+    filterSkills(skills:string[],player:Player):string[];
     /**
      * 解析技能所包含的技能组。
      * 即技能的group属性所记录的技能组
      * @param skills 
      */
-    expandSkills(skills):any;
-    css(style):any;
+    expandSkills(skills): string[];
+
+    /** 添加css (未使用)*/
+    css(style:SMap<any>):void;
+
+    //一些常用的过滤
     /**
-     * 检测当前是否有符合条件的玩家
+     * 检测当前是否有符合条件的玩家（不包括out，指当前游戏内的玩家game.players）
      * @param func 过滤条件
      */
-    hasPlayer(func:OneParmFun<Player,boolean>):boolean;
+    hasPlayer(func?:OneParmFun<Player,boolean>):boolean;
     /**
      * 计算符合条件的玩家数
      * @param func 回调函数，根据条件返回计数，若返回值为false则不计数，返回值为true默认+1，返回值为num，则增加num
      */
-    countPlayer(func:(player)=>number|boolean):number;
-    filterPlayer(func,list):any;
-    findPlayer(func):any;
-    findCards(func,all):any;
-    countGroup():any;
+    countPlayer(func?: OneParmFun<Player, boolean|number>):number;
+    /**
+     * 获取过滤后的玩家列表
+     * @param func 返回true，则通过
+     * @param list 可以传入一个玩家列表数组，继续添加结果到里面，默认生成一个新的空数组
+     */
+    filterPlayer(func?: OneParmFun<Player, boolean>,list?:Player[]):Player[];
+    /**
+     * 查找玩家
+     * @param func 
+     */
+    findPlayer(func?: OneParmFun<Player, boolean>): Player;
+    /**
+     * 查找卡牌
+     * @param func 
+     * @param all 是否查找所有卡牌，若为true，则是查找所有；若为false或者默认不填，则是只查找自己当前使用卡堆里有的牌
+     */
+    findCards(func?: TwoParmFun<string,ExCardData, boolean>,all?:boolean):string[];
+    /**
+     * 获取当前游戏中存在的势力数（种类）
+     */
+    countGroup():number;
 
 
     /** 正在游戏中的玩家 */
