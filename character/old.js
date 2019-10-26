@@ -4,14 +4,32 @@ game.import('character',function(lib,game,ui,get,ai,_status){
 		name:'old',
 		characterSort:{
 			old:{
-				old_shenhua:["yuji","zhangjiao","old_zhugezhan"],
-				old_yijiang:["masu","xushu","fazheng","liru","yujin","xin_yujin","old_zhonghui","old_xusheng","old_zhuran","old_lingtong","old_madai","old_caoxiu","old_wangyi","old_caozhen","old_quancong","old_chenqun","old_zhuhuan","old_zhuzhi"],
-				old_sp:["old_lingju","old_maliang","old_machao","zhangliang"],
+				old_shenhua:["yuji","zhangjiao","old_zhugezhan","old_zhoutai","old_caoren","xiahouyuan","xiaoqiao","huangzhong","weiyan","xuhuang","pangde"],
+				old_refresh:["old_zhangfei","old_huatuo"],
+				old_yijiang1:["masu","xushu","fazheng","yujin","xin_yujin","old_xusheng","old_lingtong","ol_yujin"],
+				old_yijiang2:["old_madai","old_zhonghui","old_wangyi","old_guanzhang","ol_liaohua"],
+				old_yijiang3:["liru","old_zhuran","ol_zhuran","ol_manchong","ol_guohuai"],
+				old_yijiang4:["old_caozhen","old_chenqun","old_zhuhuan","ol_wuyi"],
+				old_yijiang5:["old_caoxiu","old_quancong","old_zhuzhi"],
+				old_yijiang67:["ol_xinxianying","ol_zhangrang","ol_liuyu"],
+				old_sp:["old_caochun","old_lingju","old_maliang","old_machao","zhangliang","jsp_caoren","ol_guansuo"],
 			},
 		},
 		character:{
+			xuhuang:['male','wei',4,['gzduanliang']],
+			pangde:['male','qun',4,['mashu','mengjin']],
+			xiahouyuan:['male','wei',4,['shensu']],
+			huangzhong:['male','shu',4,['liegong']],
+			weiyan:['male','shu',4,['kuanggu']],
+			xiaoqiao:['female','wu',3,['tianxiang','hongyan']],
 			yuji:['male','qun',3,['old_guhuo'],['forbidai']],
 			zhangjiao:['male','qun',3,['leiji','guidao','huangtian'],['zhu']],
+			old_zhoutai:['male','wu',4,['gzbuqu']],
+			old_caoren:['male','wei',4,['moon_jushou','jiewei']],
+			old_zhangfei:['male','shu',4,['paoxiao','retishen']],
+			old_huatuo:['male','qun',3,['jijiu','chulao']],
+			jsp_caoren:['male','wei',4,['kuiwei','yanzheng']],
+			old_caochun:['male','wei',4,['shanjia']],
 			masu:['male','shu',3,['xinzhan','huilei']],
 			xushu:['male','shu',3,['wuyan','jujian']],
 			fazheng:['male','shu',3,['enyuan','xuanhuo']],
@@ -38,6 +56,17 @@ game.import('character',function(lib,game,ui,get,ai,_status){
 			old_machao:['male','qun',4,['zhuiji','cihuai']],
 			old_zhugezhan:["male","shu",3,["old_zuilun","old_fuyin"]],
 			zhangliang:["male","qun",4,["old_jijun","old_fangtong"]],
+			old_guanzhang:['male','shu',4,['old_fuhun']],
+			ol_xinxianying:['female','wei',3,['caishi','zhongjian']],
+			ol_zhangrang:['male','qun',3,['taoluan']],
+			ol_yujin:['male','wei',4,['zhenjun']],
+			ol_zhuran:['male','wu',4,['danshou']],
+			ol_liaohua:['male','shu',4,['dangxian','fuli']],
+			ol_guansuo:['male','shu',4,['zhengnan','xiefang']],
+			ol_manchong:['male','wei',3,['yuce','junxing']],
+			ol_guohuai:['male','wei',4,['jingce']],
+			ol_wuyi:['male','shu',4,['benxi']],
+			ol_liuyu:['male','qun',2,['zongzuo','zhige']],
 		},
 		characterFilter:{
 			old_lingju:function(mode){
@@ -45,6 +74,24 @@ game.import('character',function(lib,game,ui,get,ai,_status){
 			}
 		},
 		skill:{
+			old_fuhun:{
+				audio:'fuhun',
+				trigger:{player:'phaseDrawBefore'},
+				content:function(){
+					'step 0'
+					trigger.cancel();
+					'step 1'
+					var cards=get.cards(2);
+					event.cards=cards;
+					player.showCards(cards);
+					'step 2'
+					player.gain(cards,'gain2');
+					if(get.color(cards[0])!=get.color(cards[1])){
+						player.addTempSkill('wusheng');
+						player.addTempSkill('paoxiao');
+					}
+				},
+			},
 			"old_guhuo":{
 				group:["old_guhuo_guess","old_guhuo_respond","old_guhuo_wuxie"],
 				enable:"chooseToUse",
@@ -346,6 +393,7 @@ game.import('character',function(lib,game,ui,get,ai,_status){
 				audio:"xinfu_fangtong",
 				forced:true,
 				skillAnimation:true,
+				animationColor:'metal',
 				filter:function (event,player){
 					return (player.storage.old_jijun&&player.storage.old_jijun.length>35);
 				},
@@ -811,7 +859,25 @@ game.import('character',function(lib,game,ui,get,ai,_status){
 			old_zhugezhan:"旧诸葛瞻",
 			zhangliang:'SP张梁',
 			yuji:'旧于吉',
+			old_zhoutai:'旧周泰',
+			old_caoren:'旧曹仁',
+			old_guanzhang:'旧关兴张苞',
+			old_zhangfei:'OL张飞',
+			old_huatuo:'OL华佗',
+			jsp_caoren:'☆SP曹仁',
+			ol_xinxianying:'OL辛宪英',
+			ol_zhangrang:'OL张让',
+			ol_yujin:'镇军于禁',
+			ol_liaohua:'OL廖化',
+			ol_zhuran:'OL朱然',
+			ol_guansuo:'OL关索',
+			ol_manchong:'OL满宠',
+			ol_guohuai:'OL郭淮',
+			ol_wuyi:'OL吴懿',
+			ol_liuyu:'OL刘虞',
 
+			old_fuhun:'父魂',
+			old_fuhun_info:'摸牌阶段开始时，你可以放弃摸牌，改为从牌堆顶亮出两张牌并获得之，若亮出的牌颜色不同，你获得技能“武圣”、“咆哮”，直到回合结束。',
 			"old_guhuo":"蛊惑",
 			"old_guhuo_info":"你可以说出任何一种基本牌或普通锦囊牌，并正面朝下使用或打出一张手牌。体力值不为0的其他角色依次选择是否质疑。若无角色质疑，则该牌按你所述之牌结算。若有角色质疑则亮出验明：若为真，质疑者各失去1点体力；若为假，质疑者各摸一张牌。无论真假，弃置被质疑的牌。仅当被质疑的牌为红桃花色且为真时，该牌仍然可以进行结算。",
 			"old_guhuo_guess":"蛊惑",
@@ -845,7 +911,13 @@ game.import('character',function(lib,game,ui,get,ai,_status){
 			oldxuanfeng_info:'每当你失去一次装备区里的牌时，你可以执行下列两项中的一项：1.视为对任意一名其他角色使用一张【杀】（此【杀】不计入每回合的使用限制）；2.对与你距离1以内的一名其他角色造成一点伤害',
 			
 			old_shenhua:'神话再临',
-			old_yijiang:'一将成名',
+			old_refresh:'界限突破',
+			old_yijiang1:'一将成名2011',
+			old_yijiang2:'一将成名2012',
+			old_yijiang3:'一将成名2013',
+			old_yijiang4:'一将成名2014',
+			old_yijiang5:'一将成名2015',
+			old_yijiang67:'原创设计',
 			old_sp:'SP',
 		}
 	};

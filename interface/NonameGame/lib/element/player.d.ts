@@ -636,19 +636,19 @@ declare namespace Lib.element {
          * @param card 
          * @param cards 
          */
-        addJudge(card: any, cards: any): any;
+        addJudge(card: Card, cards?: Card[]): any;
         /**
          * 判断该牌是否可以添加到判定区
          * 需要通过game.checkMod，检测通过“targetEnabled”锁定技；
          * （注：该方法貌似值用在类似闪电这种，可以长时间逗留的判定牌）
          * @param card 
          */
-        canAddJudge(card: any): boolean;
+        canAddJudge(card: string|Card): boolean;
         /**
          * 添加当前玩家的某判定牌到下一位玩家
          * @param card 
          */
-        addJudgeNext(card: any): void;
+        addJudgeNext(card: Card): void;
         /**
          * 创建“judge”判定事件
          */
@@ -688,12 +688,20 @@ declare namespace Lib.element {
          */
         logSkill(name: string, targets: Player|Player[], nature?: string, logv?: boolean): void;
 
-        //弹出信息相关会话提示面板
-        unprompt(): any;
-        prompt(str: any, nature: any): any;
-        prompt_old(name2: any, className: any): any;
-        popup(name: any, className: any): any;
-        popup_old(name: any, className: any): any;
+        //弹出信息相关
+        /** 清除弹出信息 */
+        unprompt(): void;
+        /** 弹出信息（似乎没用到） */
+        prompt(str: string, nature?: string): void;
+        prompt_old(name2: number|string[], className: any): void;//无用，废弃
+        /**
+         * 弹出信息（例如伤害，回血.....之类）
+         * 使用$damagepop弹出信息
+         * @param name 该参数数用来调用get.translation
+         * @param className 弹出文本的样式，默认是“water”
+         */
+        popup(name: any, className?: string): void;
+        popup_old(name: any, className?: string): HTMLDivElement;//无用废弃
         _popup(): any;
 
         /** 显示时间 */
@@ -764,12 +772,12 @@ declare namespace Lib.element {
          */
         hasUseTarget(card: string|{name:string}, distance?: boolean, includecard?: boolean): boolean;
         /**
-         * 获取使用卡牌的最小数值？
+         * 获取使用卡牌的最小数值？（应该是ai使用）
          * @param card 
          * @param distance 
          * @param includecard 
          */
-        getUseValue(card: any, distance: any, includecard: any): any;
+        getUseValue(card: string | { name: string }, distance?: boolean, includecard?: boolean): number;
 
         //随从相关（炉石玩法）
         addSubPlayer(cfg: any): any;
@@ -1073,7 +1081,7 @@ declare namespace Lib.element {
          * 注：使用了“ignoredHandcard”锁定技mod检测，同时调用了player.getHandcardLimit获得手牌上限
          * @param num 
          */
-        needsToDiscard(num: any): any;
+        needsToDiscard(num?: number): number;
         /**
          * 获得当前玩家到指定目标玩家的距离是多少
          * @param target 

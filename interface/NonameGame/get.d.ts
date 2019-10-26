@@ -197,39 +197,54 @@ interface Get {
     /** 金币的倍数（系数） */
     coinCoeff(list):number;
     /**
-     * 排行
+     * 武将排行（多用于ai，用排行确定优先度）
      * @param name 
      * @param num 
      */
     rank(name:string|{name:string},num:boolean|number):number|string;
-    skillRank(skill,type,grouped):any;
+    /**
+     * 技能排行(多用于ai，获取使用技能准确的优先度)
+     * @param skill 
+     * @param type 排行的类型：in（用于触发阶段判断）,out（用于触发伤血，流血，卖血技等等判断）,item（或者说空，则是不判断in,out）
+     * @param grouped 
+     */
+    skillRank(skill:string,type:string,grouped?:boolean):number;
 
-    targetsInfo(targets):any;
-    infoTargets(info):any;
+    /**
+     * 获取所有目标的位置
+     * @param targets 
+     * @return 虽然是字符串数组，实际是座位号数组
+     */
+    targetsInfo(targets:Player[]):string[];
+    /**
+     * 通过玩家的id集合，获取对应的玩家目标
+     * @param info 
+     */
+    infoTargets(info:string[]):Player[];
     /**
      * 获取card对象上的基础信息
      * @param card 卡牌对象（UI上的卡牌）
      * @return 返回[....]结构的卡牌信息 
      */
-    cardInfo(card:object):CardBaseData;
+    cardInfo(card:Card):CardBaseData;
     /**
      * 获取cards列表上的对象的基础信息
      * @param cards card列表
      * @return 返回[....]结构的卡牌信息列表 
      */
-    cardsInfo(cards:object[]):CardBaseData[];
+    cardsInfo(cards: Card[]):CardBaseData[];
     /**
      * 根据info中的基础信息创建card
      * @param info [...]结构的卡牌信息
      * @return 返回创建的卡牌对象
      */
-    infoCard(info:CardBaseData):object;
+    infoCard(info: CardBaseUIData):Card;
     /**
      * 根据info中的基础信息列表创建cards
      * @param info [...]结构的卡牌信息列表
      * @return 返回创建的卡牌对象列表
      */
-    infoCards(info:CardBaseData[]):object[];
+    infoCards(info:CardBaseUIData[]):Card[];
 
 
     //联网模式下的信息获取，稍后统一研究
@@ -256,7 +271,7 @@ interface Get {
     numStr(num:number,method?:string):string;
     /** 获取去掉特殊前缀（SP，☆SP，手杀... ...）的原名 */
     rawName(str:string):string;
-    rawName2(str):any;//无用
+    rawName2(str: string): string;//无用
      /** 获取去掉特殊前缀（SP，☆SP，手杀... ...）的名字，将其垂直输出 */
     slimName(str:string):string;
 
@@ -265,6 +280,7 @@ interface Get {
     /** 获取当前时间（UTC） */
     utc():number;
 
+    //【UI】直接和h5原生事件相关，计算当前的位置
     evtDistance(e1,e2):any;
     xyDistance(from,to):any;
 
@@ -283,13 +299,13 @@ interface Get {
      *      若class列表有“dialog”，则返回类型：dialog（对话框，包括提示，弹出框...）；
      * @param obj 
      */
-    itemtype(obj:any):any;
+    itemtype(obj:any):string;
     /**
      * 获取装备的类型（1-5）
      * 逻辑和get.equiptype基本一致（算是冗余的方法）
      * @param card 
      */
-    equipNum(card):number;
+    equipNum(card:{name:string}):number;
     /**
      * 获取对象的类型：
      * 当前可分辨类型：array，object，div，table，tr，td
@@ -303,25 +319,25 @@ interface Get {
      * @param obj 可以是卡牌的名字，也可以是带有name属性的对象
      * @param method 若传入“trick”，则type为“delay”（延时锦囊牌），也视为“锦囊牌”，结果返回“trick”
      */
-    type(obj:string|object,method?:string):string;
+    type(obj:string|{name:string},method?:string):string;
     /**
      * 获取卡牌的类型2（上面方法的简略版，把延时锦囊“delay”，视为锦囊“trick”返回）
      * @param card 可以是卡牌的名字，也可以是带有name属性的对象
      */
-    type2(card:string|object):string;
+    type2(card: string | { name: string }):string;
     /**
      * 获取卡牌第二类型（子类型）
      * 返回卡牌的subtype属性
      * 例:equip装备的子类型：equip1武器，equip2防具，equip3防御马，equip4进攻马，equip5宝物（常规外的额外装备）
      * @param obj 可以是卡牌的名字，也可以是带有name属性的对象
      */
-    subtype(obj:string|object):string;
+    subtype(obj: string | { name: string }):string;
     /**
      * 获取装备的类型（1-5）
      * 当前类型分别为：1武器，2防具，3防御马，4进攻马，5宝物（常规外的额外装备）
      * @param card 可以是卡牌的名字，也可以是带有name属性的对象
      */
-    equiptype(card:string|object):number;
+    equiptype(card: string | { name: string }):number;
     /**
      * 获取卡牌的花色suit
      * 
@@ -414,16 +430,16 @@ interface Get {
     /**
      * 获取卡牌所在的位置：
      * 位置：e装备区，j判定区，h手牌，c抽牌区，d弃牌区，s特殊区（special）
-     * @param card 
+     * @param card 若是卡牌，则返回卡牌的位置；若是玩家，则返回玩家的位置
      */
-    position(card):string;
+    position(card:Card | Player):string;
 
     /**
      * 获取技能的翻译名
      * @param str 技能名，若名字有“re”属于（界）；名字有“xin”属于（新）
      * @param player 指定玩家
      */
-    skillTranslation(str:string,player):string;
+    skillTranslation(str:string,player:Player):string;
     /**
      * 获取技能的描述
      * （“技能名_info”）
@@ -444,7 +460,7 @@ interface Get {
      * @param str  
      * @param arg 类型：viewAs，skill，info
      */
-    translation(str: string|object, arg?:string): string;
+    translation(str: any, arg?:string): string;
     /**
      * 将阿拉伯数字转成中文数字显示
      * @param num 原数字
@@ -505,19 +521,19 @@ interface Get {
      * @param card 若是true，则获取player的当前回合卡牌使用次数；若是对象，字符串，则获取指定牌的当前回合使用次数
      * @param player 要获取的玩家，默认是当前处理中的玩家_status.event.player
      */
-    cardCount(card:boolean|string|object,player?:any):number;
+    cardCount(card:boolean|string|{name:string},player?:Player):number;
     /**
      * 获取玩家当前回合技能的使用次数
      * @param skill 技能名
      * @param player 要获取的玩家，默认是当前处理中的玩家_status.event.player
      */
-    skillCount(skill:string,player?:any):any;
+    skillCount(skill:string,player?:Player):number;
     /**
      * 获取该card的所有者（拥有者）
      * @param card 指定card
      * @param method 目前没什么太大用途，值为“judge”排除掉判定的牌
      */
-    owner(card,method?):any;
+    owner(card:Card,method?:string):Player;
     /**
      * 是否当前没有可选择的目标
      */
@@ -538,7 +554,7 @@ interface Get {
      * @param tag 
      * @param item2 
      */
-    tag(item,tag,item2):any;
+    tag(item:{name:string},tag:string,item2?:string):boolean;
     /**
      * 获取排序卡牌的方法
      * @param sort 指定排序方法：type_sort，suit_sort，number_sort
@@ -553,17 +569,17 @@ interface Get {
      * @param name 获取卡牌的名字，获取判定卡牌的方法
      * @param create 指定获取卡牌的地方：'cardPile'抽卡区,'discardPile'弃卡区,'field'玩家场地（玩家的装备，判定牌区），若都不是，则创建一张该名字的卡牌
      */
-    cardPile(name:string|CardFun<boolean>,create:string):any;
+    cardPile(name:string|CardFun<boolean>,create:string):Card;
     /**
      * 获取抽卡区里指定名字的卡牌（一张）
      * @param name 获取卡牌的名字，获取判定卡牌的方法
      */
-    cardPile2(name:string|CardFun<boolean>):any;
+    cardPile2(name: string | CardFun<boolean>): Card;
     /**
      * 获取弃卡去里指定名字的卡牌（一张）
      * @param name 获取卡牌的名字，获取判定卡牌的方法
      */
-    discardPile(name:string|CardFun<boolean>):any;
+    discardPile(name: string | CardFun<boolean>): Card;
 
 
     /** 获取ai的态度 */
@@ -572,21 +588,22 @@ interface Get {
 
     //获取各种描述信息，用于ui显示上
     /** 获取指定武将的技能信息描述 */
-    skillintro(name:string,learn,learn2):string;
+    skillintro(name: string, learn?: boolean, learn2?: boolean):string;
     /** 获取指定武将的信息描述 */
     intro(name:string):string;
     /** 获取缓存的信息 */
-    storageintro(type,content,player,dialog,skill):any;
+    storageintro(type, content, player, dialog, skill): any;
     /** 获取设置node节点的信息 */
-    nodeintro(node,simple,evt):any;
+    nodeintro(node,simple,evt):Dialog;
     /** 获取横置（连环）的信息 */
-    linkintro(dialog,content,player):any;
+    linkintro(dialog,content,player):void;
 
     /** 获取游戏中的势力标记列表 */
     groups():string[];
     /** 获取lib.card中所有（不重复，延迟锦囊算作锦囊trick）类型type */
     types():string[];
-    links(buttons):any;
+    /** 获取按钮的link */
+    links(buttons:Button[]):any[];
 
 
     //ai相关的操作
@@ -598,7 +615,7 @@ interface Get {
      * @param from 
      * @param to 
      */
-    attitude(from,to):any;
+    attitude(from,to):number;
     sgnAttitude():any;
     useful(card):any;
     unuseful(card):any;
@@ -635,21 +652,24 @@ interface Is {
     /** 是否是火狐流浪器 */
     safari(): boolean;
     /** 判断这些牌中，有没有不在h，e，j区域中，若都不在，则为true */
-    freePosition(cards:any[]): boolean;
+    freePosition(cards:Card[]): boolean;
     /** 判断是否有菜单 */
     nomenu(name:string, item): boolean;
-    altered(skill): boolean;
+    altered(skill): boolean;//无用
+
     /** 判断当前对象是html文档节点 */
-    node(obj:any): boolean;
+    node(obj:Object): boolean;
     /** 判断当前对象是div节点 */
-    div(obj:any): boolean;
+    div(obj: Object): boolean;
     /** 判断当前对象是Map（es6） */
-    map(obj:any): boolean;
+    map(obj: Object): boolean;
     /** 判断当前对象是Set（es6） */
-    set(obj:any): boolean;
+    set(obj: Object): boolean;
     /** 判断当前对象是对象 */
-    object(obj:any): boolean;
-    singleSelect(func): boolean;
+    object(obj: Object): boolean;
+
+    /** 是否是只有一个目标（单目标） */
+    singleSelect(func: number | Select | NoneParmFum<number | Select>): boolean;
     /** 是否是“君主” */
     jun(name:string): boolean;
     /** 是否是对决模式 */

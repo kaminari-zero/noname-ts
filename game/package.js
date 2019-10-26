@@ -10,6 +10,7 @@ window.noname_package={
 		mobile:'移动版',
 		old:'怀旧',
 		diy:'DIY',
+		tw:'外服武将',
 		yxs:'英雄杀',
 		hearth:'炉石传说',
 		gwent:'昆特牌',
@@ -37,7 +38,6 @@ window.noname_package={
 		cardpile:'牌堆补充',
 		wuxing:'五行生克',
 		coin:'富甲天下',
-		"代码搜索器":"代码搜索器"
 	},
 	mode:{
 		identity:'身份',

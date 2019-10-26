@@ -46,7 +46,23 @@ game.import('character',function(lib,game,ui,get,ai,_status){
 					source.storage.new_wuhun_mark+=trigger.num;
 					source.markSkill('new_wuhun_mark');
 				},
-				contentx:function (){
+				subSkill:{
+					die:{
+						audio:"wuhun2",
+						skillAnimation:true,
+						animationColor:'soil',
+						trigger:{
+							player:"die",
+						},
+						forced:true,
+						forceDie:true,
+						popup:false,
+						filter:function (event,player){
+							return game.hasPlayer(function(current){
+								return current!=player&&current.storage.new_wuhun_mark!=undefined;
+							});
+						},
+				content:function (){
 					"step 0"
 					var num=0;
 					for(var i=0;i<game.players.length;i++){
@@ -78,27 +94,6 @@ game.import('character',function(lib,game,ui,get,ai,_status){
 						lib.element.player.die.apply(target,[]);
 					}
 				},
-				subSkill:{
-					die:{
-						audio:"wuhun2",
-						skillAnimation:true,
-						trigger:{
-							player:"dieBegin",
-						},
-						forced:true,
-						popup:false,
-						filter:function (event,player){
-							return game.hasPlayer(function(current){
-								return current!=player&&current.storage.new_wuhun_mark!=undefined;
-							});
-						},
-						content:function (){
-							"step 0"
-							var next=game.createEvent('new_wuhun',null,trigger.parent);
-							next.forceDie=true;
-							next.player=player;
-							next.setContent(lib.skill.new_wuhun.contentx);
-						},
 						sub:true,
 					},
 					mark:{
@@ -148,7 +143,7 @@ game.import('character',function(lib,game,ui,get,ai,_status){
 					event.range={
 						手牌区:['h','e','j'],
 						装备区:['e','h','j'],
-						判定区:['j','e','h'],
+						判定区:['j','h','e'],
 					}[result.control||'手牌区'];
 					"step 3"
 					if(num<event.targets.length){
@@ -158,18 +153,17 @@ game.import('character',function(lib,game,ui,get,ai,_status){
 							var cards=target.getCards(range[i]);
 							if(cards.length){
 								var card=cards.randomGet();
-								player.gain(card);
-								target.$giveAuto(card,player);
-								game.delay(0.3);
+								player.gain(card,target,'giveAuto');
 								break;
 							}
 						}
 						event.num++;
-						event.redo();
 					}
 					"step 4"
-					player.turnOver();
+					if(num<event.targets.length) event.goto(3);
 					"step 5"
+					player.turnOver();
+					"step 6"
 					event.count--;
 					if(event.count){
 						player.chooseBool(get.prompt2('new_guixin')).ai=function(){
@@ -179,7 +173,7 @@ game.import('character',function(lib,game,ui,get,ai,_status){
 					else{
 						event.finish();
 					}
-					"step 6"
+					"step 7"
 					if(event.count&&result.bool){
 						player.logSkill('new_guixin');
 						event.goto(1);
@@ -359,6 +353,7 @@ game.import('character',function(lib,game,ui,get,ai,_status){
 				},
 				content:function(){
 					"step 0"
+					event.forceDie=true;
 					if(typeof event.count!='number'){
 						// event.count=trigger.cards.length-1;
 						event.count=1;
@@ -455,14 +450,13 @@ game.import('character',function(lib,game,ui,get,ai,_status){
 					player.markSkill('baonu');
 					player.syncStorage('baonu');
 				},
-				trigger:{source:'damageEnd',player:'damageEnd'},
+				trigger:{source:'damageSource',player:'damageEnd'},
 				forced:true,
 				filter:function(event){
 					return event.num>0; 
 				},
 				content:function(){
-					if(player==trigger.player) player.storage.baonu+=trigger.num;
-					if(player==trigger.source) player.storage.baonu+=trigger.num;
+					player.storage.baonu+=trigger.num;
 					player.markSkill('baonu');
 					player.syncStorage('baonu');
 				},
@@ -619,6 +613,7 @@ game.import('character',function(lib,game,ui,get,ai,_status){
 			},
 			sbaiyin:{
 				skillAnimation:'epic',
+				animationColor:'thunder',
 				trigger:{player:'phaseBegin'},
 				forced:true,
 				unique:true,
@@ -660,14 +655,14 @@ game.import('character',function(lib,game,ui,get,ai,_status){
 					};
 					"step 1"
 					if(result.bool){
-						player.respond(result.cards,'highlight');
+						player.respond(result.cards,'highlight','jilue_guicai');
 					}
 					else{
 						event.finish();
 					}
 					"step 2"
 					if(result.bool){
-						player.logSkill('jilue_guicai');
+						//player.logSkill('jilue_guicai');
 						player.storage.renjie--;
 						player.updateMarks();
 						if(trigger.player.judging[0].clone){
@@ -1255,7 +1250,7 @@ game.import('character',function(lib,game,ui,get,ai,_status){
 						player.unmarkSkill('qixing');
 					}
 					game.addVideo('storage',player,['qixing',get.cardsInfo(player.storage.qixing),'cards']);
-					player.discard(result.links);
+					game.cardsDiscard(result.links);
 				},
 				group:'dawu3'
 			},
@@ -1290,11 +1285,11 @@ game.import('character',function(lib,game,ui,get,ai,_status){
 					for(var i=0;i<game.players.length;i++){
 						if(game.players[i].hasSkill('dawu2')){
 							game.players[i].removeSkill('dawu2');
-							game.players[i].popup('dawu2');
+							//game.players[i].popup('dawu2');
 						}
 						if(game.players[i].hasSkill('kuangfeng2')){
 							game.players[i].removeSkill('kuangfeng2');
-							game.players[i].popup('kuangfeng2');
+							//game.players[i].popup('kuangfeng2');
 						}
 					}
 				}
@@ -1332,7 +1327,8 @@ game.import('character',function(lib,game,ui,get,ai,_status){
 						player.unmarkSkill('qixing');
 					}
 					game.addVideo('storage',player,['qixing',get.cardsInfo(player.storage.qixing),'cards']);
-					player.discard(result.links);
+					game.cardsDiscard(result.links);
+					game.log(player,'将',result.links,'置入了弃牌堆')
 				},
 			},
 			kuangfeng2:{
@@ -1359,9 +1355,10 @@ game.import('character',function(lib,game,ui,get,ai,_status){
 			},
 			yeyan:{
 				unique:true,
+				forceDie:true,
 				enable:'phaseUse',
 				audio:3,
-				animationColor:'fire',
+				animationColor:'metal',
 				skillAnimation:'legend',
 				filterTarget:function(card,player,target){
 					var length=ui.selected.cards.length;
@@ -1409,7 +1406,7 @@ game.import('character',function(lib,game,ui,get,ai,_status){
 							return targets.contains(target)
 						}).set('ai',function(target){
 							return 1;
-						});
+						}).set('forceDie',true);
 					}
 					"step 3"
 					if(event.num<targets.length){
@@ -1423,7 +1420,7 @@ game.import('character',function(lib,game,ui,get,ai,_status){
 					"step 4"
 					player.chooseControl("2点","3点").set('prompt','请选择伤害点数').set('ai',function(){
 						return "3点";
-					});
+					}).forceDie=true;
 					"step 5"
 					targets[0].damage('fire',result.control=="2点"?2:3,'nocard'); 
 				},
@@ -1624,11 +1621,12 @@ game.import('character',function(lib,game,ui,get,ai,_status){
 						autodelay:function(event){
 							return event.name=='respond'?0.5:false;
 						},
-						filter:function(evt){
+						filter:function(evt,player){
 							return (evt.skill=='xinlonghun3'||evt.skill=='xinlonghun4')&&
-								evt.cards&&evt.cards.length==2&&_status.currentPhase.countDiscardableCards('he');
+								evt.cards&&evt.cards.length==2&&_status.currentPhase&&_status.currentPhase!=player&&_status.currentPhase.countDiscardableCards(player,'he');
 						},
 						content:function(){
+							player.line(_status.currentPhase,'green');
 							player.discardPlayerCard(_status.currentPhase,'he',true);
 						}
 					}
@@ -1828,7 +1826,7 @@ game.import('character',function(lib,game,ui,get,ai,_status){
 					event.dialog.close();
 					var card=event.card;
 					if(result.control=='gongxin_top'){
-						target.lose(card);
+						target.lose(card,ui.special);
 						player.showCards(card,'置于牌堆顶');
 					}
 					else{
@@ -2030,18 +2028,12 @@ game.import('character',function(lib,game,ui,get,ai,_status){
 				mark:true,
 				trigger:{
 					player:"damageAfter",
-					source:"damageAfter",
+					source:"damageSource",
 				},
 				forced:true,
 				content:function(){
-					if(player==trigger.source){
-						player.storage.nzry_junlve+=trigger.num;
-						game.log(player,'获得了',trigger.num,'个“军略”标记');
-					}
-					if(player==trigger.player){
-						player.storage.nzry_junlve+=trigger.num;
-						game.log(player,'获得了',trigger.num,'个“军略”标记');
-					}
+					player.storage.nzry_junlve+=trigger.num;
+					game.log(player,'获得了',trigger.num,'个“军略”标记');
 					player.syncStorage('nzry_junlve');
 				},
 			},
@@ -2108,6 +2100,7 @@ game.import('character',function(lib,game,ui,get,ai,_status){
 				unique:true,
 				mark:true,
 				skillAnimation:true,
+				animationColor:'metal',
 				enable:'phaseUse',
 				filter:function (event,player){
 					return !player.storage.nzry_dinghuo&&player.storage.nzry_junlve>0;
@@ -2162,7 +2155,7 @@ game.import('character',function(lib,game,ui,get,ai,_status){
 					player.storage.drlt_duorui=[];
 				},
 				trigger:{
-					source:'damageAfter'
+					source:'damageSource'
 				},
 				filter:function(event,player){
 				if(player.storage.drlt_duorui.length) return false;
@@ -2334,8 +2327,8 @@ game.import('character',function(lib,game,ui,get,ai,_status){
 				enable:'phaseUse',
 				usable:1,
 				filterTarget:function(card,player,target){
-					//return target!=player&&target.countCards('h')>0;
-					return target!=player;
+					return target!=player&&target.countCards('h')>0;
+					//return target!=player;
 				},
 				content:function(){
 					'step 0'
@@ -2449,6 +2442,7 @@ game.import('character',function(lib,game,ui,get,ai,_status){
 				content:function(){
 					trigger.num++;
 				},
+				ai:{nokeep:true},
 			},
 			'drlt_jieying':{
 				audio:2,

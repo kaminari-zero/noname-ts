@@ -5,6 +5,7 @@ game.import('card',function(lib,game,ui,get,ai,_status){
 		connect:true,
 		card:{
 			liulongcanjia:{
+				audio:true,
 				mode:['guozhan'],
 				fullskin:true,
 				type:'equip',
@@ -36,6 +37,7 @@ game.import('card',function(lib,game,ui,get,ai,_status){
 				},
 			},
 			minguangkai:{
+				audio:true,
 				mode:['guozhan'],
 				fullskin:true,
 				type:'equip',
@@ -49,6 +51,7 @@ game.import('card',function(lib,game,ui,get,ai,_status){
 				}
 			},
 			dinglanyemingzhu:{
+				audio:true,
 				mode:['guozhan'],
 				fullskin:true,
 				type:'equip',
@@ -75,6 +78,7 @@ game.import('card',function(lib,game,ui,get,ai,_status){
 				}
 			},
 			feilongduofeng:{
+				audio:true,
 				mode:['guozhan'],
 				fullskin:true,
 				type:'equip',
@@ -101,6 +105,7 @@ game.import('card',function(lib,game,ui,get,ai,_status){
 				}
 			},
 			taipingyaoshu:{
+				audio:true,
 				mode:['guozhan'],
 				fullskin:true,
 				type:'equip',
@@ -132,6 +137,7 @@ game.import('card',function(lib,game,ui,get,ai,_status){
 				}
 			},
 			yuxi:{
+				audio:true,
 				mode:['guozhan'],
 				fullskin:true,
 				type:'equip',
@@ -142,6 +148,7 @@ game.import('card',function(lib,game,ui,get,ai,_status){
 				}
 			},
 			xietianzi:{
+				audio:true,
 				fullskin:true,
 				type:'trick',
 				enable:function(card,player,event){
@@ -149,8 +156,8 @@ game.import('card',function(lib,game,ui,get,ai,_status){
 					if(player.hasSkill('xietianzi')) return false;
 					if(_status.currentPhase!=player) return false;
 					var evt=event||_status.event;
-					var evt2=evt.getParent('chooseToUse');
-					return evt.type=='phase'||evt2.type=='phase';
+					if(evt.name!='chooseToUse') evt=evt.getParent('chooseToUse');
+					return evt.type=='phase';
 				},
 				filterTarget:function(card,player,target){
 					return player==target;
@@ -177,6 +184,7 @@ game.import('card',function(lib,game,ui,get,ai,_status){
 				}
 			},
 			shuiyanqijunx:{
+				audio:'shuiyanqijun',
 				fullskin:true,
 				type:'trick',
 				filterTarget:function(card,player,target){
@@ -227,6 +235,7 @@ game.import('card',function(lib,game,ui,get,ai,_status){
 			},
 			lulitongxin:{
 				fullskin:true,
+				audio:true,
 				type:'trick',
 				enable:function(card,player){
 					return game.hasPlayer(function(current){
@@ -275,6 +284,7 @@ game.import('card',function(lib,game,ui,get,ai,_status){
 			},
 			lianjunshengyan:{
 				fullskin:true,
+				audio:true,
 				type:'trick',
 				enable:function(card,player){
 					if(get.mode()=='guozhan') return !player.isUnseen();
@@ -304,6 +314,7 @@ game.import('card',function(lib,game,ui,get,ai,_status){
 						var evt=event.getParent();
 						if(evt&&evt.targets&&evt.targets.contains(player)){
 							evt.fixedSeat=true;
+							evt.targets.sortBySeat();
 							evt.targets.remove(player);
 							evt.targets.push(player);
 						}
@@ -363,9 +374,15 @@ game.import('card',function(lib,game,ui,get,ai,_status){
 			},
 			chiling:{
 				fullskin:true,
+				audio:true,
 				type:'trick',
-				enable:true,
+				enable:function(){
+					return game.hasPlayer(function(current){
+						return current.isUnseen();
+					});
+				},
 				mode:['guozhan'],
+				global:['g_chiling1','g_chiling2','g_chiling3'],
 				filterTarget:function(card,player,target){
 					return target.isUnseen();
 				},
@@ -434,6 +451,7 @@ game.import('card',function(lib,game,ui,get,ai,_status){
 			},
 			diaohulishan:{
 				fullskin:true,
+				audio:true,
 				type:'trick',
 				enable:true,
 				global:'g_diaohulishan',
@@ -482,6 +500,7 @@ game.import('card',function(lib,game,ui,get,ai,_status){
 			},
 			huoshaolianying:{
 				fullskin:true,
+				audio:true,
 				type:'trick',
 				filterTarget:function(card,player,target){
 					if(get.mode()=='guozhan'){
@@ -745,9 +764,8 @@ game.import('card',function(lib,game,ui,get,ai,_status){
 				},
 			},
 			minguangkai_cancel:{
-				trigger:{target:'useCardToBefore'},
+				trigger:{target:'useCardToTarget'},
 				forced:true,
-				priority:15,
 				check:function(event,player){
 					return get.effect(event.target,event.card,event.player,player)<0;
 				},
@@ -757,7 +775,7 @@ game.import('card',function(lib,game,ui,get,ai,_status){
 					return false;
 				},
 				content:function(){
-					trigger.cancel();
+					trigger.getParent().targets.remove(player);
 				},
 				ai:{
 					effect:{
@@ -846,14 +864,13 @@ game.import('card',function(lib,game,ui,get,ai,_status){
 				}
 			},
 			feilongduofeng:{
-				trigger:{player:'shaBegin'},
-				priority:7,
+				trigger:{player:'useCardToPlayered'},
 				logTarget:'target',
 				check:function(event,player){
 					return get.attitude(player,event.target)<=0;
 				},
 				filter:function(event,player){
-					return event.target.countCards('he');
+					return event.card.name=='sha'&&event.target.countCards('he');
 				},
 				content:function(){
 					trigger.target.chooseToDiscard('he',true);
@@ -1065,17 +1082,7 @@ game.import('card',function(lib,game,ui,get,ai,_status){
 					});
 				},
 				content:function(){
-					'step 0'
-					player.chooseTarget('玉玺：选择知己知彼的目标',function(card,player,target){
-						return player.canUse({name:'zhibi'},target);
-					},true).set('ai',function(target){
-						var player=_status.event.player;
-						return get.effect(target,{name:'zhibi'},player,player);
-					});
-					'step 1'
-					if(result.bool){
-						player.useCard({name:'zhibi'},result.targets);
-					}
+					player.chooseUseTarget('玉玺：选择知己知彼的目标',{name:'zhibi'});
 				}
 			},
 			xietianzi:{
@@ -1099,7 +1106,7 @@ game.import('card',function(lib,game,ui,get,ai,_status){
 					}
 				},
 			},
-			_chiling1:{
+			g_chiling1:{
 				mode:['guozhan'],
 				trigger:{player:'discardAfter'},
 				filter:function(event,player){
@@ -1128,7 +1135,7 @@ game.import('card',function(lib,game,ui,get,ai,_status){
 					}
 				},
 			},
-			_chiling2:{
+			g_chiling2:{
 				mode:['guozhan'],
 				trigger:{player:'judgeAfter'},
 				forced:true,
@@ -1143,7 +1150,7 @@ game.import('card',function(lib,game,ui,get,ai,_status){
 					player.popup('敕令');
 				}
 			},
-			_chiling3:{
+			g_chiling3:{
 				mode:['guozhan'],
 				trigger:{player:'phaseAfter'},
 				forced:true,
