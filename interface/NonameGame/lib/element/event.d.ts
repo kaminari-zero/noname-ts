@@ -40,6 +40,7 @@ declare namespace Lib.element {
          */
         getLogv(): string;
 
+        /** 【联机】发送当前事件处理中的技能的信息 */
         send(): void;
 
         /**
@@ -66,15 +67,17 @@ declare namespace Lib.element {
          */
         getRand(): number;
 
-        insert(func: any, map: any): any;
-        insertAfter(func: any, map: any): any;
+        /** 创建一个当前事件的途中的插入事件（意义貌似不是很大） */
+        insert(func: string|ContentFunc, map: SMap<any>): Event;
+        /** 创建一个当前事件的after队列的事件，将其添加到当前事件的after队列 */
+        insertAfter(func: string | ContentFunc, map: SMap<any>): Event;
 
         /**
-         * 备份该事件的信息到_backup。
+         * 备份该事件的skill信息到_backup。
          * 注：删除已选择对象。
          * @param skill 
          */
-        backup(skill: any): void;
+        backup(skill: string): void;
         /**
          * 回复备份数据_backup。
          */
@@ -112,6 +115,7 @@ declare namespace Lib.element {
          * @param player 
          */
         untrigger(all: any, player: any): void;
+
     }
 
     //event的属性，不过大部分都是动态获取的
@@ -163,6 +167,10 @@ declare namespace Lib.element {
         /** 记录一个number类型的数字，每个事件代表都不一样 */
         num:number;
 
+
+        /** 是否强制结束出牌阶段，同时也可以让result.bool为false跳过 */
+        skipped:boolean;
+
         custom:{
             add:any,
 			replace:any
@@ -188,5 +196,11 @@ declare namespace Lib.element {
         _cardChoice:Card[];
         _targetChoice:Player[];
         _skillChoice:string[];
+    }
+
+    /** event._result */
+    export interface ReslutData {
+        /** 一般用来标记当前事件是否按预定执行的，即执行成功 */
+        bool:boolean;
     }
 }

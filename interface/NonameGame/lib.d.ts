@@ -236,6 +236,10 @@ interface Lib {
         dualside: ExSkillData;
         _disableJudge: ExSkillData;
         _disableEquip: ExSkillData;
+        /**
+         * 特殊技能：封印技能
+         * 使指定技能“失效”（即玩家失去了某些技能，可在标记上查看）
+         */
         fengyin: ExSkillData;
         baiban: ExSkillData;
         qianxing: ExSkillData;
@@ -264,6 +268,11 @@ interface Lib {
          */
         _save: ExSkillData;
         _ismin: ExSkillData;
+        /**
+         * 特殊技能：重铸
+         * 触发阶段：phaseUse（出牌阶段中）
+         * 可以触发当前自己所拥有的牌是否可以“重铸”
+         */
         _chongzhu: ExSkillData;
         _lianhuan: ExSkillData;
         _lianhuan2: ExSkillData;

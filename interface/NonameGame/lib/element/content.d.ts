@@ -8,6 +8,10 @@ declare namespace Lib.element {
      * 注：当前游戏内自定义的content，大部分
      */
     interface Content {
+        /**
+         * 无处理方法，直接触发事件名
+         */
+        emptyEvent():void
         chooseToDuiben(): any;
         chooseToPSS(): any;
         cardsDiscard(): any;

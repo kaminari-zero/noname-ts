@@ -401,7 +401,7 @@ interface Get {
      * 获取当前可选择的目标数，范围。
      * 若没有默认返回[1,1]
      * @param select 
-     * @return [number,number] 数组第一个目标数（可选目标数），数组第二个值为进攻范围，若为-1，则无距离限制
+     * @return [number,number] 数组第一个目标数（可选目标数），数组第二个值为进攻范围，若为-1，则无距离限制（还不确定，目前来看，好像就是0，1指定范围区间）
      */
     select(select:number|Select|NoneParmFum<number|Select>):Select;
     /**

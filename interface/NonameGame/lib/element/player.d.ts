@@ -856,6 +856,8 @@ declare namespace Lib.element {
         addEquipTrigger(card?: Card): Player;
         /**
          * 移除装备卡牌的触发
+         * 
+         * 注：一般只有装备牌在失去时有效果处理，所以默认处理装备牌，但是也可以处理一些其他失去时有效果的卡牌。
          * @param card 指定一张卡牌，若不指定则默认装备区的所有卡牌
          */
         removeEquipTrigger(card?: Card): Player;
@@ -1268,9 +1270,22 @@ declare namespace Lib.element {
         avatar: string;
         version: string;
 
+        /** 扩展名，不知时哪里赋值的，在addCharacter中使用，默认_status.extension */
+        extension:string;
+
         //player.out
         outCount:number;
         outSkills:string[];
+
+        /**
+         * 记录当前事件中得玩家使用中的卡牌
+         * 
+         * 在useCard中赋值；
+         * 在useCard最终步骤（即将准备结束useCard事件），
+         * phase（回合阶段即将结束），
+         * phaseUse（每次出牌阶段使用完一次卡牌后）
+         */
+        using:Card[];
 
         /** 信息显示html节点 */
         node:{
