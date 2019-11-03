@@ -45,11 +45,11 @@ interface Lib {
     cardPack: SMap<string[]>;
 
     /** 在updatex中，执行一些列onresize重新调整UI大小 */
-    onresize: NoParamFun<void>[];
+    onresize: NoneParmFum<void>[];
     /** 在“phaseLoop”事件执行该一系列onphase事件 */
-    onphase: NoParamFun<void>[];
+    onphase: NoneParmFum<void>[];
     /** 保存多个洗牌方法进行洗牌 */
-    onwash: NoParamFun<string>[];
+    onwash: NoneParmFum<string>[];
     /** gameover后执行的一些列结束方法 */
     onover: OneParmFun<string,void>[];
 
@@ -60,7 +60,7 @@ interface Lib {
     /** 聊天历史 */
     chatHistory: [string,string][];
     /** 主要在lib.init记录场景加载的系列方法，在ui.arena中取出执行 */
-    arenaReady: NoParamFun<void>[];
+    arenaReady: NoneParmFum<void>[];
     /** 保存一些UI处理的方法，在合适时机取出来执行 */
     onfree: Function[];
     /** 在牌堆里牌(指不区分数字，花色，伤害属性的牌) */
@@ -242,7 +242,15 @@ interface Lib {
          */
         fengyin: ExSkillData;
         baiban: ExSkillData;
+        /**
+         * 特殊技能：潜行
+         * 常用于：锁定技，你不能成为其他角色的卡牌的目标
+         */
         qianxing: ExSkillData;
+        /**
+         * 特殊技能：免疫
+         * 常用于：锁定技，防止一切伤害
+         */
         mianyi: ExSkillData;
         /**
          * 特殊技能：混乱

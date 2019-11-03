@@ -184,7 +184,7 @@ interface LocalGameConfigMenuData {
     },
     /** 显示 */
     view: {
-        name: '显示',
+        name: string,
         config: {
             /** 出牌记录栏 */
             show_history: SelectConfigData,
@@ -504,7 +504,7 @@ interface LocalModeMenuData {
     },
     /** 对决(分为两份对战) */
     versus: {
-        name: '对决',
+        name: string,
         connect: {
             update(config: any, map: any): any;
             /** 游戏模式 */
@@ -580,7 +580,7 @@ interface LocalModeMenuData {
     },
     /** 挑战 */
     boss: {
-        name: '挑战',
+        name: string,
         config: {
             /** 自由选将 */
             free_choose: SelectConfigData,

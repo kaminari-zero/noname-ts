@@ -5599,7 +5599,7 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 					}
 					'step 1'
 					if(result.bool){
-						player.chooseUseTarget(result.links[0][2],true,false);
+						player.chooseUseTarget(result.links[0][2]);
 					}
 				},
 				ai:{

@@ -11,39 +11,112 @@ interface NMap<V> {
     [key: number]: V
 }
 
-/** 菜单的选项的配置 */
+/** 
+ * 菜单的选项的配置 
+ * 
+ * config的功能菜单的node._link.config，就是该config
+ * 内部代码略复杂，太多UI相关逻辑，看不懂（等日后精进，再继续再战）
+ */
 interface SelectConfigData {
     /** 功能名 */
-    name: string,
-    /** 初始化时默认的选项/配置/模式 */
-    init: boolean | string,
-    /** 功能说明 */
-    intro: string,
+    name: string;
+    /** 
+     * 【核心】初始化时默认的选项/配置/模式（对应下面item的key）
+     */
+    init: boolean | string;
+    /** 
+     * 【核心】二级菜单配置(当前config内容的菜单)
+     */
+    item?: SMap<string> | NoneParmFum<SMap<string>>;
+    /** 
+     * 功能说明
+     * 
+     * 若没有，也不是其他特殊的选项，则显示“设置+name”
+     */
+    intro: string|NoneParmFum<string>;
 
-    restart?: boolean,
-    frequent?: boolean,
-    unfrequent?: boolean,
-    /** 清理游戏，核心选项，应该默认是false，具体到时看代码 */
-    clear?: boolean,
-
+    /**
+     * 显示bar(添加了“withbar”,有一定的居中效果，即当前menu的头部或者尾部)
+     * 
+     * @param node 创建出来的visualBar节点
+     * @param item item选项
+     * @param create 即内部自定义的createNode方法，一般不直接使用该方法，目前来看，可以内部重新定义覆盖该方法，自己达成创建item列表的方式
+     * @param switcher 当前config的item的node节点
+     */
+    visualBar?: (node: HTMLDivElement, item: SMap<string>, create: OneParmFun<string, void>, switcher?: HTMLDivElement) => void
+    /**
+     * 显示菜单
+     * 显示一个以3列为一行的显示列表（内部实现）
+     * @param node 当前配置项的节点
+     * @param item 当前node的node._link
+     * @param name item选项
+     * @param config 当前的config
+     */
+    visualMenu?: (node: HTMLDivElement, link: any, name: string, config: SelectConfigData) => void;
+    /**
+     * 文本菜单
+     * 当前不存在visualMenu的话，则创建item列表节点，若有该属性则执行
+     * @param node 
+     * @param link 
+     */
+    textMenu?(node: HTMLDivElement, link: string,config:SelectConfigData):void;
+   
+    /** 
+     * 清理游戏，核心选项，应该默认是false(undefined)<--该功能不知是否存在
+     * 
+     * 若没有nopointer配置（false/undefined）,则设置“pointerspan”
+     * 
+     * 通“click”,即当前整个node都可以点击<--这个应该才是真实的功能
+     */
+    clear?: boolean;
     /** 指定该项没有功能，仅展示，项目内多用于描述上 */
-    nopointer?: boolean,
-    input?: boolean,
+    nopointer?: boolean;
+    /** 
+     * 点击触发事件
+     * 
+     * 若有返回值false，则当前点击事件的toggle切换无懈
+     */
+    onclick?(item:any):void | boolean;
+    onclick?(link:any,node:HTMLDivElement):void | boolean;
 
-    /** 二级菜单配置 */
-    item?: SMap<string>,
+    /** 当前没有onclick方法时，除了默认game.saveConfig保存数据配置key的数据，可以使用该方法进行数据处理啊 */
+    onsave?(reslut:any):void;
+    
+    /**
+     * 输入框
+     * 
+     * 其输入框的默认值是当前的init属性
+     */
+    input?: boolean;
+    /** 取值true，若没有设置可以进行input输入 */
+    fixed?:boolean;
+    /** 设置input节点的onblur事件的回调（焦点离开输出框） */
+    onblur?():void;
 
-    visualBar?: (node: any, item: any, create: any, switcher?: any) => void
-    visualMenu?: (node: any, link: any, name?: any, config?: any) => void
+    /**
+     * 用于扩展菜单lib.extensionMenu中(目前未见使用)
+     */
+    onswitch?(bool: boolean): void;
+    
+    /** 核心，更新方法 */
+    update?(config: SMap<any>, map: SMap<HTMLDivElement>): any;
+    
+    /**
+     * 在玩法模式选择中： 
+     *  是否需要“重启”游戏，若为true，则“启”按钮会高亮（添加“glowing”）
+     * 在选项中：
+     *  每次改变该选项，都会重置当前的ui选项（增加，减少一些功能项） 
+     */
+    restart?: boolean|NoneParmFum<boolean>;
+    /** 应该与unfrequent功能时一致的，相反判断，直接显示出来的功能项 */
+    frequent?: boolean,
+    /** 加入更多中（随着下拉出现），用得较多 */
+    unfrequent?: boolean;
+    /** 不明，用得很少 */
+    content?(bool: boolean):void;
 
-    content?: (bool: any) => void
-
-    textMenu?: (node: any, link: any) => void
-
-    onswitch?: (bool: any) => void
-
-    /** 点击触发事件（好像是有返回值的） */
-    onclick?: (...args: any[]) => void | boolean
+    /** 内部属性，记录当前配置的key */
+    _name?: string;
 }
 
 /** 通常菜单的标准配置 */
@@ -184,7 +257,11 @@ interface ExSkillData {
      * 触发计数，会在玩家身上添加“counttrigger”技能，计数记录在：player.storage.counttrigger[当前技能名]
      */
     usable?: number;
-    /** 暂时不明，应该和card的该属性是一样意思，估计是死亡后是否强制发动的技能 */
+    /** 
+     * 暂时不明，应该和card的该属性是一样意思，估计是死亡后是否强制发动的技能
+     * （马里奥大佬的解释：forceDie是重中之重 没有它的话 技能是不会在死后发动的）
+     * 基本确定这是死亡后会发动的技能标记
+     */
     forceDie?:boolean;
     /** 
      * 是否触发可以弹出选择技能的发动
@@ -353,7 +430,7 @@ interface ExSkillData {
          * 当标记显示内容是文本时，
          * 例：标记显示内容为当前有多少个标记
          */
-        content: string | IntroContentFun;
+        content: string | ThreeParmFun<SMap<any>, Player, Skill,string>;
         markcount?: number | TwoParmFun<any, Player, number>;
         /** 是否不启用技能标记计数 */
         nocount?: boolean;
@@ -373,9 +450,9 @@ interface ExSkillData {
     skillAnimation?: boolean|string;
     /** 是否只显示文字特效 */
     textAnimation?:boolean;
-    /** 觉醒文字 */
+    /** 动画文字(可用于觉醒文字) */
     animationStr?: string;
-    /** 觉醒文字颜色 */
+    /** 动画文字颜色(觉醒文字颜色) */
     animationColor?: string;
     /** 标记显示文本，一般为一个字 */
     marktext?: string;
@@ -632,6 +709,8 @@ interface ExSkillData {
     log?: string;
     /**
      * player是否logSkill('此技能').
+     * 
+     * 注：logSkill 则是在玩家确定要使用卡牌的情况下 弹出发动的技能（马里奥大佬的解释，到时看下）
      * true为不
      */
     nopop?: boolean;
@@ -946,6 +1025,12 @@ interface ExModData {
     wuxieEnabled?(card: Card, player: Player, target: Target, current: Current):boolean;
     /** 是否能响应无懈 */
     wuxieRespondable?(card: Card, player: Player, target: Target, current: Current):boolean;
+
+    //94版本
+    /** 改变卡牌名字  用于get.name*/
+    cardname?(card:Card, player:Player):string;
+    /** 改变卡牌伤害属性   用于get.nature*/
+    cardnature?(card:Card, player:Player):string;
 }
 
 /** 选择按钮配置 */
@@ -983,7 +1068,7 @@ interface ChooseButtonConfigData {
 }
 
 /**
- * 武将包的配置信息
+ * 武将包的配置信息（import:character）
  */
 interface CharacterConfigData extends ExCommonConfig {
     /** 该武将包是否可以联机 */
@@ -1026,7 +1111,7 @@ interface CharacterConfigData extends ExCommonConfig {
 type HeroData = [string,string,number,string[],string[]];
 
 /**
- * 卡包配置信息
+ * 卡包配置信息（import:card）
  */
 interface CardHolderConfigData extends ExCommonConfig {
     /** 该卡包是否可以联机 */
@@ -1287,7 +1372,10 @@ interface ExCardData {
 
     /** 只可在以下指定mode使用（不指定应该是都可用） */
     mode?: string[];
-
+    /** 禁止列表，但是貌似没用上 */
+    forbid?: string[];
+    /** 隐藏该卡牌，是否添加到lib.CardPack中 */
+    hidden?:boolean;
 
     /**
      * 卡牌所拥有的技能列表。
@@ -1424,8 +1512,6 @@ interface ExCardData {
     derivationpack?: string;
 
 
-    /** 禁止列表，但是貌似没用上 */
-    forbid?:string[];
     //似乎没有用上，不知有什么用
     source?:string|string[];
 
@@ -1434,15 +1520,32 @@ interface ExCardData {
 }
 
 /**
- * 标记显示内容为文本时的返回字符串方法
+ * 玩家相关扩展（import:player）
+ * 不过实际上用得少，都是直接在mode中，或者在extension
  */
-type IntroContentFun = (storage,player,skill) => string;
+interface PlayerConfigData extends ExCommonConfig {
+    /** 禁用此扩展的模式 */
+    forbid:string[];
+    /** 可使用模式 */
+    mode:string[];
+
+    //自定义是实现核心初始化方法
+    init?():void;
+    arenaReady?(): void;
+
+    /** 以下都是执行覆盖或者新增某些方法 */
+    element?:SMap<any>;
+    ui?: SMap<any>;
+    game?: SMap<any>;
+    get?: SMap<any>;
+
+}
 
 /** 扩展回调方法 */
 type ExtensionFunc = (lib: Lib, game: Game, ui: UI, get: Get, ai: AI, _status: Status) => ExtensionInfoConfigData;
 
 /**
- * extentsion扩展的配置
+ * extentsion扩展的配置（import:extentsion）
  * game.import的回调返回值结构
  */
 interface ExtensionInfoConfigData extends ExCommonConfig {
@@ -1494,7 +1597,7 @@ interface ExtensionInfoConfigData extends ExCommonConfig {
 }
 
 /**
- * 玩法模式的扩展配置
+ * 玩法模式的扩展配置(import:mode)
  * game.import,type为mode的主要返回结构
  * 
  * 若想扩展一些项目内没有的对象，最好采用以下两种结构加入：
@@ -1503,28 +1606,6 @@ interface ExtensionInfoConfigData extends ExCommonConfig {
  * 要扩充方法，通过对象结构，都会以lib[新对象结构的key]={对象结构}的方式保存在本地。
  */
 interface ExModeConfigData extends ExCommonConfig {
-    /**
-     * 对应lib.element,
-     * 若里面是项目内的同名字段，将覆盖原方法
-     */
-    element:any,
-    /**
-     * 对应ai
-     */
-    ai:any,
-    /**
-     * 对应ui
-     */
-    ui:any,
-    /**
-     * 对应game
-     */
-    game:any,
-    /**
-     * 对应get
-     */
-    get:any,
-
     /** 技能（主要是放些该模式下特有的技能） */
     skill?:SMap<ExSkillData>;
     /** 
@@ -1568,6 +1649,28 @@ interface ExModeConfigData extends ExCommonConfig {
      */
     onreinit?():void;
 
+    /**
+     * 对应lib.element,
+     * 若里面是项目内的同名字段，将覆盖原方法
+     */
+    element?: SMap<any>;
+    /**
+     * 对应ai
+     */
+    ai?: SMap<any>;
+    /**
+     * 对应ui
+     */
+    ui?: SMap<any>;
+    /**
+     * 对应game
+     */
+    game?: SMap<any>;
+    /**
+     * 对应get
+     */
+    get?: SMap<any>;
+
     /** 
      * 可以继续加入更多对象：
      * 这些对象会对应附加在lib中，或替换对应lib位置的对象：
@@ -1607,6 +1710,9 @@ interface ExCommonConfig {
      * (目前可显示帮助信息：mode，extension，card卡包，character武将包)
      */
     help?:SMap<string>;
+
+    /** 其余的全部保存到lib中，若有则覆盖，若没有则添加 */
+    [key: string]: any;
 }
 
 /** 
@@ -1796,3 +1902,7 @@ type Links = any[];
  * 下标1：选中的数量。-1为所有
  */
 type Select = [number,number];
+/**
+ * div的左距离坐标，右距离坐标
+ */
+type DivPosition = [number,number,number,number];

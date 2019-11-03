@@ -22,7 +22,12 @@ declare namespace UI {
         roomInfo(): any;
         templayer(time): any;
         selectlist(list, init, position, onchange): any;
-        menu(connectMenu): any;
+        /**
+         * 【核心】创建游戏菜单
+         * （内部过于复杂，似乎时8000多行代码的一个方法，暂时UI方面看不懂）
+         * @param connectMenu 
+         */
+        menu(connectMenu:SelectConfigData): void;
         table(): any;
         giveup(): any;
         groupControl(dialog): any;

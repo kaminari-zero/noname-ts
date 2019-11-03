@@ -362,11 +362,18 @@ interface Get {
      */
     number(card:Card):number;
     /**
+     * 获取卡牌的名字
+     * @param card 
+     * @param mod 若不为false，则使用“cardname”mod检测；若为false（取值必须为false），则直接返回名字
+     */
+    name(card: Card, mod?: boolean): string;
+    /**
      * 获取卡牌的nature（伤害属性）
      * nature：fire火，thunder雷，poison毒
      * @param card 
+     * @param mod 若不为false，则使用“cardnature”mod检测；若为false（取值必须为false），则直接返回伤害属性
      */
-    nature(card:Card):string;
+    nature(card:Card,mod?:boolean):string;
     /**
      * 获取（牌堆顶的）牌
      * @param num 
@@ -569,17 +576,17 @@ interface Get {
      * @param name 获取卡牌的名字，获取判定卡牌的方法
      * @param create 指定获取卡牌的地方：'cardPile'抽卡区,'discardPile'弃卡区,'field'玩家场地（玩家的装备，判定牌区），若都不是，则创建一张该名字的卡牌
      */
-    cardPile(name:string|CardFun<boolean>,create:string):Card;
+    cardPile(name: string | OneParmFun<Card, boolean>,create:string):Card;
     /**
      * 获取抽卡区里指定名字的卡牌（一张）
      * @param name 获取卡牌的名字，获取判定卡牌的方法
      */
-    cardPile2(name: string | CardFun<boolean>): Card;
+    cardPile2(name: string | OneParmFun<Card,boolean>): Card;
     /**
      * 获取弃卡去里指定名字的卡牌（一张）
      * @param name 获取卡牌的名字，获取判定卡牌的方法
      */
-    discardPile(name: string | CardFun<boolean>): Card;
+    discardPile(name: string | OneParmFun<Card, boolean>): Card;
 
 
     /** 获取ai的态度 */

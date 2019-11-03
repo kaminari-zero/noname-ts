@@ -9818,8 +9818,8 @@
 					target.discard(todis2);
 					"step 1"
 					event.cards=[player.getCards('e'),target.getCards('e')];
-					player.lose(event.cards[0],ui.special);
-					target.lose(event.cards[1],ui.special);
+					player.lose(event.cards[0],ui.special,'visible');
+					target.lose(event.cards[1],ui.special,'visible');
 					if(event.cards[0].length) player.$give(event.cards[0],target);
 					if(event.cards[1].length) target.$give(event.cards[1],player);
 					"step 2"
@@ -10912,7 +10912,7 @@
 							event.redo();
 						}
 						else{
-							player.lose(event.card);
+							player.lose(event.card,'visible');
 							player.$phaseJudge(event.card);
 							event.cancelled=false;
 							event.trigger('phaseJudge');
@@ -13135,8 +13135,8 @@
 						event.finish();
 						return;
 					}
-					if(!get.info(card).noForceDie) event.forceDie=true;
-					var next=player.lose(cards).set('type','use');
+					if(!get.info(card,false).noForceDie) event.forceDie=true;
+					var next=player.lose(cards,'visible').set('type','use');
 					for(var i=0;i<cards.length;i++){
 						if(!next.cards.contains(cards[i])){
 							cards[i].discard();
@@ -13222,7 +13222,7 @@
 							if(event.addedTarget){
 								player.line2(targets.concat(event.addedTargets),config);
 							}
-							else if(get.info(card).multitarget&&targets.length>1&&!get.info(card).multiline){
+							else if(get.info(card,false).multitarget&&targets.length>1&&!get.info(card,false).multiline){
 								player.line2(targets,config);
 							}
 							else{
@@ -13319,7 +13319,94 @@
 						}
 					}
 					"step 3"
-					var info=get.info(card);
+					event.sortTarget=function(animate){
+						var info=get.info(card,false);
+						if(num==0&&targets.length>1){
+							if(!info.multitarget){
+								if(!event.fixedSeat){
+									targets.sortBySeat(player);
+								}
+								if(animate)	for(var i=0;i<targets.length;i++){
+									targets[i].animate('target');
+								}
+							}
+						else if(animate){
+								for(var i=0;i<targets.length;i++){
+									targets[i].animate('target');
+								}
+							}
+						}
+					}
+					event.sortTarget();
+					event.getTriggerTarget=function(list1,list2){
+						var listx=list1.slice(0).sortBySeat();
+						for(var i=0;i<listx.length;i++){
+							if(!list2.contains(listx[i])) return listx[i];
+						}
+						return null;
+					}
+					"step 4"
+					if(!event.triggeredTargets1) event.triggeredTargets1=[];
+					var target=event.getTriggerTarget(targets,event.triggeredTargets1);
+					if(target){
+						event.triggeredTargets1.push(target);
+						var next=game.createEvent('useCardToPlayer',false);
+						next.setContent('emptyEvent');
+						next.targets=targets;
+						next.target=target;
+						next.card=card;
+						next.cards=cards;
+						next.player=player;
+						if(event.forceDie) next.forceDie=true;
+						event.redo();
+					}
+					"step 5"
+					if(!event.triggeredTargets2) event.triggeredTargets2=[];
+					var target=event.getTriggerTarget(targets,event.triggeredTargets2);
+					if(target){
+						event.triggeredTargets2.push(target);
+						var next=game.createEvent('useCardToTarget',false);
+						next.setContent('emptyEvent');
+						next.targets=targets;
+						next.target=target;
+						next.card=card;
+						next.cards=cards;
+						next.player=player;
+						if(event.forceDie) next.forceDie=true;
+						event.redo();
+					}
+					"step 6"
+					if(!event.triggeredTargets3) event.triggeredTargets3=[];
+					var target=event.getTriggerTarget(targets,event.triggeredTargets3);
+					if(target){
+						event.triggeredTargets3.push(target);
+						var next=game.createEvent('useCardToPlayered',false);
+						next.setContent('emptyEvent');
+						next.targets=targets;
+						next.target=target;
+						next.card=card;
+						next.cards=cards;
+						next.player=player;
+						if(event.forceDie) next.forceDie=true;
+						event.redo();
+					}
+					"step 7"
+					if(!event.triggeredTargets4) event.triggeredTargets4=[];
+					var target=event.getTriggerTarget(targets,event.triggeredTargets4);
+					if(target){
+						event.triggeredTargets4.push(target);
+						var next=game.createEvent('useCardToTargeted',false);
+						next.setContent('emptyEvent');
+						next.targets=targets;
+						next.target=target;
+						next.card=card;
+						next.cards=cards;
+						next.player=player;
+						if(event.forceDie) next.forceDie=true;
+						event.redo();
+					}
+					"step 8"
+					var info=get.info(card,false);
 					if(info.contentBefore){
 						var next=game.createEvent(card.name+'ContentBefore');
 						next.setContent(info.contentBefore);
@@ -13340,97 +13427,11 @@
 						next.type='precard';
 						if(event.forceDie) next.forceDie=true;
 					}
-					"step 4"
-					event.sortTarget=function(animate){
-						var info=get.info(card);
-						if(num==0&&targets.length>1){
-							if(!info.multitarget){
-								if(!event.fixedSeat){
-									targets.sortBySeat(player);
-								}
-								if(animate)	for(var i=0;i<targets.length;i++){
-									targets[i].animate('target');
-								}
-							}
-						else if(animate){
-								for(var i=0;i<targets.length;i++){
-									targets[i].animate('target');
-								}
-							}
-						}
-					}
-					event.sortTarget();
-					event.getTriggerTarget=function(list1,list2){
-						for(var i=0;i<list1.length;i++){
-							if(!list2.contains(list1[i])) return list1[i];
-						}
-						return null;
-					}
-					"step 5"
-					if(!event.triggeredTargets1) event.triggeredTargets1=[];
-					var target=event.getTriggerTarget(targets,event.triggeredTargets1);
-					if(target){
-						event.triggeredTargets1.push(target);
-						var next=game.createEvent('useCardToPlayer',false);
-						next.setContent('emptyEvent');
-						next.targets=targets;
-						next.target=target;
-						next.card=card;
-						next.cards=cards;
-						next.player=player;
-						if(event.forceDie) next.forceDie=true;
-						event.redo();
-					}
-					"step 6"
-					if(!event.triggeredTargets2) event.triggeredTargets2=[];
-					var target=event.getTriggerTarget(targets,event.triggeredTargets2);
-					if(target){
-						event.triggeredTargets2.push(target);
-						var next=game.createEvent('useCardToTarget',false);
-						next.setContent('emptyEvent');
-						next.targets=targets;
-						next.target=target;
-						next.card=card;
-						next.cards=cards;
-						next.player=player;
-						if(event.forceDie) next.forceDie=true;
-						event.redo();
-					}
-					"step 7"
-					if(!event.triggeredTargets3) event.triggeredTargets3=[];
-					var target=event.getTriggerTarget(targets,event.triggeredTargets3);
-					if(target){
-						event.triggeredTargets3.push(target);
-						var next=game.createEvent('useCardToPlayered',false);
-						next.setContent('emptyEvent');
-						next.targets=targets;
-						next.target=target;
-						next.card=card;
-						next.cards=cards;
-						next.player=player;
-						if(event.forceDie) next.forceDie=true;
-						event.redo();
-					}
-					"step 8"
-					if(!event.triggeredTargets4) event.triggeredTargets4=[];
-					var target=event.getTriggerTarget(targets,event.triggeredTargets4);
-					if(target){
-						event.triggeredTargets4.push(target);
-						var next=game.createEvent('useCardToTargeted',false);
-						next.setContent('emptyEvent');
-						next.targets=targets;
-						next.target=target;
-						next.card=card;
-						next.cards=cards;
-						next.player=player;
-						if(event.forceDie) next.forceDie=true;
-						event.redo();
-					}
 					"step 9"
 					if(num==0&&targets.length>1){
 						event.sortTarget(true);
 					}
-					var info=get.info(card);
+					var info=get.info(card,false);
 					if(targets[num]&&targets[num].isDead()) return;
 					if(targets[num]&&targets[num].isOut()) return;
 					if(targets[num]&&targets[num].removed) return;
@@ -13485,14 +13486,14 @@
 						}
 					}
 					"step 10"
-					if(!get.info(event.card).multitarget&&num<targets.length-1&&!event.cancelled){
+					if(!get.info(event.card,false).multitarget&&num<targets.length-1&&!event.cancelled){
 						event.num++;
 						event.goto(9);
 					}
 					"step 11"
-					if(get.info(card).contentAfter){
+					if(get.info(card,false).contentAfter){
 						var next=game.createEvent(card.name+'ContentAfter');
-						next.setContent(get.info(card).contentAfter);
+						next.setContent(get.info(card,false).contentAfter);
 						next.targets=targets;
 						next.card=card;
 						next.cards=cards;
@@ -13534,14 +13535,15 @@
 					else{
 						if(info.lose!=false){
 							if(info.losetrigger==false){
-								player.lose(cards,ui.special)._triggered=null;
+								var losecard=player.lose(cards,ui.special)._triggered=null;
 							}
 							else{
-								player.lose(cards,ui.special);
+								var losecard=player.lose(cards,ui.special);
 							}
 						}
 						if(!info.prepare&&info.viewAs){
 							player.$throw(cards);
+							losecard.visible=true;
 							if(lib.config.sync_speed&&cards[0]&&cards[0].clone){
 								var waitingForTransition=get.time();
 								event.waitingForTransition=waitingForTransition;
@@ -13625,9 +13627,9 @@
 					}
 					if(info.prepare){
 						switch(info.prepare){
-							case 'give':player.$give(cards,targets[0]);break;
+							case 'give':losecard.visible=true;player.$give(cards,targets[0]);break;
 							case 'give2':player.$give(cards.length,targets[0]);break;
-							case 'throw':player.$throw(cards);break;
+							case 'throw':losecard.visible=true;player.$throw(cards);break;
 							case 'throw2':player.$throw(cards.length);break;
 							default:info.prepare(cards,player,targets);
 						}
@@ -13798,7 +13800,7 @@
 				discard:function(){
 					"step 0"
 					game.log(player,'弃置了',cards);
-					player.lose(cards,event.position);
+					player.lose(cards,event.position,'visible');
 					if(event.animate!=false){
 						event.discardid=lib.status.videoId++;
 						game.broadcastAll(function(player,cards,id){
@@ -13889,7 +13891,8 @@
 						game.log(player,'打出了',card);
 					}
 					for(var i=0;i<cards.length;i++){
-						player.lose(cards[i]);
+						if(get.owner(cards[i])==player) player.lose(cards[i],'visible');
+						else cards[i].discard();
 						if(event.animate!=false) player.$throw(cards[i]);
 						if(event.highlight){
 							cards[i].clone.classList.add('thrownhighlight');
@@ -13991,7 +13994,8 @@
 					if(cards){
 						var owner=event.source||get.owner(cards[0]);
 						if(owner){
-							owner.lose(cards,ui.special).set('type','gain').set('forceDie',true);
+							var next=owner.lose(cards,ui.special).set('type','gain').set('forceDie',true);
+							if(event.animate=='give') next.visible=true;
 						}
 					}
 					else{
@@ -14612,7 +14616,7 @@
 					if(player.isDead()){
 						event.cards=player.getCards('hej');
 						if(event.cards.length){
-							player.lose(event.cards).forceDie=true;
+							player.lose(event.cards,'visible').forceDie=true;
 							player.$throw(event.cards,1000);
 							game.log(player,'弃置了',event.cards,event.logvid);
 						}
@@ -14681,7 +14685,7 @@
 				equip:function(){
 					"step 0"
 					var owner=get.owner(card)
-					if(owner) owner.lose(card,ui.special).set('type','equip');
+					if(owner) owner.lose(card,ui.special,'visible').set('type','equip');
 					"step 1"
 					if(event.cancelled){
 						event.finish();
@@ -14714,7 +14718,7 @@
 					"step 3"
 					var current=player.getCards('e',{subtype:get.subtype(card)});
 					if(current.length){
-						player.lose(current,false);
+						player.lose(current,false,'visible');
 						event.swapped=true;
 						event.redo();
 					}
@@ -14737,7 +14741,7 @@
 					game.addVideo('equip',player,get.cardInfo(card));
 					game.log(player,'装备了',card);
 					"step 5"
-					var info=get.info(card);
+					var info=get.info(card,false);
 					if(info.onEquip&&(!info.filterEquip||info.filterEquip(card,player))){
 						if(Array.isArray(info.onEquip)){
 							for(var i=0;i<info.onEquip.length;i++){
@@ -14765,7 +14769,7 @@
 					if(cards){
 						var owner=get.owner(cards[0]);
 						if(owner){
-							owner.lose(cards);
+							owner.lose(cards,'visible');
 						}
 					}
 					"step 1"
@@ -14874,6 +14878,7 @@
 					"step 1"
 					event.result={
 						card:player.judging[0],
+						name:player.judging[0].name,
 						number:get.number(player.judging[0]),
 						suit:get.suit(player.judging[0]),
 						color:get.color(player.judging[0]),
@@ -16146,7 +16151,7 @@
 					if(arg2){
 						if(typeof arg2=='string'){
 							for(i=0;i<cards.length;i++){
-								if(cards[i].name!=arg2){
+								if(get.name(cards[i])!=arg2){
 									cards.splice(i,1);i--;
 								}
 							}
@@ -16236,7 +16241,7 @@
 					if(arg3!==false){
 						for(i=0;i<this.node.equips.childElementCount;i++){
 							if(!this.node.equips.childNodes[i].classList.contains('removing')){
-								var equipskills=get.info(this.node.equips.childNodes[i]).skills;
+								var equipskills=get.info(this.node.equips.childNodes[i],false).skills;
 								if(equipskills){
 									es.addArray(equipskills);
 								}
@@ -17524,6 +17529,9 @@
 							if(arguments[i]=='noai'){
 								next.noai=true;
 							}
+							else if(arguments[i]=='nowuxie'){
+								next.nowuxie=true;
+							}
 							else{
 								next.skill=arguments[i];
 							}
@@ -17915,6 +17923,9 @@
 						}
 						else if(arguments[i]=='toStorage'){
 							next.toStorage=true;
+						}
+						else if(arguments[i]=='visible'){
+							next.visible=true;
 						}
 					}
 					if(next.cards){
@@ -22564,7 +22575,14 @@
 					if(!lib.hookmap[name]&&!lib.config.compatiblemode) return;
 					if(!game.players||!game.players.length) return;
 					var event=this;
-					var start=event.source||event.player||game.me||game.players[0];
+					var start=false;
+					var starts=[event.source,event.player,game.me,game.players[0]];
+					for(var i=0;i<starts.length;i++){
+						if(get.itemtype(starts[i])=='player'){
+							start=starts[i];break;
+						}
+					}
+					if(!start) return;
 					if(!game.players.contains(start)){
 						start=game.findNext(start);
 					}
@@ -31105,7 +31123,8 @@
 			var name=arguments[arguments.length-2];
 			var skills=arguments[arguments.length-1];
 			if(skills.getSkills){
-				skills=skills.getSkills();
+				if(name!='cardname') skills=skills.getSkills();
+				else skills=skills.getSkills(true,false);
 			}
 			skills=skills.concat(lib.skill.global);
 			game.expandSkills(skills);
@@ -45867,7 +45886,17 @@
 				}
 			}
 			else{
-				if(get.is.object(card)&&get.itemtype(cards)=='cards'&&!card.cards){
+				if(card.name!=get.name(card)){
+					var next={
+						name:get.name(card),
+						suit:card.suit,
+						number:card.number,
+						nature:get.nature(card),
+					};
+					if(get.itemtype(cards)=='cards'&&!card.cards) next.cards=cards.slice(0);
+					return next;
+				}
+				else if(get.is.object(card)&&get.itemtype(cards)=='cards'&&!card.cards){
 					card=get.copy(card);
 					card.cards=cards.slice(0);
 				}
@@ -46963,9 +46992,10 @@
 		type:function(obj,method){
 			if(typeof obj=='string') obj={name:obj};
 			if(typeof obj!='object') return;
-			if(!lib.card[obj.name]) return;
-			if(method=='trick'&&lib.card[obj.name].type=='delay') return 'trick';
-			return lib.card[obj.name].type;
+			var name=get.name(obj);
+			if(!lib.card[name]) return;
+			if(method=='trick'&&lib.card[name].type=='delay') return 'trick';
+			return lib.card[name].type;
 		},
 		type2:function(card){
 			return get.type(card,'trick');
@@ -46980,6 +47010,15 @@
 			var subtype=get.subtype(card);
 			if(subtype.indexOf('equip')==0) return parseInt(subtype[5]);
 			return 0;
+		},
+		name:function(card,mod){
+			if(mod!==false&&!['e','j'].contains(get.position(card))){
+				var owner=get.owner(card);
+				if(owner){
+					return game.checkMod(card,owner,card.name,'cardname',owner);
+				}
+			}
+			return card.name;
 		},
 		suit:function(card){
 			if(get.itemtype(card)=='cards'){
@@ -47020,7 +47059,13 @@
 		number:function(card){
 			return card.number;
 		},
-		nature:function(card){
+		nature:function(card,mod){
+			if(mod!==false&&!['e','j'].contains(get.position(card))){
+				var owner=get.owner(card);
+				if(owner){
+					return game.checkMod(card,owner,card.nature,'cardnature',owner);
+				}
+			}
 			return card.nature;
 		},
 		cards:function(num){
@@ -47159,12 +47204,14 @@
 			if(method=='attack') return m;
 			return n;
 		},
-		info:function(item){
+		info:function(item,mod){
 			if(typeof item=='string'){
 				return lib.skill[item];
 			}
 			if(typeof item=='object'){
-				return lib.card[item.name];
+				var name=item.name;
+				if(mod!==false) name=get.name(item);
+				return lib.card[name];
 			}
 		},
 		select:function(select){
@@ -47503,7 +47550,15 @@
 				for(var j in filter){
 					if(filter.hasOwnProperty(j)){
 						if(get.itemtype(arguments[i])=='card'){
-							if(j=='type'){
+							if(j=='name'){
+								if(typeof filter[j]=='object'){
+									if(filter[j].contains(get.name(arguments[i]))==false) return false;
+								}
+								else if(typeof filter[j]=='string'){
+									if(get.name(arguments[i])!=filter[j]) return false;
+								}
+							}
+							else if(j=='type'){
 								if(typeof filter[j]=='object'){
 									if(filter[j].contains(get.type(arguments[i]))==false) return false;
 								}

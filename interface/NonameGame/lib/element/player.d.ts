@@ -592,6 +592,8 @@ declare namespace Lib.element {
         dying(reason: any,...args): Event;
         /**
          * 死亡阶段
+         * 
+         * “die”时机（马里奥大佬的解释）：是死亡结算流程中明置身份牌之后 弃置区域内的牌和结算奖惩之前
          * @param reason 
          */
         die(reason: any,...args): Event;
