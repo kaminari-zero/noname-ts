@@ -11,7 +11,7 @@ declare namespace Lib.element {
          *  若为“div”类型，则将其添加进content中；
          *  若为“cards”类型，则添加生成卡牌列表按钮；
          *  若为“players”类型，则添加生成玩家武将列表按钮；
-         *  若不是以上类型，则是[button的item,button的type]数组，添加生成对应的按钮；
+         *  若不是以上类型，则是[button的item或者list,button的type]数组，添加生成对应的按钮；
          * @param item 添加的信息（有多种类型的信息）
          * @param noclick 是否可点击
          * @param zoom 是否是小型布局“smallzoom”的信息

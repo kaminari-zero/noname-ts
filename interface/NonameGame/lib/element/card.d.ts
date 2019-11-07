@@ -9,7 +9,7 @@ declare namespace Lib.element {
          * 初始化card
          * @param card 
          */
-        init(card: CardBaseUIData|CardBaseUIData2): Card;
+        init(card: CardBaseUIData | CardBaseData): Card;
         /**
          * 将当前card，添加到排除列表event._aiexclude中
          */

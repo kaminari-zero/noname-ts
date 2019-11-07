@@ -105,12 +105,12 @@ interface Game {
      * @param type 导入扩展的类型
      * @param content 导入扩展的内容
      */
-    import(type: string, content: ExtensionFunc):void;
+    import(type: string, content: ExtensionFunc|ExCommonConfig):void;
     /**
      * 【核心】读取扩展信息
      * @param obj 
      */
-    loadExtension(obj: ExtensionFunc):void;
+    loadExtension(obj: ExtensionFunc|ExtensionInfoConfigData):void;
     /**
      * 导入扩展：（25693-25900）
      * 若不存在window.JSZip，则先加载JSZip，加载完后再重新执行一遍game.importExtension。

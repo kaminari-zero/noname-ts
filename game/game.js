@@ -6907,6 +6907,11 @@
 						lib.init.js(lib.assetURL+'character',lib.config.all.characters,packLoaded,packLoaded);
 						lib.init.js(lib.assetURL+'character','rank',packLoaded,packLoaded);
 						// if(lib.device!='ios'&&lib.config.enable_pressure) lib.init.js(lib.assetURL+'game','pressure');
+						//最终还是选择改代码，增加自定义扩展简单导入
+						toLoad += window.loadSelfExtensionConfig.length;
+						for (var i = 0; i < window.loadSelfExtensionConfig.length;i++){
+							lib.init.js(lib.assetURL + "build/exsrc/" + window.loadSelfExtensionConfig[i], "extension", packLoaded, packLoaded);
+						}
 					};
 
 					var layout=lib.config.layout;

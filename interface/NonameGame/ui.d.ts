@@ -1,9 +1,9 @@
 declare var ui:UI;
 interface UI {
-    updates:[],
-    thrown:[],
-    touchlines:[],
-    todiscard:{},
+    updates:any[];
+    thrown: any[];
+    touchlines: any[];
+    todiscard:SMap<any>;
     refresh(node):any;
     create:UI.Create,
     click:UI.Click,

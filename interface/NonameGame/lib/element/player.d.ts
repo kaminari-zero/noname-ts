@@ -218,7 +218,7 @@ declare namespace Lib.element {
          * @param arg1 获取玩家身上牌的类型：h手牌，e装备牌，j判定牌，可以多个拼接
          * @param arg2 获取牌的详细过滤条件（若是字符串则是卡牌名，若是对象是个cardSimpInfo结构）
          */
-        getCards(arg1: string, arg2: string | Object |OneParmFun<Card,boolean>): Card[];
+        getCards(arg1: string, arg2?: string | Object |OneParmFun<Card,boolean>): Card[];
         /**
          * 获取指定玩家可以弃置的当前玩家的牌
          * 执行lib.filter.canBeDiscarded,通过“canBeDiscarded”mod检测
@@ -246,7 +246,7 @@ declare namespace Lib.element {
          * @param arg1 获取玩家身上牌的类型：h手牌，e装备牌，j判定牌，可以多个拼接
          * @param arg2 获取牌的详细过滤条件（若是字符串则是卡牌名，若是对象是个cardSimpInfo结构）
          */
-        countCards(arg1: string, arg2: string | Object|OneParmFun<Card,boolean>): number;
+        countCards(arg1: string, arg2?: string | Object|OneParmFun<Card,boolean>): number;
         /**
          * 获取获取指定玩家可以弃置的当前玩家的牌的数量
          * @param player 
@@ -393,17 +393,29 @@ declare namespace Lib.element {
          * @param prompt 
          * @param includecard 
          */
-        chooseUseTarget(card: any, prompt: any, includecard: any,...args): Event;
+        chooseUseTarget(card: any, prompt?: any, includecard?: any,...args): Event;
         /**
          * 发起选择目标
          */
         chooseTarget(...args): Event;
         /**
          * 选择卡牌与目标
-         * @param choose 
+         * 
+         * 注：只有一个参数，用map结构传参。
+         * 参数：(以上方法主要为了game.check)
+         * filterCard：
+         * filterTarget：
+         * filterCard：过滤卡牌的方法，若不设置或者设置“true”，则默认lib.filter.all（默认所有都通过）；
+         * selectCard：选择卡牌数，默认为1，可以是：number | Select | OneParmFun<Card,number>
+         * filterTarget：过滤目标的方法，参考filterCard；
+         * selectTarget：选择目标数，默认为1，可以是：number | Select
+         * ai1：
+         * ai2：
+         * prompt：显示的提示文本；
+         * @param choose 只有一个参数时，使用map结构入参
          * @param args 
          */
-        chooseCardTarget(choose: Event,...args): Event;
+        chooseCardTarget(...args): Event;
         /**
          * 选择列表的控制面板
          * @param args 

@@ -88,3 +88,19 @@ window.testLog = function (type, name) {
     }
     console.log(`【${name2}】${startTime}：[${body}]->${body2};`);
 }
+
+
+/**
+ * 方便扩展自己的扩展（动态加载进去，方便测试，后期可能把扩展包分离）
+ */
+window.loadSelfExtensionConfig = ["ZJ联盟杀"];
+/*
+代码保存，代码添加到loadPack方法得末尾
+搜索关键字：var loadPack=function()
+code:
+//最终还是选择改代码，增加自定义扩展简单导入
+toLoad += window.loadSelfExtensionConfig.length;
+for (var i = 0; i < window.loadSelfExtensionConfig.length;i++){
+    lib.init.js(lib.assetURL + "build/exsrc/" + window.loadSelfExtensionConfig[i], "extension", packLoaded, packLoaded);
+}
+*/

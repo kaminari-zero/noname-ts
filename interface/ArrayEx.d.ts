@@ -10,7 +10,7 @@ interface Array<T> {
      * 添加任意元素进数组中
      * @param args 
      */
-    add(...args:any):Array<T>|boolean;
+    add(...args):Array<T>|boolean;
     /**
      * 添加一个数组的元素到该数组中
      * @param arr 
