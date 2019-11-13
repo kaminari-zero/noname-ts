@@ -5469,6 +5469,36 @@
 					},
 				}
 			},
+			single:{
+				name:'单挑',
+				connect:{
+					connect_single_mode:{
+						name:'游戏模式',
+						init:'normal',
+						item:{
+							normal:'新1v1',
+							dianjiang:'点将单挑',
+						},
+						restart:true,
+						frequent:true,
+					},
+					update:function(config,map){},
+				},
+				config:{
+					single_mode:{
+						name:'游戏模式',
+						init:'normal',
+						item:{
+							normal:'新1v1',
+							dianjiang:'点将单挑',
+						},
+						restart:true,
+						frequent:true,
+					},
+					update:function(config,map){
+					},
+				}
+			},
 			chess:{
 				name:'战棋',
 				config:{
@@ -6909,7 +6939,7 @@
 						// if(lib.device!='ios'&&lib.config.enable_pressure) lib.init.js(lib.assetURL+'game','pressure');
 						//最终还是选择改代码，增加自定义扩展简单导入
 						toLoad += window.loadSelfExtensionConfig.length;
-						for (var i = 0; i < window.loadSelfExtensionConfig.length;i++){
+						for (var i = 0; i < window.loadSelfExtensionConfig.length; i++) {
 							lib.init.js(lib.assetURL + "build/exsrc/" + window.loadSelfExtensionConfig[i], "extension", packLoaded, packLoaded);
 						}
 					};
@@ -9533,8 +9563,8 @@
 						else event.targets2=[];
 						if(!event.forced){
 							var next=player.chooseBool();
-							next.prompt=event.prompt||('是否'+(event.targets2.length?'对':'')+get.translation(event.targets2)+'使用'+get.translation(card)+'?');
-							if(event.prompt2) next.prompt2=event.prompt2;
+							next.set('prompt',event.prompt||('是否'+(event.targets2.length?'对':'')+get.translation(event.targets2)+'使用'+get.translation(card)+'?'));
+							if(event.prompt2) next.set('prompt2',event.prompt2);
 							next.ai=function(){
 								var eff=0;
 								for(var i=0;i<event.targets2.length;i++){
@@ -9547,23 +9577,23 @@
 					}
 					else{
 						var next=player.chooseTarget();
-						next._get_card=card;
-						next.filterTarget=function(card,player,target){
+						next.set('_get_card',card);
+						next.set('filterTarget',function(card,player,target){
 							if(!_status.event.targets.contains(target)) return false;
 							return lib.filter[_status.event.nodistance?'targetEnabled':'filterTarget'].apply(this,arguments);
-						};
+						});
 						next.set('ai',event.ai||get.effect);
 						if(typeof info.selectTarget=='function'){
-							next.selectTarget=info.selectTarget;
+							next.set('selectTarget',info.selectTarget);
 						}
 						else{
-							next.selectTarget=get.select(info.selectTarget);
+							next.set('selectTarget',get.select(info.selectTarget));
 						}
-						if(event.nodistance) next.nodistance=true;
-						if(event.forced) next.forced=true;
-						next.targets=targets;
-						next.prompt=event.prompt||('选择'+get.translation(card)+'的目标');
-						if(event.prompt2) next.prompt2=event.prompt2;
+						if(event.nodistance) next.set('nodistance',true);
+						if(event.forced) next.set('forced',true);
+						next.set('targets',targets);
+						next.set('prompt',event.prompt||('选择'+get.translation(card)+'的目标'));
+						if(event.prompt2) next.set('prompt2',event.prompt2);
 					}
 					'step 1'
 					if(result.bool){
@@ -9763,7 +9793,7 @@
 					else{
 						event.list=list;
 						var next=player.chooseControl(list);
-						next.prompt='请选择恢复一个装备栏';
+						next.set('prompt','请选择恢复一个装备栏');
 						if(!event.ai) event.ai=function(event,player,list){
 							return list.randomGet();
 						}
@@ -9789,7 +9819,7 @@
 					else{
 						event.list=list;
 						var next=player.chooseControl(list);
-						next.prompt='请选择废除一个装备栏';
+						next.set('prompt','请选择废除一个装备栏');
 						if(!event.ai) event.ai=function(event,player,list){
 							return list.randomGet();
 						}
@@ -10543,24 +10573,25 @@
 							}
 							if(typeof str=='function'){str=str(trigger,player)}
 							var next=player.chooseBool(str);
+							next.set('forceDie',true);
 							next.ai=function(){
 								return !check||check(trigger,player);
 							};
 							if(typeof info.prompt2=='function'){
-								next.prompt2=info.prompt2(trigger,player);
+								next.set('prompt2',info.prompt2(trigger,player));
 							}
 							else if(typeof info.prompt2=='string'){
-								next.prompt2=info.prompt2;
+								next.set('prompt2',info.prompt2);
 							}
 							else if(info.prompt2!=false&&lib.translate[event.skill+'_info']){
-								next.prompt2=lib.translate[event.skill+'_info'];
+								next.set('prompt2',lib.translate[event.skill+'_info']);
 							}
 							if(trigger.skillwarn){
 								if(next.prompt2){
-									next.prompt2='<span class="thundertext">'+trigger.skillwarn+'。</span>'+next.prompt2;
+									next.set('prompt2','<span class="thundertext">'+trigger.skillwarn+'。</span>'+next.prompt2);
 								}
 								else{
-									next.prompt2=trigger.skillwarn;
+									next.set('prompt2',trigger.skillwarn);
 								}
 							}
 						}
@@ -13544,11 +13575,12 @@
 							}
 							else{
 								var losecard=player.lose(cards,ui.special);
+								if(info.visible) losecard.visible=true;
 							}
 						}
 						if(!info.prepare&&info.viewAs){
 							player.$throw(cards);
-							losecard.visible=true;
+							if(losecard) losecard.visible=true;
 							if(lib.config.sync_speed&&cards[0]&&cards[0].clone){
 								var waitingForTransition=get.time();
 								event.waitingForTransition=waitingForTransition;
@@ -13632,9 +13664,9 @@
 					}
 					if(info.prepare){
 						switch(info.prepare){
-							case 'give':losecard.visible=true;player.$give(cards,targets[0]);break;
+							case 'give':if(losecard) losecard.visible=true;player.$give(cards,targets[0]);break;
 							case 'give2':player.$give(cards.length,targets[0]);break;
-							case 'throw':losecard.visible=true;player.$throw(cards);break;
+							case 'throw':if(losecard) losecard.visible=true;player.$throw(cards);break;
 							case 'throw2':player.$throw(cards.length);break;
 							default:info.prepare(cards,player,targets);
 						}
@@ -14113,7 +14145,15 @@
 						},get.delayx(gain2t,gain2t));
 					}
 					else if(event.source&&(event.animate=='give'||event.animate=='giveAuto')){
-						event.source['$'+event.animate](cards,player);
+						if(event.animate=='give') event.source['$'+event.animate](cards,player);
+						else{
+							var givemap={hs:[],ots:[]};
+							for(var i=0;i<cards.length;i++){
+								givemap[cards[i].original=='h'?'hs':'ots'].push(cards[i]);
+							}
+							if(givemap.hs.length) event.source.$giveAuto(givemap.hs,player);
+							if(givemap.ots.length) event.source.$give(givemap.ots,player);
+						}
 						game.pause();
 						setTimeout(function(){
 							addv();
@@ -15515,7 +15555,7 @@
 					ui.updatem(this);
 
 					this.skipList=[];
-					this.skills=[];
+					this.skills=this.skills.contains('cangji_yozuru')?['cangji_yozuru']:[];
 					this.initedSkills=[];
 					this.additionalSkills={};
 					this.disabledSkills={};
@@ -17051,8 +17091,9 @@
 						}
 					}
 					next.setContent('chooseUseTarget');
+					next._args=Array.from(arguments);
 					return next;
-					// Online-Ready! Enjoy It!
+					// Fully Online-Ready! Enjoy It!
 				},
 				chooseTarget:function(){
 					var next=game.createEvent('chooseTarget');
@@ -17907,7 +17948,8 @@
 					}
 					if(shown.length) this.$give(shown,target);
 					if(hidden.length) this.$giveAuto(hidden,target);
-					target.gain(cards,this);
+					var next=target.gain(cards,this);
+					if(visible) next.visible=true;
 				},
 				lose:function(){
 					var next=game.createEvent('lose');
@@ -19551,6 +19593,7 @@
 						exclude.push(arguments[i]);
 					}
 					for(i=0;i<this.skills.length;i++){
+						if(lib.skill[this.skills[i]].superCharlotte) continue;
 						if(!all&&(lib.skill[this.skills[i]].temp||lib.skill[this.skills[i]].charlotte)) continue;
 						if(!exclude.contains(this.skills[i])){
 							list.push(this.skills[i]);
@@ -23994,6 +24037,7 @@
 			_chongzhu:{
 				enable:'phaseUse',
 				logv:false,
+				visible:true,
 				prompt:'将要重铸的牌置入弃牌堆并摸一张牌',
 				filter:function(event,player){
 					return player.hasCard(function(card){
@@ -26340,7 +26384,7 @@
 						game.players[i].init(players[i].name,players[i].name2);
 						game.players[i].setIdentity(players[i].identity);
 					}
-					else if(lib.config.mode=='doudizhu'){
+					else if(lib.config.mode=='doudizhu'||lib.config.mode=='single'){
 						game.players[i].init(players[i].name,players[i].name2);
 						game.players[i].setIdentity(players[i].identity);
 					}
@@ -44090,7 +44134,7 @@
 						}
 					}
 					else{
-						if(lib.configOL.mode=='versus'||lib.configOL.mode=='doudizhu') return;
+						if(lib.configOL.mode=='versus'||lib.configOL.mode=='doudizhu'||lib.configOL.mode=='single') return;
 						if(lib.configOL.mode=='identity'&&lib.configOL.identity_mode=='zhong') return;
 						if(!this.classList.contains('unselectable2')&&lib.configOL.number<=2) return;
 						this.classList.toggle('unselectable2')
@@ -45714,6 +45758,9 @@
 			versus:function(){
 				return !_status.connectMode&&get.mode()=='versus'&&_status.mode=='three';
 			},
+			single:function(){
+				return get.mode()=='single'&&_status.mode=='normal';
+			},
 			mobileMe:function(player){
 				return (game.layout=='mobile'||game.layout=='long')&&!game.chess&&player.dataset.position==0;
 			},
@@ -45848,16 +45895,16 @@
 		},
 		evtprompt:function(next,str){
 			if(next.prompt){
-				next.prompt2=str;
+				next.set('prompt2',str);
 			}
 			else{
 				if(str.indexOf('###')==0){
 					var prompts=str.slice(3).split('###');
-					if(prompts[0]) next.prompt=prompts[0];
-					if(prompts[1]) next.prompt2=prompts[1];
+					if(prompts[0]) next.set('prompt',prompts[0]);
+					if(prompts[1]) next.set('prompt2',prompts[1]);
 				}
 				else{
-					next.prompt=str;
+					next.set('prompt',str);
 				}
 			}
 		},
@@ -45891,7 +45938,7 @@
 				}
 			}
 			else{
-				if(card.name!=get.name(card)){
+				if(card.name!=get.name(card)||card.nature!=get.nature(card)){
 					var next={
 						name:get.name(card),
 						suit:card.suit,
@@ -46319,12 +46366,20 @@
 			}
 		},
 		modetrans:function(config,server){
+			if(config.mode=='doudizhu') return '欢乐斗地主';
 			if(config.mode=='versus'){
 				switch(config.versus_mode){
 					case '1v1':return '单人对决';
 					case '2v2':return '欢乐成双';
 					case '3v3':return '血战到底';
 					case '4v4':return '四人对决';
+				}
+			}
+			else if(config.mode=='single'){
+				switch(config.single_mode){
+					case 'normal':return '新1v1';
+					case 'changban':return '血战长坂坡';
+					case 'dianjiang':return '点将单挑';
 				}
 			}
 			else if(config.mode=='identity'&&config.identity_mode=='zhong'){

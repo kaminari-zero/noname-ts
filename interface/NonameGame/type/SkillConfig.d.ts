@@ -365,102 +365,6 @@ interface ExSkillData {
 
 
     //具体功能的处理
-    //目标
-    /**
-     * 需要选择多少张牌才能发动
-     * 选择的牌数
-     * -1时，选择所有牌,否则就是指定数量的牌
-     * 数组时，这个数组就是选择牌数的区间,其中任意（至少一张）：[1,Infinity]
-     * 为变量时（具体情况具体分析），例：()=>number
-     */
-    selectCard?: number | Select | OneParmFun<Card, number>;
-    /**
-     * 需要选择多少个目标才能发动
-     * 选择的目标数：
-     * 为-1时，选择全部人
-     * 为数组时，这个数组就是选择目标数的区间
-     */
-    selectTarget?: number | Select;
-    /**
-     * 选择的牌需要满足的条件
-     * 可以使用键值对的简便写法
-     * 也可以使用函数返回值（推荐）
-     */
-    filterCard?: SMap<string> | OneParmFun<Card, boolean>;
-    /**
-     * 过滤发动条件，返回true则可以发动此技能
-     * 主要在filterTrigger中处理
-     * @param event 事件 相当于trigger时机
-     * @param player 
-     */
-    filter?(event: Trigger, player: Player): boolean;
-    /**
-     * 选择的目标需要满足的条件
-     * @param card 
-     * @param player 
-     * @param target 
-     */
-    filterTarget?(card: Card, player: Player, target: Target): boolean;
-    /**
-     * 选择的目标武将牌上出现什么字，
-     * 数组第几元素对应第几个目标
-     */
-    targetprompt?: string[];
-    /**
-     * 选择时弹出的提示
-     */
-    prompt?: string | TwoParmFun<Links, Player, string>;
-    /**
-     * 二次提示，主要显示的时机暂未明确
-     * 若是boolean类型，则使用lib.translate[“技能名_info”]的描述
-     */
-    prompt2?: string | TwoParmFun<Links, Player, string> | boolean;
-    /** 
-     * 在ui.click.skill中使用，若当前event.skillDialog不存在，可以用该方法生成的文本的dialog作为skillDialog；
-     * 若没有该方法，可以使用翻译中该技能的info信息代替。
-     */
-    promptfunc?: TwoParmFun<Trigger, Player, String>;
-    /** 似乎没用上，作用是使skillDialog.forcebutton为true */
-    longprompt?: boolean;
-    /**
-     * 是否每个目标都结算一次(多个目标)
-     * true为否
-     */
-    multitarget?: boolean | number;
-    /**
-     * 指向线的颜色枚举：
-     * fire（橙红色FF9244），thunder（浅蓝色8DD8FF），green（青色8DFFD8），
-     */
-    line?: string;
-    /** 是否显示多条指引线 */
-    multiline?: boolean;
-
-    /**
-     * 在filterTrigger中执行，过滤发动条件，和filter有些类似，具体功能稍后分析
-     * @param event 
-     * @param player 
-     * @param name 
-     * @param skill 
-     */
-    block?(event: Trigger, player: Player, name: string, skill: Skill): void;
-
-    /**
-     * 选中该技能使用时,进行处理
-     * 在chooseToUse 的content中调用，
-     * 目前参考的例子中，大多数多是用于添加一些牌到待选择到event.set(key，收集的牌)中，
-     * 用于使用前先选牌的效果
-     * 注：其调用时机应该远早于触发技能的，在选中牌时就开始处理。
-     * @param event 
-     */
-    onChooseToUse?(event: Trigger): void;
-
-    /**
-     * 在chooseToCompare和chooseToCompareMultiple，step2中使用，返回玩家用于的拼点的牌
-     * @param player 
-     */
-    onCompare?(player: Player): Card[];
-
-
     //弃牌，失去牌
     /**
      * 是否弃牌
@@ -507,6 +411,142 @@ interface ExSkillData {
      * 在respond中使用
      */
     onrespond?(event: Trigger, player: Player): void;
+    /**
+     * 过滤发动条件，返回true则可以发动此技能
+     * 主要在filterTrigger中处理
+     * @param event 事件 相当于trigger时机
+     * @param player 
+     */
+    filter?(event: Trigger, player: Player): boolean;
+    /**
+     * 选择的目标武将牌上出现什么字，
+     * 数组第几元素对应第几个目标
+     */
+    targetprompt?: string[];
+    /**
+     * 是否每个目标都结算一次(多个目标)
+     * true为否
+     */
+    multitarget?: boolean | number;
+    /**
+     * 指向线的颜色枚举：
+     * fire（橙红色FF9244），thunder（浅蓝色8DD8FF），green（青色8DFFD8），
+     */
+    line?: string;
+    /** 是否显示多条指引线 */
+    multiline?: boolean;
+
+    /**
+     * 在filterTrigger中执行，过滤发动条件，和filter有些类似，具体功能稍后分析
+     * @param event 
+     * @param player 
+     * @param name 
+     * @param skill 
+     */
+    block?(event: Trigger, player: Player, name: string, skill: Skill): void;
+
+    /**
+     * 选中该技能使用时,进行处理
+     * 在chooseToUse 的content中调用，
+     * 目前参考的例子中，大多数多是用于添加一些牌到待选择到event.set(key，收集的牌)中，
+     * 用于使用前先选牌的效果
+     * 注：其调用时机应该远早于触发技能的，在选中牌时就开始处理。
+     * @param event 
+     */
+    onChooseToUse?(event: Trigger): void;
+
+    /**
+     * 在chooseToCompare和chooseToCompareMultiple，step2中使用，返回玩家用于的拼点的牌
+     * @param player 
+     */
+    onCompare?(player: Player): Card[];
+
+    //核心
+    //event.bakcup设置的信息，game.check使用到的一些参数，其实就是把game.check需要的一些参数设置到技能中，作为check时的条件
+    /* 这些就是作为前提条件的主要属性
+    filterButton
+    selectButton
+    filterTarget
+    selectTarget
+    filterCard
+    selectCard
+    position
+    forced
+    complexSelect?:boolean;
+    complexCard?:boolean;
+    complexTarget
+    ai1
+    ai2
+    */
+    //目标
+    /**
+     * 需要选择多少张牌才能发动
+     * 选择的牌数
+     * -1时，选择所有牌,否则就是指定数量的牌
+     * 数组时，这个数组就是选择牌数的区间,其中任意（至少一张）：[1,Infinity]
+     * 为变量时（具体情况具体分析），例：()=>number
+     */
+    selectCard?: number | Select | NoneParmFum<number | Select>;
+    /**
+     * 需要选择多少个目标才能发动
+     * 选择的目标数：
+     * 为-1时，选择全部人
+     * 为数组时，这个数组就是选择目标数的区间
+     */
+    selectTarget?: number | Select | NoneParmFum<number | Select>;
+    /**
+     * 选择的牌需要满足的条件
+     * 可以使用键值对的简便写法
+     * 也可以使用函数返回值（推荐）
+     */
+    filterCard?: SMap<string> | TwoParmFun<Card,Player, boolean>;
+    /** 
+     * 是否使用mod检测
+     * 
+     * 取值true;
+     * 若没有设置filterCard;
+     * 则若当前事件为”chooseToUse“（选择卡牌使用）,使用”cardEnabled“卡牌是否能使用mod检测；
+     * 则若当前事件为”chooseToRespond“（选择卡牌响应），使用”cardRespondable“卡牌是否能响应mod检测；
+     */
+    ignoreMod?:boolean;
+    /**
+     * 选择的目标需要满足的条件
+     * @param card 
+     * @param player 
+     * @param target 
+     */
+    filterTarget?(card: Card, player: Player, target: Target): boolean;
+    /**
+     * 选择时弹出的提示
+     * 
+     * 单参数的方法，主要用再技能点击使用时的提示；
+     */
+    prompt?: string | TwoParmFun<Trigger, Player, String> | OneParmFun<Trigger,string> | TwoParmFun<Links, Player, string>;
+    /**
+     * 二次提示
+     * 
+     * 主要在createTrigger，step1中，设置event.prompt2
+     * 若是boolean类型，则使用lib.translate[“技能名_info”]的描述
+     */
+    prompt2?: string | TwoParmFun<Trigger, Player, String> |TwoParmFun<Links, Player, string> | boolean;
+    /** 
+     * 在ui.click.skill中使用，若当前event.skillDialog不存在，可以用该方法生成的文本的dialog作为skillDialog；
+     * 若没有该方法，可以使用翻译中该技能的info信息代替。
+     */
+    promptfunc?: TwoParmFun<Trigger, Player, String>;
+    /** 似乎没用上，作用是使skillDialog.forcebutton为true */
+    longprompt?: boolean;
+
+    //补充game.check相关参数的声明：
+    /** 过滤不可选择按钮 */
+    filterButton?(button: Button, player: Player): boolean;
+    /** 按钮的可选数量，大多数情况下，默认1 */
+    selectButton?: number | Select | NoneParmFum<number | Select>;
+    complexSelect?: boolean;
+    complexCard?: boolean;
+    complexTarget?:boolean;
+    ai1?:Function;
+    ai2?:Function;
 
     /**
      * 是否检测隐藏的卡牌
@@ -612,21 +652,6 @@ interface ExSkillData {
      */
     check?(...arg): any;
 
-    //event.bakcup设置的信息
-    /*
-    filterButton
-    selectButton
-    filterTarget
-    selectTarget
-    filterCard
-    selectCard
-    position
-    complexSelect?:boolean;
-    complexCard?:boolean;
-    complexTarget
-    ai1
-    ai2
-    */
     //日后还有很多属性要添加的
     [key: string]: any;
 }

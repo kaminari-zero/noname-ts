@@ -9,7 +9,7 @@ namespace NG {
     }
 
     /** 玩家区域的位置类型 */
-    export enum PositionType {
+    export const enum PositionType {
         /** 手牌区 */
         Shoupai = "h",
         /** 装备区 */
@@ -22,7 +22,14 @@ namespace NG {
         /** 弃牌区 */
         Discard = "d",
         /** 特殊显示区 */
-        Special = "s"
+        Special = "s",
+
+        /** 玩家场上的牌（武器，判定） */
+        Area = "ej",
+        /** 玩家操作的牌 */
+        Use = "he",
+        /** 玩家所有的牌 */
+        All = "hej",
     }
 
     /** 性别 */
@@ -63,15 +70,15 @@ namespace NG {
     //阶段重新整理：阶段名+时机
     export enum TriggerEnum {
         /** 开始前 */
-        Before,
+        Before = "Before",
         /** 开始时/时 */
-        Begin,
+        Begin = "Begin",
         /** 触发后/后 */
-        End,
+        End = "End",
         /** 触发结束后/结束后 */
-        After,
+        After = "After",
         /** 忽略/跳过 */
-        Omitted
+        Omitted = "Omitted"
     }
 
     /**

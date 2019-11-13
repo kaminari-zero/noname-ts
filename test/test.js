@@ -88,6 +88,61 @@ window.testLog = function (type, name) {
     }
     console.log(`【${name2}】${startTime}：[${body}]->${body2};`);
 }
+/*
+添加流程调试代码：
+第一部分：phaseLoop（打印当前回合开始）
+phaseLoop:function(){
+    "step 0"
+    lib.cheat.testLog(5,player.name,`别名：${player.name2}`)
+
+第二部分：trigger:function（打印触发事件名）
+var event=this;
+lib.cheat.testLog(2,name,`事件名:${event.name}`)
+var start=event.player||game.me||game.players[0];
+
+第三部分：trigger:function（打印当前触发事件的筛选出待触发技能）【核心】
+list.sort(function(a,b){
+    return b[2]-a[2];
+});
+lib.cheat.testLog(3,name,`执行trigger事件名:${event.name}`,`收集技能:${list.toString()}`)
+
+第四部分：createEvent（打印正在创建事件，并且打印当前运行中的事件）
+(triggerevent||_status.event).next.push(next);
+lib.cheat.testLog(0,name,`当前运行中事件:${_status.event?_status.event.name:"null"}`)
+return next;
+
+第五部分：game.loop（打印当前事件队列中，进入下一个事件，打印父节点）
+        next.player.skipList.remove(next.name);
+    }
+    else{
+        next.parent=event;
+        _status.event=next;
+        lib.cheat.testLog(4,next.name,`设置父节点:${next.parent.name}`)
+    }
+}
+
+第六部分：game.loop（打印当前事件完成已完成，主动权回溯父节点）
+在event.finished中：
+else{
+    lib.cheat.testLog(1,event.name,`父节点:${event.parent?event.parent.name:"null"}`)
+    if(event.parent){
+        if(event.result){
+            event.parent._result=event.result;
+        }
+        _status.event=event.parent;
+    }
+    ......
+}
+*/
+
+window.gameTestLog = function(){
+    let curEvent = (_status && _status.event)||{name:"loop未启动",step:0};
+    // console.log.call(null, [`【${curEvent.name}】 step:${curEvent.step} 的”${arguments[0]}“log:`, Array.prototype.splice.call(arguments, 1)]);
+    // let logStr = `【${curEvent.name}】 step:${curEvent.step} 的”${arguments[0]}“log:`;
+    // let parames = (Array.prototype.splice.call(arguments, 1)).unshift(logStr);
+    arguments[0] = `【${curEvent.name}】step${curEvent.step} 的”${arguments[0]}“log:`;
+    console.log.apply(null, arguments);
+}
 
 
 /**

@@ -119,7 +119,7 @@ declare namespace Lib.element {
     }
 
     //event的属性，不过大部分都是动态获取的
-    export interface Event {
+    export interface Event extends CheckEventData {
         //核心部分：
         /** 事件名 */
         name:string;
@@ -147,9 +147,18 @@ declare namespace Lib.element {
         player:Player;
         /** 当前事件的源触发事件 */
         _trigger:Event;
-        result:any;
-        _result:any;
+        /** 源触发事件的名字（和直接用于判断源触发事件，按逻辑该值应该可以自定义，目前代码中该值是直接用源事件的名字） */
+        triggername:string;
 
+        //结果，是记录事件执行过程中产生的某些结果记录，这些结果，需要回馈给父节点事件的，是过程中产生的信息
+        //事件的结果，为什么分成两种，后期继续观察代码考究
+        result:any;
+        /** 该参数应该时事件记录结果的核心返回值，上面那个，暂待观察 */
+        _result:BaseResultData;
+
+        //这些记录的基本都是事件自身带有的信息（例如你当前属于某个阶段的触发事件，此时你携带的触发信息）
+        //因此，如果该事件是属于某事件的子事件，即next，after中的队列事件，此时，身为主触发会附带在_trigger中
+        //表示：因为触发该事件，而产生了next中的操作，其触发源为_trigger
         /** 记录触发源玩家 */
         source:Player;
         /** 记录指定的目标玩家 */
@@ -171,36 +180,35 @@ declare namespace Lib.element {
         /** 是否强制结束出牌阶段，同时也可以让result.bool为false跳过 */
         skipped:boolean;
 
+        /** 一些额外操作，目前看到最常用在game.check中 */
         custom:{
-            add:any,
-			replace:any
+            add:SMap<any>,
+			replace:SMap<any>
         }
-
-        filterButton:any;
-        selectButton:any;
-        filterTarget:any;
-        selectTarget:any;
-        filterCard:any;
-        selectCard:any;
-        position:any;
-
-        fakeforce:any;
-        _aiexclude:any;
-        complexSelect:any;
-        complexCard:any;
-        complexTarget:any;
-
-        ai1:any;
-        ai2:any;
         
+        _aiexclude:any;
+        fakeforce:any;
+        
+        /** 选中的卡牌 */
         _cardChoice:Card[];
+        /** 选中的目标 */
         _targetChoice:Player[];
+        /** 选中的技能 */
         _skillChoice:string[];
+
+        //game.check 一些核心过滤参数，目前都额外存放在CheckEventData定义中
+        // filterButton:any;
+        // selectButton:any;
+        // filterTarget:any;
+        // selectTarget:any;
+        // filterCard:any;
+        // selectCard:any;
+        // position:any;
+        // complexSelect:any;
+        // complexCard:any;
+        // complexTarget:any;
+        // ai1:any;
+        // ai2:any;
     }
 
-    /** event._result */
-    export interface ReslutData {
-        /** 一般用来标记当前事件是否按预定执行的，即执行成功 */
-        bool:boolean;
-    }
 }

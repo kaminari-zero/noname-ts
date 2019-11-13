@@ -11,7 +11,7 @@ module ZJNGEx {
             // connect: true,
             character: {
                 zjm01_yangjuebo: [NG.Sex.MALE, NG.Group.WOOD, 5, ["zj_laobo"],[]],
-                zjm01_zhengbosen: [NG.Sex.MALE,NG.Group.WOOD,4,[],[]],
+                zjm01_zhengbosen: [NG.Sex.MALE, NG.Group.WOOD, 4, ["zj_bosen"],[]],
             },
             characterTitle: {
                 zjm01_yangjuebo:"盟主捞波",
@@ -28,9 +28,9 @@ module ZJNGEx {
                     // selectCard:[1,Infinity],
                     // discard:false,
                     // prepare:NG.PrepareConst.Give,
-                    filterTarget: (card: Card, player: Player, target: Target)=>{
-                        return player!=target; //目标不能是自己
-                    },
+                    // filterTarget: (card: Card, player: Player, target: Target)=>{
+                    //     return player!=target; //目标不能是自己
+                    // },
                     precontent: function (event: GameEvent, step: number, source: Player, player: Player, target: Player, targets: Player[], card: Card, cards: Card[], skill: string, forced: boolean, num: number, trigger: GameEvent, result: BaseResultData){
                         //初始化标记（扩展一个全局性质的变量）
                         player.storage.zj_laobo_targets = [];//对哪些目标使用
@@ -39,6 +39,7 @@ module ZJNGEx {
                     content: function (event: GameEvent, step: number, source: Player, player: Player, target: Player, targets: Player[], card: Card, cards: Card[], skill: string, forced: boolean, num: number, trigger: GameEvent, result: BaseResultData){
                         let storageTargets:Player[] = player.storage.zj_laobo_targets;
                         let storageNum:number = player.storage.zj_laobo_num;
+                        let haveHandCard = player.countCards(NG.PositionType.Shoupai) > 0;
                         'step 0'
                         if (NG.ObjectUtil.isUndefined(storageTargets) || NG.ObjectUtil.isUndefined(storageNum)){
                             console.error("不明原因，zj_laobo的标记变量没有生成！");
@@ -48,25 +49,31 @@ module ZJNGEx {
                         'step 1'
                         //将任意数量的手牌交给任意角色(至少1张)
                         //选择角色和交给的牌
-                        player.chooseCardTarget({
-                            filterCard:true,
-                            selectCard:[1,Infinity],
-                            filterTarget: (card: Card, player: Player, target: Target) => {
-                                return player != target; //目标不能是自己
-                            },
-                            prompt:"选择要交给牌与玩家"
-                        });
+                        if(haveHandCard){
+                            player.chooseCardTarget({
+                                filterCard:true,
+                                selectCard:[1,Infinity],
+                                filterTarget: (card: Card, player: Player, target: Target) => {
+                                    return player != target; //目标不能是自己
+                                },
+                                prompt:"选择要交给牌与玩家",
+                                forced:true
+                            });
+                        } else {
+                            event.finish();
+                        }
                         'step 2'
                         if(result.bool){
                             storageTargets.push(target);
                             // target.gain(cards,player);
                             result.targets[0].gain(result.cards, player,"gain");
                             player.storage.zj_laobo_num += result.cards.length;
-                            if(player.countCards(NG.PositionType.Shoupai)>0){
-                                event.goto(1);
-                            }
                         }
                         'step 3'
+                        if (haveHandCard){ //为了能及时刷新手牌数另开一个步骤
+                            event.goto(1);
+                        }
+                        'step 4'
                         //你摸X张牌且血量+1(X为你已损失的血量)
                         let loseHp = player.maxHp - player.hp;
                         player.draw(loseHp);
@@ -81,7 +88,6 @@ module ZJNGEx {
                                 list.push("jiu");
                             }
                             if(list.length){
-                                console.log("捞波 step3 list:",list);
                                 player.chooseButton([
                                     "是否视为视为对你使用一张【血】或【魔】？",
                                     [list,NG.TypeConst.VCARD]
@@ -90,7 +96,7 @@ module ZJNGEx {
                                 event.finish();
                             }
                         } 
-                        'step 4'
+                        'step 5'
                         //你可以视为对你使用一张【血】或【魔】
                         if (result && result.bool && result.links[0]) {
                             let vard = { name: result.links[0][2], nature: result.links[0][3] };
@@ -105,7 +111,74 @@ module ZJNGEx {
                 },
                 zj_bosen:{
                     name: "博森",
-
+                    group: ["zj_bosen_zj_bosen_1", "zj_bosen_zj_bosen_2"],
+                    subSkill:{
+                        zj_bosen_1:{
+                            trigger:{
+                                player:[
+                                    NG.StateTrigger.loseHp + NG.TriggerEnum.End,
+                                    NG.StateTrigger.damage + NG.TriggerEnum.End,
+                                ]
+                            },
+                            // selectTarget:function(){
+                            //     window.gameTestLog("selectTarget数量：", _status.event.num);
+                            //     return _status.event.num;
+                            // },
+                            // filterTarget: function (card: Card, player: Player, target: Target){
+                            //     return true;
+                            // },
+                            filter: function (event: Trigger, player: Player) {
+                                window.gameTestLog("filter触发",event);
+                                return event.num>0;
+                            },
+                            //设置强制触发的话，不受条件影响
+                            forced:true,
+                            content: function (event: GameEvent, step: number, source: Player, player: Player, target: Player, targets: Player[], card: Card, cards: Card[], skill: string, forced: boolean, num: number, trigger: GameEvent, result: BaseResultData){
+                                "step 0"
+                                
+                                player.storage.zj_bosen_1_flag = trigger.num;
+                                "step 1"
+                                //不能同时选择同一个玩家
+                                // player.chooseTarget(
+                                //     trigger.num,
+                                //     `请选择${trigger.num}位玩家`
+                                // );
+                                player.chooseTarget(lib.translate.zj_bosen_zj_bosen_1_info);
+                                "step 2"
+                                window.gameTestLog("当前还剩次数", player.storage.zj_bosen_1_flag);
+                                //指定失去得体力数得玩家抽牌
+                                if(result.bool && result.targets.length>0){
+                                    result.targets[0].draw(2);
+                                }
+                                player.storage.zj_bosen_1_flag--;
+                                if (player.storage.zj_bosen_1_flag > 0) {
+                                    event.goto(1);
+                                }
+                                // window.gameTestLog("zj_bosen_zj_bosen_1触发时：", _status.event);
+                                "step 3"
+                                delete player.storage.zj_bosen_1_flag;
+                            },
+                            description:"当你除去1点血量后，你令任一角色摸两张牌"
+                        },
+                        zj_bosen_2:{
+                            trigger:{
+                                player:NG.StateTrigger.die+NG.TriggerEnum.Begin
+                            },
+                            content: function (event: GameEvent, player: Player, trigger: GameEvent, result: BaseResultData){
+                                "step 0"
+                                player.chooseTarget(
+                                    lib.translate.zj_bosen_zj_bosen_2_info,
+                                );
+                                "step 1"
+                                if(result.bool && result.targets.length>0){
+                                    //获取玩家所有的牌：
+                                    result.targets[0].gain(player.getCards(NG.PositionType.All),player);
+                                    result.targets[0].gainMaxHp(1);
+                                }
+                            },
+                            description:"当你死亡时，你可以将你的所有牌交给任一其他角色，然后令其血量+1"
+                        }
+                    }
                 }
             },
             translate: {
@@ -113,6 +186,9 @@ module ZJNGEx {
                 zj_laobo:"捞波",
                 zj_laobo_info:"阶段技，你可以将任意数量的手牌交给任意角色(至少1张)，你摸X张牌且血量+1，若其获得你给出的牌张数不小于2，你可以视为对你使用一张【血】或【魔】(X为你已损失的血量)。",
                 zjm01_zhengbosen:"郑博森",
+                zj_bosen:"博森",
+                zj_bosen_info:"锁定技，当你除去1点血量后，你令任一角色摸两张牌；当你死亡时，你可以将你的所有牌交给任一其他角色，然后令其血量+1。",
+
             }
         };
         //技能
@@ -162,7 +238,7 @@ module ZJNGEx {
                     intro:"在身份局中，不同属性的身份会拥有不同的主公技",
                     frequent:true,
                     onclick:(item)=>{
-                        console.log("点击后输出的结果为：",item);
+                        console.log("点击后输出的结果为111：",item);
                     }
                 }
             },

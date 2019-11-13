@@ -30,4 +30,12 @@ declare interface Window {
     cordovaLoadTimeout:number;
 
     game:Game;
+
+
+    //自定义test扩展
+    /** 游戏测试日志 */
+    gameTestLog(...args):void;
+
+    /** 流程测试 */
+    testLog(type:number, name:string,...args):void;
 }

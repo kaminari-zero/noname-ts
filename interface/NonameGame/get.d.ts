@@ -28,8 +28,8 @@ interface Get {
     colorspan(str:string):string;
     /**
      * 设置事件的prompt
-     * @param next 
-     * @param str 
+     * @param next 要设置prompt/prompt2的事件
+     * @param str 可以是"###+prompt+###+prompt2"格式字符串,以”###“分割开
      */
     evtprompt(next:GameEvent,str:string):void;
     /**

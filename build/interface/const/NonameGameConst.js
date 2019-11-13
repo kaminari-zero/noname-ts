@@ -8,15 +8,6 @@ var NG;
         ImportType["Mode"] = "mode";
         ImportType["Player"] = "player";
     })(ImportType = NG.ImportType || (NG.ImportType = {}));
-    var PositionType;
-    (function (PositionType) {
-        PositionType["Shoupai"] = "h";
-        PositionType["Zhuangbei"] = "e";
-        PositionType["Panding"] = "j";
-        PositionType["CardPlie"] = "c";
-        PositionType["Discard"] = "d";
-        PositionType["Special"] = "s";
-    })(PositionType = NG.PositionType || (NG.PositionType = {}));
     var Sex;
     (function (Sex) {
         Sex["MALE"] = "male";
@@ -37,11 +28,11 @@ var NG;
     })(Group = NG.Group || (NG.Group = {}));
     var TriggerEnum;
     (function (TriggerEnum) {
-        TriggerEnum[TriggerEnum["Before"] = 0] = "Before";
-        TriggerEnum[TriggerEnum["Begin"] = 1] = "Begin";
-        TriggerEnum[TriggerEnum["End"] = 2] = "End";
-        TriggerEnum[TriggerEnum["After"] = 3] = "After";
-        TriggerEnum[TriggerEnum["Omitted"] = 4] = "Omitted";
+        TriggerEnum["Before"] = "Before";
+        TriggerEnum["Begin"] = "Begin";
+        TriggerEnum["End"] = "End";
+        TriggerEnum["After"] = "After";
+        TriggerEnum["Omitted"] = "Omitted";
     })(TriggerEnum = NG.TriggerEnum || (NG.TriggerEnum = {}));
     var PhaseTrigger;
     (function (PhaseTrigger) {

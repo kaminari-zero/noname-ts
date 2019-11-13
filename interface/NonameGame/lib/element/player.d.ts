@@ -269,12 +269,12 @@ declare namespace Lib.element {
          * 获取玩家的技能。
          * 默认获取玩家（除了玩家forbiddenSkills上的禁用技能）的：
          *  武将技能skills+附加技能additionalSkills+临时技能tempSkills
-         * @param arg2 若为true，获取技能附带隐藏技能hiddenSkills
-         * @param arg3 若为true，获取技能附带装备技能；
-         * @param arg4 若为true，获取技能经过game.filterSkills过滤后的技能
+         * @param arg2 若为true，获取技能附带隐藏技能hiddenSkills；若取值“e”，则只返回装备的技能
+         * @param arg3 若为true/undefined，获取技能附带装备技能；取值false，则不附带装备技能；
+         * @param arg4 若为true/undefined，获取技能经过game.filterSkills过滤后的技能；取值false则不选要过滤；
          * @return 返回最后收集到的玩家的技能   
          */
-        getSkills(arg2?: boolean, arg3?: boolean, arg4?: boolean): string[];
+        getSkills(arg2?: boolean|string, arg3?: boolean, arg4?: boolean): string[];
         /**
          * 获取技能/区域卡牌
          * 注：下面参数的意义，读跟前一个参数相关，略乱 
@@ -364,20 +364,46 @@ declare namespace Lib.element {
          * @param list 
          */
         discoverCard(list: string[]|Card[],...args): Event;
+
+        //创建按钮系列事件
+        /**
+         * 创建选择button，暂停等待选择结果
+         * 发起“chooseButton”事件；
+         * 
+         * 参数列表：
+         *  boolean类型：对应next.forced，若没有，默认false(手动执行)；
+         *  itemtype为"dialog"类型：对应next.dialog，是否使用当前已有的dialog面板;
+         *  itemtype为"select"类型/number类型：对应next.selectButton，没有就默认[1,1],可选按钮数目;
+         *  function类型：对应next.filterButton，若没有，默认lib.filter.filterButton;
+         *  数组类型：next.createDialog,核心，创建dialog的信息，常用基本结构：
+         *      [
+         *      string的prompt文本,[item,type],  (上面部分主要是提供给dialog.add的参数，可直接参考add的参数)
+         *      "hidden"/”notouchscroll“/”forcebutton“,布尔类型值 (下面部分是主要提供ui.create.dialog)
+         *      ]；
+         */
+        chooseButton(...args): Event;
         /**
          * 创建选择卡牌按钮：
          * 发起“chooseButton”事件；
+         * 
+         * 参数列表：
+         *  itemtype为”cards“：对应next.cards;
+         *  boolean类型：对应next.forced，若没有，默认false(手动执行)；
+         *  string类型：对应next.prompt;
+         *  itemtype为"select"类型/number类型：对应next.selectButton，没有就默认[1,1],可选按钮数目;
          */
         chooseCardButton(...args): Event;
         /**
          * 创建选择虚拟卡牌按钮（vcard）
          * 发起“chooseButton”事件；
+         * 
+         * 参数列表：
+         *  数组类型：卡牌名数字string[]；
+         *  boolean类型：对应next.forced，若没有，默认false(手动执行)；
+         *  string类型：对应next.prompt/;
+         *  "notype"：不传入卡牌类型
          */
         chooseVCardButton(...args): Event;
-        /**
-         * 创建选择button，暂停等待选择结果
-         */
-        chooseButton(...args): Event;
 
         //【联机】联机专用选择按钮，选择卡牌
         chooseButtonOL(list: any, callback: any, ai: any): Event;
@@ -385,37 +411,37 @@ declare namespace Lib.element {
 
         /**
          * 发起选择卡牌
+         * 
+         * 参数列表：
+         *  itemtype为"select"类型/number类型：对应next.selectCard，没有就默认[1,1],可选卡牌数目;
+         *  boolean类型：对应next.forced，若没有，默认false(手动执行)；
+         *  function类型：对应next.filterCard，若没有，默认lib.filter.all;
+         *  itemtype为“position”类型：对应next.position,应该就是窗口位置了
+         *  string类型：对应next.prompt/prompt2，可以用"###+prompt+###+prompt2"格式字符串;
+         *  “glow_result”：设置next.glow_result=true;
          */
         chooseCard(...args): Event;
         /**
          * 选择使用的目标
-         * @param card 
-         * @param prompt 
-         * @param includecard 
          */
-        chooseUseTarget(card: any, prompt?: any, includecard?: any,...args): Event;
+        chooseUseTarget(...args): Event;
         /**
          * 发起选择目标
+         * 
+         * 参数列表：（其实去参考selectTarget中对应参数即可）
+         *  itemtype为"select"类型/number类型：对应next.selectTarget，没有就默认[1,1],可选目标数目;
+         *  boolean类型：对应next.forced，若没有，默认false(手动执行)；
+         *  function类型：对应next.filterTarget，若没有，默认lib.filter.all;
+         *  string类型：对应next.prompt/prompt2，可以用"###+prompt+###+prompt2"格式字符串;
+         *  itemtype为"dialog"类型：对应next.dialog,且next.prompt=false,使用当前已有的会话面板；
          */
         chooseTarget(...args): Event;
         /**
          * 选择卡牌与目标
          * 
-         * 注：只有一个参数，用map结构传参。
-         * 参数：(以上方法主要为了game.check)
-         * filterCard：
-         * filterTarget：
-         * filterCard：过滤卡牌的方法，若不设置或者设置“true”，则默认lib.filter.all（默认所有都通过）；
-         * selectCard：选择卡牌数，默认为1，可以是：number | Select | OneParmFun<Card,number>
-         * filterTarget：过滤目标的方法，参考filterCard；
-         * selectTarget：选择目标数，默认为1，可以是：number | Select
-         * ai1：
-         * ai2：
-         * prompt：显示的提示文本；
-         * @param choose 只有一个参数时，使用map结构入参
-         * @param args 
+         * @param choose 只有一个参数时，使用map结构入参,目前总结了choose系列得参数为CheckEventData
          */
-        chooseCardTarget(...args): Event;
+        chooseCardTarget(choose: CheckEventData): Event;
         /**
          * 选择列表的控制面板
          * @param args 
@@ -546,6 +572,18 @@ declare namespace Lib.element {
         gainMultiple(targets?: Player[], position?: string): Event;
         /**
          * 获得牌
+         * 
+         * 参数列表：
+         *  itemtype为“player”类型：设置next.source，即获得牌的源头；
+         *  itemtype为“card”，“cards”类型：设置next.cards，即获得的牌；
+         *  itemtype为bool类型：设置next.delay，应该是动画延迟；
+         *  itemtype为字符串：设置next.animate，设置动画；
+         *      gain目前可设置动画:
+         *          "give","gain","gain2","draw2","giveAuto"...... 实质是调用它们对应”$动画名“的方法；
+         *  itemtype为以下特殊字符串：
+         *      “log”：设置next.log=true；
+         *      “fromStorage”：设置next.fromStorage=true，标记是否来自缓存中；
+         *      “bySelf”：设置next.bySelf；
          */
         gain(...args): Event;
         /**

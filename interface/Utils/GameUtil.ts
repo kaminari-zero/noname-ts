@@ -62,5 +62,12 @@ namespace NG {
             return desc;
         }
 
+        /**
+         * 设置触发时机：
+         * 
+         */
+        public static setTrigger(){
+
+        }
     }
 }

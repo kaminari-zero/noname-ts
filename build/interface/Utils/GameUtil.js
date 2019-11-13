@@ -51,6 +51,8 @@ var NG;
             });
             return desc;
         };
+        Utils.setTrigger = function () {
+        };
         return Utils;
     }());
     NG.Utils = Utils;

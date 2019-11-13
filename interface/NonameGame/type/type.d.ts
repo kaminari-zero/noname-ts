@@ -31,9 +31,20 @@ interface BaseResultData {
     /**
      * 最终结果
      * 
-     * 大多代表该事件到达这一步骤过程中的结果
+     * 大多代表该事件到达这一步骤过程中的结果;
+     * 一般用来标记当前事件是否按预定执行的，即执行成功
      */
     bool:boolean;
+    /** 记录返回当前事件操作过程中的卡牌 */
+    cards:Card[];
+    /** 记录返回当前事件操作过程中的目标 */
+    targets:Player[];
+    /** 记录返回当前事件操作过程中的按钮 */
+    buttons:Button[];
+    /** 记录返回当前事件操作过程中，面板按钮的确定取消 */
+    confirm:string;
+
+    links:any[];
 
     [key:string]:any;
 }
@@ -46,7 +57,11 @@ interface BaseResultData {
  *  
  *  _status:Status, lib:Lib, game:Game, ui:UI, get:Get, ai:AI这6大对象，不需要在参数列表中
  */
-type ContentFunc = (event: GameEvent, step: number, source: Player, player: Player, target: Player, targets: Player[], card: Card, cards: Card[], skill: string, forced: boolean, num: number, trigger: GameEvent, result: BaseResultData) => void;
+type ContentFunc = ContentFuncByAll | ContentFuncByNormal;
+type ContentFuncByAll = (event: GameEvent, step: number, source: Player, player: Player, target: Player, targets: Player[], card: Card, cards: Card[], skill: string, forced: boolean, num: number, trigger: GameEvent, result: BaseResultData) => void;
+//扩充一些额外得搭配参数(简化参数配置),改成基本参数求event给就行了
+//这里只是用于方便些代码的声明，实际上的参数列表，是执行了parse后转换的函数参数，所以不用在意这里的位置关系，只要名字一致就行了
+type ContentFuncByNormal = (event: GameEvent, player: Player, trigger: GameEvent,result: BaseResultData)=>void;
 
 //一些主要对象简单化，语义化类型名：
 /** nogame的card类型 */

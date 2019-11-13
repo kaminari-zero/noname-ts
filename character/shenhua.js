@@ -29,13 +29,13 @@ game.import('character',function(lib,game,ui,get,ai,_status){
 			sp_zhugeliang:['male','shu',3,['huoji','bazhen','kanpo']],
 			pangtong:['male','shu',3,['lianhuan','oldniepan']],
 			xunyu:['male','wei',3,['quhu','jieming']],
-			dianwei:['male','wei',4,['qiangxi']],
+			dianwei:['male','wei',4,['qiangxix']],
 			taishici:['male','wu',4,['tianyi']],
 			yanwen:['male','qun',4,['shuangxiong']],
 			re_yuanshao:['male','qun',4,['luanji','xueyi'],['zhu']],
 			re_pangde:['male','qun',4,['mashu','jianchu']],
 
-			menghuo:['male','shu',4,['huoshou','zaiqi']],
+			menghuo:['male','shu',4,['huoshou','zaiqixx']],
 			zhurong:['female','shu',4,['juxiang','lieren']],
 			caopi:['male','wei',3,['xingshang','fangzhu','songwei'],['zhu']],
 			re_xuhuang:['male','wei',4,['duanliang','jiezi']],
@@ -2957,10 +2957,13 @@ game.import('character',function(lib,game,ui,get,ai,_status){
 			jiang:{
 				audio:2,
 				audioname:['sp_lvmeng'],
-				trigger:{global:['useCard']},
+				trigger:{
+					player:'useCardToPlayered',
+					target:'useCardToTargeted',
+				},
 				filter:function(event,player){
 					if(!(event.card.name=='juedou'||(event.card.name=='sha'&&get.color(event.card)=='red'))) return false;
-					return player==event.player||event.targets.contains(player);
+					return player==event.target||event.getParent().triggeredTargets3.length==1;
 				},
 				frequent:true,
 				content:function(){
@@ -3739,6 +3742,10 @@ game.import('character',function(lib,game,ui,get,ai,_status){
 					trigger.source=player;
 				}
 			},
+			zaiqixx:{
+				audio:'zaiqi',
+				inherit:'zaiqi',
+			},
 			zaiqi:{
 				audio:2,
 				trigger:{player:'phaseDrawBefore'},
@@ -3757,7 +3764,7 @@ game.import('character',function(lib,game,ui,get,ai,_status){
 				content:function(){
 					"step 0"
 					trigger.cancel();
-					event.cards=get.cards(player.getDamagedHp());
+					event.cards=get.cards(player.getDamagedHp()+(event.name=='zaiqi'?0:1));
 					player.showCards(event.cards);
 					"step 1"
 					var num=0;
@@ -4313,15 +4320,6 @@ game.import('character',function(lib,game,ui,get,ai,_status){
 						return 0.5;
 					},
 					maixie:true,
-					effect:{
-						target:function(card,player,target){
-							if(target.maxHp<=3) return;
-							if(get.tag(card,'damage')){
-								if(target.hp==target.maxHp) return [0,1];
-							}
-							if(get.tag(card,'recover')&&player.hp>=player.maxHp-1) return [0,0];
-						}
-					}
 				}
 			},
 			jiuchi:{
@@ -4920,6 +4918,15 @@ game.import('character',function(lib,game,ui,get,ai,_status){
 						}
 					},
 				}
+			},
+			qiangxix:{
+				inherit:'reqiangxi',
+				usable:2,
+				filterTarget:function (card,player,target){
+					if(player==target) return false;
+					if(target.hasSkill('reqiangxi_off')) return false;
+					return true;
+				},
 			},
 			qiangxi:{
 				audio:2,
@@ -6551,6 +6558,7 @@ game.import('character',function(lib,game,ui,get,ai,_status){
 			huoshou1:'祸首',
 			huoshou2:'祸首',
 			zaiqi:'再起',
+			zaiqixx:'再起',
 			juxiang:'巨象',
 			juxiang1:'巨象',
 			juxiang2:'巨象',
@@ -6577,6 +6585,7 @@ game.import('character',function(lib,game,ui,get,ai,_status){
 			jiezi_info:'锁定技，其他角色跳过摸牌阶段后，你摸一张牌。',
 			huoshou_info:'锁定技，【南蛮入侵】对你无效；你视为所有【南蛮入侵】的伤害来源。',
 			zaiqi_info:'摸牌阶段，若你已受伤，则你可以改为展示牌堆顶的X张牌（X为你已损失的体力值），并回复X点体力（X为其中♥牌的数目）。然后你将这些♥牌置入弃牌堆，并获得其余的牌。',
+			zaiqixx_info:'摸牌阶段，若你已受伤，则你可以改为展示牌堆顶的X张牌（X为你已损失的体力值+1），并回复X点体力（X为其中♥牌的数目）。然后你将这些♥牌置入弃牌堆，并获得其余的牌。',
 			juxiang_info:'锁定技，【南蛮入侵】对你无效。其他角色使用的【南蛮入侵】结算后进入弃牌堆时，你获得之。',
 			lieren_info:'当你使用【杀】造成伤害后，可与受到该伤害的角色进行拼点；若你赢，你获得对方的一张牌。',
 			xingshang_info:'当有角色死亡后，你可以获得该角色的所有牌。',
@@ -6614,6 +6623,7 @@ game.import('character',function(lib,game,ui,get,ai,_status){
 			oldniepan:'涅槃',
 			quhu:'驱虎',
 			jieming:'节命',
+			qiangxix:'强袭',
 			qiangxi:'强袭',
 			tianyi:'天义',
 			shuangxiong:'双雄',
@@ -6631,6 +6641,7 @@ game.import('character',function(lib,game,ui,get,ai,_status){
 			quhu_info:'出牌阶段限一次，你可以与一名体力值大于你的角色拼点，若你赢，则该角色对其攻击范围内另一名由你指定的角色造成1点伤害。若你没赢，该角色对你造成一点伤害。',
 			jieming_info:'当你受到1点伤害后，你可令一名角色将手牌摸至X张（X为其体力上限且至多为5）。',
 			qiangxi_info:'出牌阶段限一次，你可以失去一点体力或弃置一张武器牌，然后对你攻击范围内的一名其他角色造成一点伤害。',
+			qiangxix_info:'出牌阶段限两次，你可以失去一点体力或弃置一张武器牌，然后一名本阶段内未成为过〖强袭〗的目标的其他角色造成一点伤害。',
 			tianyi_info:'出牌阶段限一次，你可以和一名其他角色拼点。若你赢，你获得以下技能效果直到回合结束：你使用【杀】没有距离限制；可额外使用一张【杀】；使用【杀】时可额外指定一个目标。若你没赢，你不能使用【杀】直到回合结束。',
 			shuangxiong_info:'摸牌阶段，你可以改为进行一次判定：你获得此判定牌，且于此回合的出牌阶段，你可以将任意一张与此判定牌不同颜色的手牌当做【决斗】使用。',
 			luanji_info:'出牌阶段，你可以将任意两张相同花色的手牌当做【万箭齐发】使用。',

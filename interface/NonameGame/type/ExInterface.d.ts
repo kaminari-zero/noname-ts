@@ -9,7 +9,7 @@ interface CheckEventData {
      * 可以使用键值对的简便写法
      * 也可以使用函数返回值（推荐）
      */
-    filterCard?: SMap<string> | OneParmFun<Card, boolean>;
+    filterCard?: boolean | SMap<string> | OneParmFun<Card, boolean>;
     /**
      * 选择的目标需要满足的条件
      */
