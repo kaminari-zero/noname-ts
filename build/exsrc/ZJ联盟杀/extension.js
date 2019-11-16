@@ -6,6 +6,7 @@ var ZJNGEx;
             character: {
                 zjm01_yangjuebo: [NG.Sex.MALE, NG.Group.WOOD, 5, ["zj_laobo"], []],
                 zjm01_zhengbosen: [NG.Sex.MALE, NG.Group.WOOD, 4, ["zj_bosen"], []],
+                zjm01_huanghuafu: [NG.Sex.MALE, NG.Group.WATER, 4, ["zj_ganglie"], []],
             },
             characterTitle: {
                 zjm01_yangjuebo: "盟主捞波",
@@ -71,7 +72,7 @@ var ZJNGEx;
                             if (list.length) {
                                 player.chooseButton([
                                     "是否视为视为对你使用一张【血】或【魔】？",
-                                    [list, NG.TypeConst.VCARD]
+                                    [list, NG.ButtonType.VCARD]
                                 ]);
                             }
                             else {
@@ -111,7 +112,6 @@ var ZJNGEx;
                                 "step 1";
                                 player.chooseTarget(lib.translate.zj_bosen_zj_bosen_1_info);
                                 "step 2";
-                                window.gameTestLog("当前还剩次数", player.storage.zj_bosen_1_flag);
                                 if (result.bool && result.targets.length > 0) {
                                     result.targets[0].draw(2);
                                 }
@@ -133,14 +133,120 @@ var ZJNGEx;
                                 player.chooseTarget(lib.translate.zj_bosen_zj_bosen_2_info);
                                 "step 1";
                                 if (result.bool && result.targets.length > 0) {
-                                    result.targets[0].gain(player.getCards("hej"));
+                                    result.targets[0].gain(player.getCards("hej"), player);
                                     result.targets[0].gainMaxHp(1);
                                 }
                             },
                             description: "当你死亡时，你可以将你的所有牌交给任一其他角色，然后令其血量+1"
                         }
                     }
-                }
+                },
+                zj_ganglie: {
+                    name: "肛裂",
+                    trigger: {
+                        player: NG.StateTrigger.damage + NG.TriggerEnum.End,
+                    },
+                    filter: function (event, player) {
+                        return event.source && event.num > 0;
+                    },
+                    logTarget: "source",
+                    content: function (event, player, trigger, result) {
+                        "step 0";
+                        event.num = trigger.num;
+                        "step 1";
+                        player.judge(function (jResult) {
+                            return jResult.color == NG.CardColor.Black ? 1 : 0;
+                        });
+                        "step 2";
+                        if (result.bool) {
+                            player.chooseControlList([
+                                "(1)令其弃置两张手牌",
+                                "(2)你对其造成的1点伤害"
+                            ], true);
+                        }
+                        else {
+                            event.goto(4);
+                        }
+                        "step 3";
+                        if (result.index == 0) {
+                            trigger.source.discard(2);
+                        }
+                        else {
+                            trigger.source.damage(1);
+                        }
+                        "step 4";
+                        event.num--;
+                        if (event.num > 0) {
+                            player.chooseBool(get.prompt2("zj_ganglie"));
+                        }
+                        else {
+                            event.finish();
+                        }
+                        "step 5";
+                        if (result.bool) {
+                            event.goto(1);
+                        }
+                    }
+                },
+                zj_huafu: {
+                    name: "华富",
+                    enable: NG.EnableTrigger.phaseUse,
+                    filter: function (event, player) {
+                        return player.hasCard(lib.filter.all, "h");
+                    },
+                    content: function (event, player, trigger, result) {
+                        "step 0";
+                        var shoupaiCount = player.countCards("h");
+                        var discardCount = 1;
+                        if (shoupaiCount >= 10) {
+                            discardCount = shoupaiCount - 10;
+                        }
+                    },
+                },
+                zj_skip_Judge: {
+                    trigger: {
+                        player: NG.PhaseTrigger.judge + NG.TriggerEnum.Before
+                    },
+                    forced: true,
+                    content: function (event, player, trigger, result) {
+                        trigger.cancel();
+                    }
+                },
+                zj_skip_PhaseDraw: {
+                    trigger: {
+                        player: NG.PhaseTrigger.phaseDraw + NG.TriggerEnum.Before
+                    },
+                    forced: true,
+                    content: function (event, player, trigger, result) {
+                        trigger.cancel();
+                    }
+                },
+                zj_skip_PhaseUse: {
+                    trigger: {
+                        player: NG.PhaseTrigger.phaseUse + NG.TriggerEnum.Before
+                    },
+                    forced: true,
+                    content: function (event, player, trigger, result) {
+                        trigger.cancel();
+                    }
+                },
+                zj_skip_PhaseDiscard: {
+                    trigger: {
+                        player: NG.PhaseTrigger.phaseDiscard + NG.TriggerEnum.Before
+                    },
+                    forced: true,
+                    content: function (event, player, trigger, result) {
+                        trigger.cancel();
+                    }
+                },
+                zj_skip_Phase: {
+                    trigger: {
+                        player: NG.PhaseTrigger.phase + NG.TriggerEnum.Before
+                    },
+                    forced: true,
+                    content: function (event, player, trigger, result) {
+                    }
+                },
             },
             translate: {
                 zjm01_yangjuebo: "杨爵波",
@@ -149,6 +255,21 @@ var ZJNGEx;
                 zjm01_zhengbosen: "郑博森",
                 zj_bosen: "博森",
                 zj_bosen_info: "锁定技，当你除去1点血量后，你令任一角色摸两张牌；当你死亡时，你可以将你的所有牌交给任一其他角色，然后令其血量+1。",
+                zjm01_huanghuafu: "黄华富",
+                zj_ganglie: "肛裂",
+                zj_ganglie_info: "当你受到1点伤害后，你可以进行一次判定，若判定结果为黑色牌，你选择一项：(1)令其弃置两张手牌；(2)你对其造成的1点伤害。",
+                zj_huafu: "华富",
+                zj_huafu_info: "你可以弃置X张手牌令你的手牌数不大于10（X至少为1），然后跳过你的弃牌阶段，将你的角色牌翻面；当你的角色牌被翻面时，你可以摸等同于你已损失的血量的牌(至少1张)。",
+                zj_skip_Judge: "判定阶段",
+                zj_skip_Judge_info: "跳过玩家判定阶段",
+                zj_skip_PhaseDraw: "抽牌阶段",
+                zj_skip_PhaseDraw_info: "跳过玩家抽牌阶段",
+                zj_skip_PhaseUse: "出牌阶段",
+                zj_skip_PhaseUse_info: "跳过玩家出牌阶段",
+                zj_skip_PhaseDiscard: "弃牌阶段",
+                zj_skip_PhaseDiscard_info: "跳过玩家弃牌阶段",
+                zj_skip_Phase: "当前回合",
+                zj_skip_Phase_info: "跳过玩家当前回合",
             }
         };
         var skills = {

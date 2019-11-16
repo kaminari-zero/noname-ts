@@ -25,7 +25,9 @@ type NameType = {name:string};
 
 /**
  * 基础result结构
+ * 
  * （基本通用，应该也有例外，暂无视）
+ *  修订：将改成涉及主逻辑相关操作都会记录在这里。(暂时还是分离开，在代码中声明类型)
  */
 interface BaseResultData {
     /**

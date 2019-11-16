@@ -80,13 +80,48 @@ interface VideoData {
     content: any;
 }
 
+/** 
+ * 判定方法的基本声明 
+ * 
+ * 其判定的结果值，
+ * 大于0，则result.bool=true，结果为”洗具“；
+ * 小于0，则result.bool=false，结果为”杯具“;
+ * 等于0，则result.bool=null，当前无结果;
+ */
+type JudgeFun = (jResult: JudgeResultData) => number;
+
 //result的结构：
 /** 判断阶段的事件reslut */
 interface JudgeResultData extends BaseResultData {
-    card: string,
-    number: number,
-    suit: string,
-    color: string,
-    judge: number,
-    node: Card,
+    /**
+     * 用于该次判定结果的牌
+     */
+    card: Card;
+    /** 
+     * 判定结果牌的名字
+     * （有该属性，可以视为card,直接使用get.卡牌相关方法） 
+     */
+    name:string;
+    /** 判定的卡牌点数 */
+    number: number;
+    /** 4中基本花色：♠，♥，♣，♦ */
+    suit: string;
+    /** 2大花色：红黑 */
+    color: string;
+    /**
+     * 用于抛出显示的判定牌（貌似是副本,非game.online）
+     */
+    node: Card;
+
+    /** 
+     * 判定的结果值
+     * （event.judge中处理的event.result没有该结果，是在处理完后才设置该结果）
+     * 
+     * 大于0，则result.bool=true，结果为”洗具“；
+     * 小于0，则result.bool=false，结果为”杯具“;
+     * 等于0，则result.bool=null，当前无结果;
+     * 注：在获得最终结果之前有一个“judge”的mod检测。
+     */
+    judge: number;
 }
+

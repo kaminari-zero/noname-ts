@@ -530,6 +530,16 @@ declare namespace Lib.element {
         useSkill(...args): Event;
         /**
          * 抽牌
+         * 
+         * 参数列表：
+         *  number类型：设置next.num;
+         *  itemtype为“player”类型：设置next.source，即让你抽牌的源头；
+         *  bool类型：设置next.animate;
+         *  有“drawDeck”属性的对象类型：设置next.drawDeck；（正常玩法下没什么用这个）
+         *  itemtype为以下特殊字符串：
+         *      “nodelay”：设置next.$draw=true;
+         *      “visible”：设置next.visible=true，设置抽出的卡可显示;
+         *      “bottom”：设置next.bottom=true，即设置从牌堆底抽卡;
          */
         draw(...args): Event;
         /**
@@ -592,17 +602,39 @@ declare namespace Lib.element {
          * @param target 目标玩家
          * @param visible 给出去的牌是否大家都可见 
          */
-        give(cards: any|any[], target: any, visible: boolean): void;
+        give(cards: Card|Card[], target: Player, visible: boolean): void;
         /**
          * 失去牌
          */
         lose(...args): Event;
         /**
-         * 收到伤害
+         * 受到伤害
+         * 
+         * 参数列表：
+         *  number类型：设置next.num;
+         *  itemtype为“nature”：设置next.nature，即伤害的属性；
+         *  【下面那些参数可以直接供给damage使用，但是主动调用时需要哪些就设置】
+         *  itemtype为“card”/带有“name”属性得对象：设置next.card，应该是记录用来造成伤害的卡；
+         *  itemtype为“cards”类型：设置next.cards，同上;
+         *  itemtype为“player”类型：设置next.source，应该是记录给当前玩家造成伤害的源玩家；
+         *  特殊常量字符串：
+         *      “nocard”：若card/cards没有，若没设置该值，默认使用event.card/event.cards；
+         *      “nosource”：若source没有，若没设置该值，默认使用event.player；
+         *      "notrigger"：若设置该值，则设置next._triggered=null，next.notrigger=true，即不触发后续阶段；
          */
         damage(...args): Event;
         /**
          * 回复体力
+         * 
+         * 参数列表：
+         *  number类型：设置next.num;
+         *  【下面那些参数可以不直接供给recover使用，但是主动调用时需要哪些就设置】
+         *  itemtype为“card”/带有“name”属性得对象：设置next.card，应该是记录用来回复得卡；
+         *  itemtype为“cards”类型：设置next.cards，同上;
+         *  itemtype为“player”类型：设置next.source，应该是记录给当前玩家回复的源玩家；
+         *  特殊常量字符串：
+         *      “nocard”：若card/cards没有，若没设置该值，默认使用event.card/event.cards；
+         *      “nosource”：若source没有，若没设置该值，默认使用event.player；
          */
         recover(...args): Event;
         /**
@@ -613,28 +645,28 @@ declare namespace Lib.element {
          * 失去体力
          * @param num 
          */
-        loseHp(num: any,...args): Event;
+        loseHp(num: number): Event;
         /**
          * 失去体力上限
          */
-        loseMaxHp(...args): Event;
+        loseMaxHp(num?: number, forced?: boolean): Event;
         /**
          * 增加体力上限
          */
-        gainMaxHp(...args): Event;
+        gainMaxHp(num?:number,forced?:boolean): Event;
         /**
          * 血量改变
-         * @param num 
-         * @param popup 
+         * @param num 血量改变数
+         * @param popup 是否弹出提示，取值为“false”，则不弹出（默认是弹出的）
          */
-        changeHp(num: any, popup: any,...args): Event;
+        changeHp(num: number, popup?: boolean): Event;
         /**
          * 护甲改变
          * （不是三国杀常规模式下相关的）
          * @param num 改变的护甲数，默认为1
          * @param type 护甲类型
          */
-        changeHujia(num?: number, type?: any,...args): Event;
+        changeHujia(num?: number, type?: any): Event;
         /**
          * 濒死阶段
          * @param reason 
@@ -702,11 +734,21 @@ declare namespace Lib.element {
          */
         addJudgeNext(card: Card): void;
         /**
-         * 创建“judge”判定事件
+         * 判定
+         * 
+         * 参数列表：
+         *  function类型：设置next.judge，即当前判定的判定条件,
+         *      其定义：(jResult: JudgeResultData) => number，若最终都没设置则默认一个返回0的方法；
+         *  itemtype为“card”类型：设置next.card，若不设置judge，设置了该值，则设置next.judge为card的judge；
+         *  string类型：设置next.skill，正常状况下和card一起都是设置next.judgestr,即该判定的名字（默认使用event.name）；
+         *  bool类型：设置next.clearArena,联机时使用，取值为false,则不通知所有玩家清理场上的ui；
+         *  objtype为“div”类型，设置next.position，用于指定该生效判定牌是丢弃还是添加到其他区域（例如玩家手上）；
          */
         judge(...args): Event;
         /**
          * 翻面
+         * 
+         * 正常触发”_turnover“预定义全局技能
          * @param bool true，翻面；false翻回正面
          */
         turnOver(bool: boolean): Event;
@@ -1325,9 +1367,10 @@ declare namespace Lib.element {
         /** 扩展名，不知时哪里赋值的，在addCharacter中使用，默认_status.extension */
         extension:string;
 
-        //player.out
-        outCount:number;
-        outSkills:string[];
+        /**
+         * 记录当前玩家正在判定的所有判定牌，其中下标0为当前生效的判定牌
+         */
+        judging:Card[];
 
         /**
          * 记录当前事件中得玩家使用中的卡牌
@@ -1377,6 +1420,7 @@ declare namespace Lib.element {
             turnedover: HTMLDivElement;
             /** 信息显示 */
             intro: HTMLDivElement;
+            
         };
 
         /** 
@@ -1425,6 +1469,8 @@ declare namespace Lib.element {
          * (暂不清楚)
          */
         forbiddenSkills:SMap<string[]>;
+        popups:any[];
+        damagepopups:any[];
         /**
          * 玩家的游戏统计：
          * 每回合“phasing”，在轮到玩家新一轮开始时，添加新的统计集合
@@ -1451,20 +1497,14 @@ declare namespace Lib.element {
          */
         ai:PlayerAIInfo;
 
-        
+        //player.out
+        outCount: number;
+        outSkills: string[];
+
+        queueCount:number;
     }
 }
 
-/** 简单的牌的结构 */
-// type cardSimpInfo = { 
-//     type, 
-//     subtype, 
-//     color, 
-//     suit, 
-//     number,
-//     /** 额外参数 */
-//     [key:string]:any
-// }
 
 /**
  * 玩家的统计数据结构
@@ -1521,4 +1561,13 @@ type PlayerStateInfo = {
  * 玩家的ai
  * （具体内容日后讨论）
  */
-type PlayerAIInfo = {}
+type PlayerAIInfo = {
+    friend: any[]; 
+    enemy: any[]; 
+    neutral: any[]; 
+    handcards: { 
+        global: any[]; 
+        source: any[]; 
+        viewed: any[];
+    }
+}

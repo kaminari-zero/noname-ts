@@ -96,9 +96,9 @@ interface Get {
      * @param target 目标玩家
      * @param player 源玩家
      */
-    prompt(skill:string,target:Player,player:Player):string;
+    prompt(skill:string,target?:Player,player?:Player):string;
     /** 在get.prompt基础上拼接“技能名_info”的信息 */
-    prompt2(skill:string,target:Player,player:Player):string;
+    prompt2(skill:string,target?:Player,player?:Player):string;
     /** 获取更新地址 */
     url(master):void;
     /**

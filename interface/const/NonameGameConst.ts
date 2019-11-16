@@ -12,10 +12,13 @@ namespace NG {
     export const enum PositionType {
         /** 手牌区 */
         Shoupai = "h",
+        Handcard = "h",
         /** 装备区 */
         Zhuangbei = "e",
+        Equip = "e",
         /** 判定区 */
         Panding = "j",
+        Judge = "j",
 
         /** 抽牌区/牌堆 */
         CardPlie = "c",
@@ -104,7 +107,7 @@ namespace NG {
         phaseUse = "phaseUse",
 
         /** 弃牌阶段 */
-        discard = "discard",
+        phaseDiscard = "phaseDiscard",
     }
 
     /**
@@ -142,6 +145,9 @@ namespace NG {
 
         /** 打出卡牌 */
         chooseToRespond = "chooseToRespond",
+
+        /** 弃牌 */
+        discard = "discard",
     }
     
     /**
@@ -214,6 +220,9 @@ namespace NG {
         /** 方块 */
         Diamond = "diamond",
 
+        /** 指无花色，颜色，一般多用于多张卡牌花色不同时，若需要把其视为一种，花色时，则为none */
+        None = "none",
+
         /** 红 */
         Red = "red",
         /** 黑 */
@@ -257,9 +266,9 @@ namespace NG {
     }
 
     /**
-     * 常用的类型常量
+     * 常用的item类型常量（主要是get.itemtype）
      */
-    export enum TypeConst {
+    export enum ItemType {
         /** 位置 */
         POSITION = "position",
         /** 玩家 */
@@ -281,9 +290,74 @@ namespace NG {
         /** 会话面板 */
         DIALOG = "dialog",
 
-        //比较特殊的类型常量：
-        /** 虚拟卡牌 */
-        VCARD="vcard"
+    }
+    
+    /**
+     * 创建按钮/div类型常量
+     */
+    export enum ButtonType {
+        /** 
+         * 背面：
+         * 
+         * 对应item为card，
+         * 效果：不显示卡面，显示背面； 
+         */
+        BLANK ="blank",
+        /**
+         * 卡牌：
+         * 
+         * 对应item为card，
+         * 效果：展示卡牌；
+         */
+        CARD ="card",
+        /** 
+         * 虚拟卡牌:
+         * 
+         * 对应item为string,则是卡牌名；否则类型为CardBaseUIData或者CardBaseUIData2，
+         * 效果：展示虚构卡牌（非卡堆里的）； 
+         */
+        VCARD="vcard",
+        /**
+         * 武将卡：
+         * 
+         * 对应item为string,则是武将名，
+         * 效果：展示武将并附带一个功能按钮；
+         */
+        Character ="character",
+        /**
+         * 玩家：
+         * 
+         * 对应的item为Player，则是玩家，
+         * 效果：展示玩家的武将；
+         */
+        PLAYER ="player",
+        /**
+         * 文本：
+         * 
+         * 对应的item为“html文档文本”，则是html文档的显示，
+         * 效果：展示这段文档；
+         */
+        TEXT ="text",
+        /**
+         * （纯）可点击文本：
+         * 
+         * 对应的item为“html文档文本”，则是html文档的显示，
+         * 效果：应该是按钮功能的文本，例如链接，暂不明确，待后期观察
+         */
+        TextButton ="textButton",
+    }
+
+    /**
+     * 对象类型
+     */
+    export enum ObjType {
+        Array = "array",
+        Object = "object",
+        Div = "div",
+        Table = "table",
+        Tr = "tr",
+        Td = "td",
+        Body = "body",
     }
 
     /**

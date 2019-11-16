@@ -212,6 +212,10 @@ interface Lib {
         /** 
          * 保存游戏内所有全局技能
          * 全局技能名命名常用："_","g_"开头
+         * 目前看来，用”_“开头，就是指定其为全局技能；
+         * 另外还有技能配置的info.global指定的全局技能；
+         * 
+         * 下面那些拥有”_“开头的技能，就是当前游戏中的预定义的全局技能，这些全局技能属于游戏玩法和流程的一部分！
          */
         global: string[];
         /** 保存的技能信息与玩家之间的关系map,目前在项目内没看出有什么用 */
@@ -221,9 +225,10 @@ interface Lib {
         /**
          * 不计入距离的计算且不能使用牌且不是牌的合法目标
          * （目前该标记直接标记到技能的group中，拥有该技能就是被隔离出游戏，目前还没见使用到这成员）
-         * 目前在项目内没什么用，只有标记到技能的group中使用，用于免除某些阶段结算
+         * 目前在项目内没什么用，只有标记到技能的group中使用，用于免除某些阶段结算(只是同名而已，和该属性似乎没有直接关系)
          */
         undist: SMap<any>;
+        //下面4个+上面1个目前似乎都没什么用......
         others: SMap<any>;
         zhu: SMap<any>;
         zhuSkill: SMap<any>;
@@ -241,6 +246,10 @@ interface Lib {
          * 使指定技能“失效”（即玩家失去了某些技能，可在标记上查看）
          */
         fengyin: ExSkillData;
+        /**
+         * 特殊技能：白板
+         * 使玩家失去当前自身的所有技能
+         */
         baiban: ExSkillData;
         /**
          * 特殊技能：潜行
@@ -249,7 +258,9 @@ interface Lib {
         qianxing: ExSkillData;
         /**
          * 特殊技能：免疫
+         * 触发阶段：damageBefore（玩家收到伤害时）
          * 常用于：锁定技，防止一切伤害
+         * 其作用是取消”damage“受到伤害事件的触发（故无法防止失去体力之类的伤害）
          */
         mianyi: ExSkillData;
         /**
@@ -267,21 +278,32 @@ interface Lib {
          */
         counttrigger: ExSkillData;
         _recovercheck: ExSkillData;
+        /**
+         * 全局技能：翻面
+         * 触发阶段：玩家phaseBefore（玩家回合开始后）
+         * 当有玩家处于翻面状态时，到其回合开始后触发该技能。
+         * 其作用是，让其翻面回正面，并且跳过该玩家的当前回合。
+         */
         _turnover: ExSkillData;
+        /**
+         * 全局技能：卡牌使用后清楚场上的ui
+         * 触发阶段：useCardAfter（全场玩家在卡牌使用之后）
+         */
         _usecard: ExSkillData;
         _discard: ExSkillData;
         /**
-         * 特殊技能：濒死阶段循环询问求救
-         * 触发阶段：濒死阶段触发
+         * 全局技能：濒死阶段循环询问求救
+         * 触发阶段：濒死阶段触发（玩家频死时，玩家造成其他玩家频死时）
          */
         _save: ExSkillData;
         _ismin: ExSkillData;
         /**
-         * 特殊技能：重铸
+         * 全局技能：重铸
          * 触发阶段：phaseUse（出牌阶段中）
          * 可以触发当前自己所拥有的牌是否可以“重铸”
          */
         _chongzhu: ExSkillData;
+        //铁索连环相关
         _lianhuan: ExSkillData;
         _lianhuan2: ExSkillData;
         _lianhuan3: ExSkillData;

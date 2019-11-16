@@ -150,6 +150,9 @@ interface ExSkillData {
      * 作为主动触发技能：
      *  在useSkill中创建当前技能的事件
      * 分步执行(通过step x分割开执行逻辑步骤)
+     * 
+     * 注：此时的content，已经为触发该技能的效果而创建的，该技能执行中的事件，此时的event一般是不具备
+     *  触发信息，触发的信息，主要在trigger触发事件中获取。
      */
     content?: ContentFunc;
     /**
@@ -218,7 +221,7 @@ interface ExSkillData {
      * 你拥有此技能时，所有角色拥有此技能（global的值为技能名）
      * 注：无论是否拥有此技能，此技能都为全局技能写法：技能名前+_
      */
-    global?: string;
+    global?: string|string[];
     globalSilent?: boolean;
 
 
@@ -305,11 +308,17 @@ interface ExSkillData {
     animationColor?: string;
     /** 标记显示文本，一般为一个字 */
     marktext?: string;
+    /**
+     * 觉醒技标记：
+     * (目前来看，这个目前单纯是技能标记，在主逻辑上并没使用，但貌似会被某些技能本身用到)
+     */
+    juexingji?:boolean;
 
     //主公技
     /** 
      * 是否为主公技：
      * true时，将这个技能设置为主公技 
+     * (目前来看，这个目前单纯是技能标记，在主逻辑上并没使用，但貌似会被某些技能本身用到)
      */
     zhuSkill?: boolean;
 
@@ -414,7 +423,7 @@ interface ExSkillData {
     /**
      * 过滤发动条件，返回true则可以发动此技能
      * 主要在filterTrigger中处理
-     * @param event 事件 相当于trigger时机
+     * @param event 事件 相当于trigger时机（此时的event为触发该技能时机时的事件）
      * @param player 
      */
     filter?(event: Trigger, player: Player): boolean;

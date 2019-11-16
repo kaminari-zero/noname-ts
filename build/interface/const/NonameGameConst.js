@@ -42,7 +42,7 @@ var NG;
         PhaseTrigger["judge"] = "judge";
         PhaseTrigger["phaseDraw"] = "phaseDraw";
         PhaseTrigger["phaseUse"] = "phaseUse";
-        PhaseTrigger["discard"] = "discard";
+        PhaseTrigger["phaseDiscard"] = "phaseDiscard";
     })(PhaseTrigger = NG.PhaseTrigger || (NG.PhaseTrigger = {}));
     var CardTrigger;
     (function (CardTrigger) {
@@ -57,6 +57,7 @@ var NG;
         CardTrigger["draw"] = "draw";
         CardTrigger["equip"] = "equip";
         CardTrigger["chooseToRespond"] = "chooseToRespond";
+        CardTrigger["discard"] = "discard";
     })(CardTrigger = NG.CardTrigger || (NG.CardTrigger = {}));
     var StateTrigger;
     (function (StateTrigger) {
@@ -87,6 +88,7 @@ var NG;
         CardColor["Heart"] = "heart";
         CardColor["Club"] = "club";
         CardColor["Diamond"] = "diamond";
+        CardColor["None"] = "none";
         CardColor["Red"] = "red";
         CardColor["Black"] = "black";
     })(CardColor = NG.CardColor || (NG.CardColor = {}));
@@ -108,20 +110,39 @@ var NG;
         Nature["Fire"] = "fire";
         Nature["Poison"] = "poison";
     })(Nature = NG.Nature || (NG.Nature = {}));
-    var TypeConst;
-    (function (TypeConst) {
-        TypeConst["POSITION"] = "position";
-        TypeConst["PLAYER"] = "player";
-        TypeConst["PLAYERS"] = "players";
-        TypeConst["CARD"] = "card";
-        TypeConst["CARDS"] = "cards";
-        TypeConst["NATURE"] = "nature";
-        TypeConst["SELECT"] = "select";
-        TypeConst["DIV_POSITION"] = "divposition";
-        TypeConst["BUTTON"] = "button";
-        TypeConst["DIALOG"] = "dialog";
-        TypeConst["VCARD"] = "vcard";
-    })(TypeConst = NG.TypeConst || (NG.TypeConst = {}));
+    var ItemType;
+    (function (ItemType) {
+        ItemType["POSITION"] = "position";
+        ItemType["PLAYER"] = "player";
+        ItemType["PLAYERS"] = "players";
+        ItemType["CARD"] = "card";
+        ItemType["CARDS"] = "cards";
+        ItemType["NATURE"] = "nature";
+        ItemType["SELECT"] = "select";
+        ItemType["DIV_POSITION"] = "divposition";
+        ItemType["BUTTON"] = "button";
+        ItemType["DIALOG"] = "dialog";
+    })(ItemType = NG.ItemType || (NG.ItemType = {}));
+    var ButtonType;
+    (function (ButtonType) {
+        ButtonType["BLANK"] = "blank";
+        ButtonType["CARD"] = "card";
+        ButtonType["VCARD"] = "vcard";
+        ButtonType["Character"] = "character";
+        ButtonType["PLAYER"] = "player";
+        ButtonType["TEXT"] = "text";
+        ButtonType["TextButton"] = "textButton";
+    })(ButtonType = NG.ButtonType || (NG.ButtonType = {}));
+    var ObjType;
+    (function (ObjType) {
+        ObjType["Array"] = "array";
+        ObjType["Object"] = "object";
+        ObjType["Div"] = "div";
+        ObjType["Table"] = "table";
+        ObjType["Tr"] = "tr";
+        ObjType["Td"] = "td";
+        ObjType["Body"] = "body";
+    })(ObjType = NG.ObjType || (NG.ObjType = {}));
     var PrepareConst;
     (function (PrepareConst) {
         PrepareConst["Give"] = "give";
