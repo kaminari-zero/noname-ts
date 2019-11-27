@@ -279,10 +279,6 @@ game.import('character',function(lib,game,ui,get,ai,_status){
 					player.storage.ol_wuqian_target=target;
 					player.addTempSkill('ol_wuqian_target');
 					target.addTempSkill('ol_wuqian_targeted');
-					var list=game.filterPlayer();
-					for(var i=0;i<list.length;i++){
-						list[i].addTempSkill('ol_wuqian_equip');
-					}
 				},
 				subSkill:{
 					equip:{
@@ -294,13 +290,13 @@ game.import('character',function(lib,game,ui,get,ai,_status){
 							}
 						}
 					},
-					targeted:{},
+					targeted:{ai:{unequip2:true}},
 					target:{
 						mark:'character',
 						onremove:true,
 						intro:{
 							content:'获得无双且$防具失效直到回合结束'
-						}
+						},
 					}
 				}
 			},
@@ -618,7 +614,7 @@ game.import('character',function(lib,game,ui,get,ai,_status){
 			sbaiyin:{
 				skillAnimation:'epic',
 				animationColor:'thunder',
-				trigger:{player:'phaseBegin'},
+				trigger:{player:'phaseZhunbeiBegin'},
 				forced:true,
 				unique:true,
 				audio:true,
@@ -690,7 +686,7 @@ game.import('character',function(lib,game,ui,get,ai,_status){
 				audio:true,
 				trigger:{player:'damageEnd'},
 				direct:true,
-				priority:-1,
+				//priority:-1,
 				filter:function(event,player){
 					return player.storage.renjie>0;
 				},
@@ -1105,7 +1101,7 @@ game.import('character',function(lib,game,ui,get,ai,_status){
 			qixing:{
 				audio:2,
 				unique:true,
-				trigger:{global:'gameDrawAfter',player:'phaseBegin'},
+				trigger:{global:'gameDrawAfter',player:'phaseZhunbeiBegin'},
 				forced:true,
 				check:function(event,player){
 					return player.hp<=1;
@@ -1203,8 +1199,8 @@ game.import('character',function(lib,game,ui,get,ai,_status){
 			},
 			dawu:{
 				unique:true,
-				trigger:{player:'phaseEnd'},
-				priority:1,
+				trigger:{player:'phaseJieshuBegin'},
+				//priority:1,
 				direct:true,
 				filter:function(event,player){
 					return player.storage.qixing&&player.storage.qixing.length;
@@ -1249,7 +1245,7 @@ game.import('character',function(lib,game,ui,get,ai,_status){
 				group:'dawu3'
 			},
 			dawu2:{
-				trigger:{player:'damageBefore'},
+				trigger:{player:'damageBegin4'},
 				filter:function(event){
 					if(event.nature!='thunder') return true;
 					return false;
@@ -1273,7 +1269,7 @@ game.import('character',function(lib,game,ui,get,ai,_status){
 				}
 			},
 			dawu3:{
-				trigger:{player:['phaseBegin','dieBegin']},
+				trigger:{player:['phaseZhunbeiBegin','dieBegin']},
 				silent:true,
 				content:function(){
 					for(var i=0;i<game.players.length;i++){
@@ -1291,7 +1287,7 @@ game.import('character',function(lib,game,ui,get,ai,_status){
 			kuangfeng:{
 				unique:true,
 				audio:2,
-				trigger:{player:'phaseEnd'},
+				trigger:{player:'phaseJieshuBegin'},
 				direct:true,
 				filter:function(event,player){
 					return player.storage.qixing&&player.storage.qixing.length;
@@ -1326,14 +1322,14 @@ game.import('character',function(lib,game,ui,get,ai,_status){
 				},
 			},
 			kuangfeng2:{
-				trigger:{player:'damageBegin'},
+				trigger:{player:'damageBegin3'},
 				filter:function(event){
 					if(event.nature=='fire') return true;
 					return false;
 				},
 				mark:true,
 				intro:{
-					content:'已获得大雾标记'
+					content:'已获得狂风标记'
 				},
 				forced:true,
 				content:function(){
@@ -1397,10 +1393,10 @@ game.import('character',function(lib,game,ui,get,ai,_status){
 					if(targets.length==1) event.goto(4);
 					else{
 						player.chooseTarget('请选择受到2点伤害的角色',true,function(card,player,target){
-							return targets.contains(target)
+							return _status.event.targets.contains(target)
 						}).set('ai',function(target){
 							return 1;
-						}).set('forceDie',true);
+						}).set('forceDie',true).set('targets',targets);
 					}
 					"step 3"
 					if(event.num<targets.length){
@@ -1559,13 +1555,13 @@ game.import('character',function(lib,game,ui,get,ai,_status){
 				},
 				audio:true,
 				trigger:{player:'phaseDrawBegin'},
-				priority:-5,
+				//priority:-5,
 				filter:function(event,player){
 					return player.hp<player.maxHp;
 				},
 				forced:true,
 				content:function(){
-					trigger.num=2+player.maxHp-player.hp;
+					trigger.num+=(player.maxHp-player.hp);
 				}
 			},
 			xinlonghun:{
@@ -1947,7 +1943,7 @@ game.import('character',function(lib,game,ui,get,ai,_status){
 					'2':{
 						audio:2,
 						trigger:{
-							player:'phaseEnd',
+							player:'phaseJieshuBegin',
 						},
 						direct:true,
 						filter:function(event,player){
@@ -2094,8 +2090,8 @@ game.import('character',function(lib,game,ui,get,ai,_status){
 						targets[i].discard(targets[i].getCards('e'));
 					}
 					player.chooseTarget(true,'对一名目标角色造成1点火焰伤害',function(card,player,target){
-						return targets.contains(target);
-					}).ai=function(){return 1};
+						return _status.event.targets.contains(target);
+					}).set('targets',targets).ai=function(){return 1};
 					'step 2'
 					if(result.bool){
 						result.targets[0].damage('fire','nocard');
@@ -2417,7 +2413,7 @@ game.import('character',function(lib,game,ui,get,ai,_status){
 					'1':{
 						audio:'drlt_jieying',
 						trigger:{
-							player:'phaseBegin'
+							player:'phaseZhunbeiBegin'
 						},
 						forced:true,
 						filter:function(event,player){
@@ -2432,7 +2428,7 @@ game.import('character',function(lib,game,ui,get,ai,_status){
 					'2':{
 						audio:'drlt_jieying',
 						trigger:{
-							player:"phaseEnd",
+							player:"phaseJieshuBegin",
 						},
 						direct:true,
 						filter:function(event,player){
