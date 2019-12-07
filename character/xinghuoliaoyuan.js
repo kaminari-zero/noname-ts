@@ -454,10 +454,10 @@ game.import('character',function(lib,game,ui,get,ai,_status){
 						event.directindex=result.index;
 					}
 					if(event.directindex==1){
-						target.chooseUseTarget({name:'sha'},cards,true)
+						target.chooseUseTarget({name:'sha'},cards,true,false)
 					}
 					else{
-						target.chooseUseTarget(card,true);
+						target.chooseUseTarget(card,true,false,'nodistance');
 					}
 				},
 				ai:{
@@ -810,7 +810,7 @@ game.import('character',function(lib,game,ui,get,ai,_status){
 				content:function (){
 					"step 0"
 					event.cards=get.cards(4);
-					player.chooseCardButton(true.event.cards,2,'选择两张牌置于牌堆顶').set('ai',ai.get.buttonValue);
+					player.chooseCardButton(true,event.cards,2,'选择两张牌置于牌堆顶').set('ai',ai.get.buttonValue);
 					"step 1"
 					if(result.bool){
 						var choice=[];
@@ -1124,8 +1124,8 @@ game.import('character',function(lib,game,ui,get,ai,_status){
 					}
 					if(event.num>1) player.draw(2);
 					if(event.num>2){
-						player.addTempSkill('lingren_jianxiong',{player:'phaseBefore'});
-						player.addTempSkill('lingren_xingshang',{player:'phaseBefore'});
+						player.addTempSkill('lingren_jianxiong',{player:'phaseBegin'});
+						player.addTempSkill('lingren_xingshang',{player:'phaseBegin'});
 					}
 				},
 				ai:{
@@ -2297,13 +2297,13 @@ game.import('character',function(lib,game,ui,get,ai,_status){
 					delete player.storage.xinfu_yanyu2;
 				},
 				trigger:{
-					global:["loseEnd","cardsDiscardEnd"],
+					global:["loseEnd","cardsDiscardEnd","useCardAfter","respondAfter"],
 				},
 				direct:true,
 				filter:function (event,player){
 					if(player.storage.xinfu_yanyu2>=3) return false;
 					var evt=event.getParent();
-					if(evt&&evt.name=='useCard'&&evt.card&&['equip','delay'].contains(get.type(evt.card))) return false;
+					if(evt&&(evt.name=='useCard'||evt.name=='respond')) return false;
 					var type=player.storage.xinfu_yanyu;
 					var cards=event.cards;
 					for(var i=0;i<cards.length;i++){
@@ -3509,7 +3509,7 @@ game.import('character',function(lib,game,ui,get,ai,_status){
 						event.finish();
 					}
 					"step 2"
-					if(get.color(result.links[0])!='black') player.draw();
+					if(get.color(result.links[0])!='black') player.draw('nodelay');
 					if(result.links[0].name!='sha'&&event.target.countCards('he')){
 						player.gainPlayerCard('he',event.target,true);
 					}
@@ -3854,7 +3854,7 @@ game.import('character',function(lib,game,ui,get,ai,_status){
 				filter:function (event,player){
 					if(player.hasSkill('guhuo_phase'))return false;
 					if(!player.countCards('h')) return false;
-					var list=['sha','tao','jiu','taoyuan','wugu','juedou','huogong','jiedao','tiesuo','guohe','shunshou','wuzhong','wanjian','nanman'];
+					var list=['sha','shan','tao','jiu','taoyuan','wugu','juedou','huogong','jiedao','tiesuo','guohe','shunshou','wuzhong','wanjian','nanman'];
 					if(get.mode()=='guozhan'){
 						list=list.concat(['xietianzi','shuiyanqijunx','lulitongxin','lianjunshengyan','chiling','diaohulishan','yuanjiao','huoshaolianying']);
 					}
@@ -3897,7 +3897,13 @@ game.import('character',function(lib,game,ui,get,ai,_status){
 						return '将一张手牌做当'+get.translation(links[0][2])+'使用';
 					},
 				},
-				ai:{save:true},
+				ai:{
+					save:true,
+					respondShan:true,
+					skillTagFilter:function(player){
+						if(player.hasSkill('guhuo_phase')) return false;
+					},
+				},
 			},
 			"guhuo_guess":{
 				audio:2,
@@ -4674,7 +4680,7 @@ game.import('character',function(lib,game,ui,get,ai,_status){
 			"yizan_respond_shan":{
 				complexCard:true,
 				audio:2,
-				enable:["chooseToRespond"],
+				enable:["chooseToUse","chooseToRespond"],
 				filterCard:function (card,player,target){
 					if(player.storage.yizan) return get.type(card)=='basic';
 						else if(ui.selected.cards.length){
@@ -4703,7 +4709,7 @@ game.import('character',function(lib,game,ui,get,ai,_status){
 				prompt:function (){
 					var player=_status.event.player;
 					var str=!player.storage.yizan?'两张牌(其中至少应有一张基本牌)':'一张基本牌';
-					return '将'+str+'当做闪打出';
+					return '将'+str+'当做闪使用或打出';
 				},
 				check:function (card){
 					if(!ui.selected.cards.length&&get.type(card)=='basic') return 6;
@@ -4758,7 +4764,7 @@ game.import('character',function(lib,game,ui,get,ai,_status){
 				silent:true,
 				popup:false,
 				trigger:{
-					player:["respond","useCard"],
+					player:["respond","useCard1"],
 				},
 				filter:function (event,player){
 					if(event.skill!='yizan_respond_sha'&&event.skill!='yizan_respond_shan'&&event.skill!='yizan_use_backup') return false;
@@ -5262,7 +5268,9 @@ game.import('character',function(lib,game,ui,get,ai,_status){
 							return true;
 						},
 						content:function (){
-							player.storage.xinfu_shangjian+=trigger.cards.length;
+							for(var i=0;i<trigger.cards.length;i++){
+								if(trigger.cards[i].original&&trigger.cards[i].original!='j') player.storage.xinfu_shangjian++;
+							}
 						},
 						sub:true,
 						forced:true,
@@ -5271,29 +5279,8 @@ game.import('character',function(lib,game,ui,get,ai,_status){
 				},
 			},
 			"rw_bagua_skill":{
-				equipSkill:true,
 				inherit:"bagua_skill",
-				trigger:{
-					player:"chooseToRespondBegin",
-				},
-				filter:function (event,player){
-					if(player.hasSkillTag('unequip2')) return false;
-					if(event.responded) return false;
-					if(!event.filterCard({name:'shan'})) return false;
-					if(!lib.filter.cardRespondable({name:'shan'},player,event)) return false;
-					var evt=event.getParent();
-					if(evt.player&&evt.player.hasSkillTag('unequip',false,{
-						name:evt.card?evt.card.name:null,
-						target:player,
-						card:evt.card
-					})) return false;
-					return true;
-				},
 				audio:"bagua_skill",
-				check:function (event,player){
-					if(get.damageEffect(player,event.player,player)>=0) return false;
-					return true;
-				},
 				content:function (){
 					"step 0"
 					player.judge('rewrite_bagua',function(card){return (get.suit(card)!='spade')?1.5:-0.5});
@@ -5303,19 +5290,6 @@ game.import('character',function(lib,game,ui,get,ai,_status){
 						trigger.responded=true;
 						trigger.result={bool:true,card:{name:'shan'}}
 					}
-				},
-				ai:{
-					effect:{
-						target:function (card,player,target,effect){
-							if(player.getEquip('qinggang')&&card.name=='sha'||target.hasSkillTag('unequip2')) return;
-							if(player.hasSkillTag('unequip',false,{
-								name:card?card.name:null,
-								target:player,
-								card:card
-							})) return;
-							if(get.tag(card,'respondShan')) return 0.5;
-						},
-					},
 				},
 			},
 			"rw_baiyin_skill":{
@@ -5344,7 +5318,7 @@ game.import('character',function(lib,game,ui,get,ai,_status){
 			"rw_lanyinjia":{
 				equipSkill:true,
 				inherit:"lanyinjia",
-				enable:["chooseToRespond"],
+				enable:["chooseToRespond","chooseToUse"],
 				filterCard:true,
 				viewAs:{
 					name:"shan",
@@ -5352,7 +5326,7 @@ game.import('character',function(lib,game,ui,get,ai,_status){
 				viewAsFilter:function (player){
 					if(!player.countCards('h')) return false;
 				},
-				prompt:"将一张手牌当闪打出",
+				prompt:"将一张手牌当闪使用或打出",
 				check:function (card){
 					return 6-get.value(card);
 				},
@@ -5617,11 +5591,11 @@ game.import('character',function(lib,game,ui,get,ai,_status){
 			"lingren_adddamage":"凌人",
 			"lingren_adddamage_info":"",
 			"lingren_jianxiong":"奸雄",
-			"lingren_jianxiong_info":"每当你受到伤害后，你可以获得对你造成伤害的牌并摸一张牌。",
+			"lingren_jianxiong_info":"当你受到伤害后，你可以获得对你造成伤害的牌并摸一张牌。",
 			"lingren_xingshang":"行殇",
-			"lingren_xingshang_info":"你可以立即获得死亡角色的所有牌。",
+			"lingren_xingshang_info":"当有角色死亡后，你可以选择一项：1.回复一点体力。2.获得该角色的所有牌。",
 			"xinfu_fujian":"伏间",
-			"xinfu_fujian_info":"锁定技，结束阶段，你观看随机一名角色的随机X张手牌。(X为场上手牌最少的角色的手牌数)",
+			"xinfu_fujian_info":"锁定技，结束阶段，你观看一名随机的其他角色的随机X张手牌。(X为场上手牌最少的角色的手牌数)",
 			"xinfu_xionghuo":"凶镬",
 			"xinfu_xionghuo_info":"游戏开始时，你获得3个“暴戾”标记。出牌阶段，你可以交给一名其他角色一个“暴戾”标记，你对有此标记的角色造成的伤害+1，且其出牌阶段开始时，移去“暴戾”并随机执行一项：1.受到1点火焰伤害且本回合不能对你使用【杀】；2.流失1点体力且本回合手牌上限-1；3.你随机获得其一张手牌和一张装备区里的牌。",
 			xionghuo:"凶镬",

@@ -2401,14 +2401,14 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 					},
 					shan:{
 						audio:"longdan_shan",
-						enable:["chooseToRespond"],
+						enable:['chooseToRespond','chooseToUse'],
 						filterCard:{
 							name:"sha",
 						},
 						viewAs:{
 							name:"shan",
 						},
-						prompt:"将一张杀当闪打出",
+						prompt:"将一张杀当闪使用或打出",
 						check:function (){return 1},
 						viewAsFilter:function (player){
 							if(!player.countCards('h','sha')) return false;
@@ -3202,7 +3202,7 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 						sub:true,
 					},
 					shan:{
-						enable:["chooseToRespond"],
+						enable:["chooseToRespond","chooseToUse"],
 						filterCard:{
 							name:"tao",
 						},
@@ -3646,7 +3646,9 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 							return _status.currentPhase!=player;
 						},
 						content:function(){
-							player.storage.gzdiancai+=trigger.cards.length;
+							for(var i=0;i<trigger.cards.length;i++){
+								if(trigger.cards[i].original&&trigger.cards[i].original!='j') player.storage.gzdiancai++;
+							}
 						}
 					}
 				}

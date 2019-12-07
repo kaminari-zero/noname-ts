@@ -1508,7 +1508,7 @@ game.import('character',function(lib,game,ui,get,ai,_status){
 				}
 			},
 			nsfuhuo2:{
-				trigger:{player:'respondAfter'},
+				trigger:{player:['respondAfter','useCardAfter']},
 				forced:true,
 				priority:10,
 				mark:'card',
