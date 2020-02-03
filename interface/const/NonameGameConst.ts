@@ -1,6 +1,6 @@
 namespace NG {
     /** 导入类型 */
-    export enum ImportType {
+    export const enum ImportType {
         Extension = "extension",
         Character = "character",
         Card = "card",
@@ -36,7 +36,7 @@ namespace NG {
     }
 
     /** 性别 */
-    export enum Sex {
+    export const enum Sex {
         /** 男 */
         MALE = "male",
         /** 女 */
@@ -46,7 +46,7 @@ namespace NG {
     /**
      * 势力名
      */
-    export enum Group {
+    export const enum Group {
         /** 魏(水) */
         WEI = "wei",
         /** 水 */
@@ -71,7 +71,7 @@ namespace NG {
     }
 
     //阶段重新整理：阶段名+时机
-    export enum TriggerEnum {
+    export const enum TriggerEnum {
         /** 开始前 */
         Before = "Before",
         /** 开始时/时 */
@@ -87,7 +87,7 @@ namespace NG {
     /**
      * 阶段类触发时机：
      */
-    export enum PhaseTrigger {
+    export const enum PhaseTrigger {
         /** 所有人都展示武将牌后 (前缀必须为global)，暂时只有一个阶段 */
         gameStart = "gameStart",
 
@@ -113,7 +113,7 @@ namespace NG {
     /**
      * 卡牌类触发时机：（卡牌类,技能类只要符合条件都会触发其对应名的阶段触发）
      */
-    export enum CardTrigger {
+    export const enum CardTrigger {
         /** 使用杀 */
         sha = "sha",
         /** 使用杀 被闪后（被响应） （前缀player，使用杀未命中） */
@@ -153,7 +153,7 @@ namespace NG {
     /**
      * 状态类触发时机：
      */
-    export enum StateTrigger {
+    export const enum StateTrigger {
         /** 受到伤害 (若前缀为source则为你造成伤害) */
         damage = "damage",
     
@@ -188,7 +188,7 @@ namespace NG {
     /**
      * 特殊阶段（后面根据代码需要补充）
      */
-    export enum SuperTrigger {
+    export const enum SuperTrigger {
         /** 触发 */
         trigger = "trigger"
     }
@@ -200,7 +200,7 @@ namespace NG {
      * 
      * 用于主动技的enable中
      */
-    export enum EnableTrigger {
+    export const enum EnableTrigger {
         /**  主动用/挑选卡牌以使用 */
         chooseToUse = "chooseToUse",
         /** 响应/挑选卡牌以响应 */
@@ -210,7 +210,7 @@ namespace NG {
     }
 
     /** 卡牌花色 */
-    export enum CardColor {
+    export const enum CardColor {
         /** 黑桃 */
         Spade = "spade",
         /** 红桃 */
@@ -230,7 +230,7 @@ namespace NG {
     }
 
     /** 卡牌类型（包括子类型） */
-    export enum CardType {
+    export const enum CardType {
         /** 基本牌 */
         Basic = "basic",
         /** 锦囊牌（指非延时锦囊） */
@@ -256,7 +256,7 @@ namespace NG {
     /**
      * 伤害的属性（属性伤害）
      */
-    export enum Nature {
+    export const enum Nature {
         /** 雷属性 */
         Thunder = "thunder",
         /** 火属性 */
@@ -268,7 +268,7 @@ namespace NG {
     /**
      * 常用的item类型常量（主要是get.itemtype）
      */
-    export enum ItemType {
+    export const enum ItemType {
         /** 位置 */
         POSITION = "position",
         /** 玩家 */
@@ -295,7 +295,7 @@ namespace NG {
     /**
      * 创建按钮/div类型常量
      */
-    export enum ButtonType {
+    export const enum ButtonType {
         /** 
          * 背面：
          * 
@@ -350,7 +350,7 @@ namespace NG {
     /**
      * 对象类型
      */
-    export enum ObjType {
+    export const enum ObjType {
         Array = "array",
         Object = "object",
         Div = "div",
@@ -363,7 +363,7 @@ namespace NG {
     /**
      * 不弃牌，准备用这些牌来干什么的常量
      */
-    export enum PrepareConst {
+    export const enum PrepareConst {
         /** 交给玩家 */
         Give ="give",
         Give2 ="give2",

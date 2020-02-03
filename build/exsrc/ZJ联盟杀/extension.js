@@ -1,12 +1,12 @@
 var ZJNGEx;
 (function (ZJNGEx) {
-    ZJNGEx.type = NG.ImportType.Extension;
+    ZJNGEx.type = "extension";
     function extensionFun(lib, game, ui, get, ai, _status) {
         var heros = {
             character: {
-                zjm01_yangjuebo: [NG.Sex.MALE, NG.Group.WOOD, 5, ["zj_laobo"], []],
-                zjm01_zhengbosen: [NG.Sex.MALE, NG.Group.WOOD, 4, ["zj_bosen"], []],
-                zjm01_huanghuafu: [NG.Sex.MALE, NG.Group.WATER, 4, ["zj_ganglie"], []],
+                zjm01_yangjuebo: ["male", "wu", 5, ["zj_laobo"], []],
+                zjm01_zhengbosen: ["male", "wu", 4, ["zj_bosen"], []],
+                zjm01_huanghuafu: ["male", "wei", 4, ["zj_ganglie"], []],
             },
             characterTitle: {
                 zjm01_yangjuebo: "盟主捞波",
@@ -16,7 +16,7 @@ var ZJNGEx;
             skill: {
                 zj_laobo: {
                     name: "捞波",
-                    enable: NG.EnableTrigger.phaseUse,
+                    enable: "phaseUse",
                     usable: 1,
                     precontent: function (event, step, source, player, target, targets, card, cards, skill, forced, num, trigger, result) {
                         player.storage.zj_laobo_targets = [];
@@ -72,7 +72,7 @@ var ZJNGEx;
                             if (list.length) {
                                 player.chooseButton([
                                     "是否视为视为对你使用一张【血】或【魔】？",
-                                    [list, NG.ButtonType.VCARD]
+                                    [list, "vcard"]
                                 ]);
                             }
                             else {
@@ -97,8 +97,8 @@ var ZJNGEx;
                         zj_bosen_1: {
                             trigger: {
                                 player: [
-                                    NG.StateTrigger.loseHp + NG.TriggerEnum.End,
-                                    NG.StateTrigger.damage + NG.TriggerEnum.End,
+                                    "loseHp" + "End",
+                                    "damage" + "End",
                                 ]
                             },
                             filter: function (event, player) {
@@ -126,7 +126,7 @@ var ZJNGEx;
                         },
                         zj_bosen_2: {
                             trigger: {
-                                player: NG.StateTrigger.die + NG.TriggerEnum.Begin
+                                player: "die" + "Begin"
                             },
                             content: function (event, player, trigger, result) {
                                 "step 0";
@@ -144,7 +144,7 @@ var ZJNGEx;
                 zj_ganglie: {
                     name: "肛裂",
                     trigger: {
-                        player: NG.StateTrigger.damage + NG.TriggerEnum.End,
+                        player: "damage" + "End",
                     },
                     filter: function (event, player) {
                         return event.source && event.num > 0;
@@ -155,7 +155,7 @@ var ZJNGEx;
                         event.num = trigger.num;
                         "step 1";
                         player.judge(function (jResult) {
-                            return jResult.color == NG.CardColor.Black ? 1 : 0;
+                            return jResult.color == "black" ? 1 : 0;
                         });
                         "step 2";
                         if (result.bool) {
@@ -190,7 +190,7 @@ var ZJNGEx;
                 },
                 zj_huafu: {
                     name: "华富",
-                    enable: NG.EnableTrigger.phaseUse,
+                    enable: "phaseUse",
                     filter: function (event, player) {
                         return player.hasCard(lib.filter.all, "h");
                     },
@@ -205,7 +205,7 @@ var ZJNGEx;
                 },
                 zj_skip_Judge: {
                     trigger: {
-                        player: NG.PhaseTrigger.judge + NG.TriggerEnum.Before
+                        player: "judge" + "Before"
                     },
                     forced: true,
                     content: function (event, player, trigger, result) {
@@ -214,7 +214,7 @@ var ZJNGEx;
                 },
                 zj_skip_PhaseDraw: {
                     trigger: {
-                        player: NG.PhaseTrigger.phaseDraw + NG.TriggerEnum.Before
+                        player: "phaseDraw" + "Before"
                     },
                     forced: true,
                     content: function (event, player, trigger, result) {
@@ -223,7 +223,7 @@ var ZJNGEx;
                 },
                 zj_skip_PhaseUse: {
                     trigger: {
-                        player: NG.PhaseTrigger.phaseUse + NG.TriggerEnum.Before
+                        player: "phaseUse" + "Before"
                     },
                     forced: true,
                     content: function (event, player, trigger, result) {
@@ -232,7 +232,7 @@ var ZJNGEx;
                 },
                 zj_skip_PhaseDiscard: {
                     trigger: {
-                        player: NG.PhaseTrigger.phaseDiscard + NG.TriggerEnum.Before
+                        player: "phaseDiscard" + "Before"
                     },
                     forced: true,
                     content: function (event, player, trigger, result) {
@@ -241,7 +241,7 @@ var ZJNGEx;
                 },
                 zj_skip_Phase: {
                     trigger: {
-                        player: NG.PhaseTrigger.phase + NG.TriggerEnum.Before
+                        player: "phase" + "Before"
                     },
                     forced: true,
                     content: function (event, player, trigger, result) {
