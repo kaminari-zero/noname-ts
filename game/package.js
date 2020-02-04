@@ -32,6 +32,7 @@ window.noname_package={
 		hearth:'炉石传说',
 		gwent:'昆特牌',
 		mtg:'万智牌',
+		huanlekapai:'欢乐卡牌',
 	},
 	play:{
 		boss:'诸神降临',
@@ -79,8 +80,9 @@ window.noname_package={
 		},
 	},
 	background:{
-		ol_bg:'龙纹',
 		planetarian_bg:'星梦',
+		ol_bg:'龙纹',
+		heaven_bg:'红烧',
 		kyoani_bg:'京都',
 		key_bg:'键社',
 		zhulin_bg:'竹林',
@@ -100,9 +102,10 @@ window.noname_package={
 		xinsha_bg:'新杀',
 	},
 	music:{
+		music_phliosophy:'Philosophy of ours',
 		music_diaochan:'貂蝉',
-		music_shezhan:'舌战',
-		music_danji:'单骑',
+		music_shezhan:'舌战群儒',
+		music_danji:'千里走单骑',
 		music_jifeng:'祭风',
 		music_jilve:'极略',
 	},

@@ -440,7 +440,7 @@ window.noname_asset_list=[
 	'audio/skill/mouzhu1.mp3',
 	'audio/skill/mouzhu2.mp3',
 	'audio/skill/niluan1.mp3',
-	'audio/skill/nuluan2.mp3',
+	'audio/skill/niluan2.mp3',
 	'audio/skill/pianyi1.mp3',
 	'audio/skill/pianyi2.mp3',
 	'audio/skill/sgrenwang1.mp3',
@@ -2324,6 +2324,8 @@ window.noname_asset_list=[
 	'image/character/hejin.jpg',
 	'image/character/hansui.jpg',
 	'image/character/niujin.jpg',
+	'image/character/lisu.jpg',
+	'image/character/re_zhangjiao.jpg',
 	
 	'image/character/baiwuchang.jpg',
 	'image/character/baosanniang.jpg',

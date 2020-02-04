@@ -2,10 +2,12 @@
 interface HTMLDivElement {
     /**
      * 增加一个动画（增加className动画标记）
+     * 
+     * 注：和新版的html中的animate的实现声明有区别，无法通过tsc编译......(估计最新的这个值被早已声明)
      * @param name className
      * @param time 该动画多长时间自动销毁
      */
-    animate(name:string,time:number):HTMLDivElement;
+    // animate(name:string,time:number):HTMLDivElement;
     /**
      * 隐藏
      */

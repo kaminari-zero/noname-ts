@@ -260,6 +260,7 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 				if(enhance_zhu){
 					var skill;
 					switch(game.zhu.name){
+						case 'key_yuri':skill='buqu';break;
 						case 'liubei':skill='jizhen';break;
 						case 'dongzhuo':skill='hengzheng';break;
 						case 'sunquan':skill='batu';break;
@@ -585,7 +586,7 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 							player.update();
 						}
 					}
-					else if(player.identity=='zhong'&&Math.random()<0.5){
+					else if(player.identity=='zhong'&&(Math.random()<0.5||game.zhu.name=='sunliang')){
 						var choice=0;
 						for(var i=0;i<list.length;i++){
 							if(lib.character[list[i]][1]==game.zhu.group){
@@ -620,7 +621,21 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 					if(get.config('choose_group')&&player.group=='shen'){
 						    var list=lib.group.slice(0);
 						    list.remove('shen');
-						    if(list.length) player.group=list.randomGet();
+						    if(list.length) player.group=function(){
+						     if(_status.mode!='zhong'&&game.zhu&&game.zhu.group){
+						      if(['re_zhangjiao','liubei','re_liubei','caocao','re_caocao','sunquan','re_sunquan','zhangjiao','sp_zhangjiao','caopi','re_caopi','liuchen','caorui','sunliang','sunxiu'].contains(game.zhu.name)) return game.zhu.group;
+						      if(game.zhu.name=='sunhao'&&player.identity=='zhong') return 'wu';
+						      if(game.zhu.name=='yl_yuanshu'){
+						       if(player.identity=='zhong') list.remove('qun');
+						       else return 'qun';
+						      }
+						      if(['sunhao','xin_yuanshao','re_yuanshao'].contains(game.zhu.name)){
+						       if(player.identity!='zhong') list.remove(game.zhu.group);
+						       else return game.zhu.group;
+						      }
+						     }
+						     return list.randomGet();
+						    }();
 						}
 						player.node.name.dataset.nature=get.groupnature(player.group);
 				}
@@ -1374,7 +1389,7 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 						list=event.list.randomGets(8);
 					}
 					else{
-						list=list2.concat(list3.randomGets(3));
+						list=list2.concat(list3.randomGets(5));
 					}
 					var next=game.zhu.chooseButton(true);
 					next.set('selectButton',(lib.configOL.double_character?2:1));
@@ -1419,12 +1434,12 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 					}
 					else{
 						num=Math.floor(event.list.length/(game.players.length-1));
+						if(num>5){
+							num=5;
+						}
 						num2=event.list.length-num*(game.players.length-1);
 						if(lib.configOL.double_nei){
 							num2=Math.floor(num2/2);
-						}
-						if(num>5){
-							num=5;
 						}
 						if(num2>2){
 							num2=2;
