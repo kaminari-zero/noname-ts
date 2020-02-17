@@ -249,10 +249,10 @@ var ZJNGEx;
                 },
             },
             translate: {
-                zjm01_yangjuebo: "杨爵波",
+                zjm01_yangjuebo: "测试人物1",
                 zj_laobo: "捞波",
                 zj_laobo_info: "阶段技，你可以将任意数量的手牌交给任意角色(至少1张)，你摸X张牌且血量+1，若其获得你给出的牌张数不小于2，你可以视为对你使用一张【血】或【魔】(X为你已损失的血量)。",
-                zjm01_zhengbosen: "郑博森",
+                zjm01_zhengbosen: "测试人物2",
                 zj_bosen: "博森",
                 zj_bosen_info: "锁定技，当你除去1点血量后，你令任一角色摸两张牌；当你死亡时，你可以将你的所有牌交给任一其他角色，然后令其血量+1。",
                 zjm01_huanghuafu: "黄华富",
