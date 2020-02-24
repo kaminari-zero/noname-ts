@@ -69,6 +69,7 @@ game.import('card',function(lib,game,ui,get,ai,_status){
 						}
 					}
 					else{
+						game.addVideo('jiuNode',target,true);
 						if(cards&&cards.length){
 							card=cards[0];
 						}
@@ -141,7 +142,10 @@ game.import('card',function(lib,game,ui,get,ai,_status){
 								if(game.hasPlayer(function(current){
 									return (get.attitude(target,current)<0&&
 										target.canUse(card,current,true,true)&&
-										!current.getEquip('baiyin')&&
+										!current.hasSkillTag('filterDamage',null,{
+											player:player,
+											card:card,
+										})&&
 										get.effect(current,card,target)>0);
 								})){
 									return 1;
@@ -183,6 +187,7 @@ game.import('card',function(lib,game,ui,get,ai,_status){
 					game.addVideo('cardDialog',null,[get.translation(target)+'展示的手牌',get.cardsInfo(result.cards),event.videoId]);
 					event.card2=result.cards[0];
 					game.log(target,'展示了',event.card2);
+					event._result={};
 					player.chooseToDiscard({suit:get.suit(event.card2)},function(card){
 						var evt=_status.event.getParent();
 						if(get.damageEffect(evt.target,evt.player,evt.player,'fire')>0){
@@ -216,7 +221,7 @@ game.import('card',function(lib,game,ui,get,ai,_status){
 							var nh=player.countCards('h');
 							if(nh<=player.hp&&nh<=4&&_status.event.name=='chooseToUse'){
 								if(typeof _status.event.filterCard=='function'&&
-									_status.event.filterCard({name:'huogong'})){
+									_status.event.filterCard({name:'huogong'},player,_status.event)){
 									return -10;
 								}
 								if(_status.event.skill){
@@ -232,7 +237,7 @@ game.import('card',function(lib,game,ui,get,ai,_status){
 							if(player.countCards('h')<=1) return 0;
 							if(target==player){
 								if(typeof _status.event.filterCard=='function'&&
-									_status.event.filterCard({name:'huogong'})){
+									_status.event.filterCard({name:'huogong'},player,_status.event)){
 									return -1.5;
 								}
 								if(_status.event.skill){
@@ -620,7 +625,7 @@ game.import('card',function(lib,game,ui,get,ai,_status){
 					if(!muniu.cards) return false;
 					lib.skill.muniu_skill.sync(muniu);
 					for(var i=0;i<muniu.cards.length;i++){
-						if(event.filterCard(muniu.cards[i],player)) return true;
+						if(event.filterCard(muniu.cards[i],player,event)) return true;
 					}
 					return false;
 				},
@@ -659,6 +664,7 @@ game.import('card',function(lib,game,ui,get,ai,_status){
 					},
 					backup:function(links,player){
 						return {
+							prompt:'选择'+get.translation(links)+'的目标',
 							filterCard:function(){return false},
 							selectCard:-1,
 							viewAs:links[0],
@@ -672,9 +678,6 @@ game.import('card',function(lib,game,ui,get,ai,_status){
 							}
 						}
 					},
-					prompt:function(links,player){
-						return '选择'+get.translation(links)+'的目标';
-					}
 				},
 				ai:{
 					order:4,
@@ -732,15 +735,18 @@ game.import('card',function(lib,game,ui,get,ai,_status){
 			},
 			huogong2:{},
 			jiu:{
-				trigger:{player:'useCard'},
+				trigger:{player:'useCard1'},
 				filter:function(event){
 					return event.card&&event.card.name=='sha';
 				},
 				forced:true,
+				charlotte:true,
+				firstDo:true,
 				content:function(){
 					if(!trigger.baseDamage) trigger.baseDamage=1;
 					trigger.baseDamage+=player.storage.jiu;
 					trigger.jiu=true;
+					game.addVideo('jiuNode',player,false);
 					game.broadcastAll(function(player){
 						player.removeSkill('jiu');
 					},player);
@@ -766,6 +772,8 @@ game.import('card',function(lib,game,ui,get,ai,_status){
 			jiu2:{
 				trigger:{player:'useCardAfter',global:'phaseAfter'},
 				priority:2,
+				firstDo:true,
+				charlotte:true,
 				filter:function(event){
 					if(event.name=='useCard') return (event.card&&(event.card.name=='sha'));
 					return true;
@@ -777,6 +785,7 @@ game.import('card',function(lib,game,ui,get,ai,_status){
 					game.broadcastAll(function(player){
 						player.removeSkill('jiu');
 					},player);
+					game.addVideo('jiuNode',player,false);
 				},
 			},
 			guding_skill:{
@@ -796,8 +805,11 @@ game.import('card',function(lib,game,ui,get,ai,_status){
 				},
 				ai:{
 					effect:{
-						target:function(card,player,target,current){
-							if(card.name=='sha'&&target.countCards('h')==0) return [1,-2];
+						player:function(card,player,target,current){
+							if(card.name=='sha'&&target.countCards('h')==0&&!target.hasSkillTag('filterDamage',null,{
+								player:player,
+								card:card,
+							})) return [1,0,1,-3];
 						}
 					}
 				}
@@ -829,12 +841,15 @@ game.import('card',function(lib,game,ui,get,ai,_status){
 								name:card?card.name:null,
 								target:player,
 								card:card
+							})||player.hasSkillTag('unequip_ai',false,{
+								name:card?card.name:null,
+								target:player,
+								card:card
 							})) return;
 							if(card.name=='nanman'||card.name=='wanjian') return 'zerotarget';
 							if(card.name=='sha'){
 								var equip1=player.getEquip(1);
 								if(equip1&&equip1.name=='zhuque') return 1.9;
-								if(equip1&&equip1.name=='qinggang') return 1;
 								if(!card.nature) return 'zerotarget';
 							}
 						}
@@ -874,7 +889,7 @@ game.import('card',function(lib,game,ui,get,ai,_status){
 			tengjia3:{
 				equipSkill:true,
 				audio:'tengjia1',
-				trigger:{target:'shaBegin'},
+				trigger:{target:'shaBefore'},
 				forced:true,
 				filter:function(event,player){
 					if(player.hasSkillTag('unequip2')) return false;
@@ -908,7 +923,26 @@ game.import('card',function(lib,game,ui,get,ai,_status){
 				//priority:-10,
 				content:function(){
 					trigger.num=1;
-				}
+				},
+				ai:{
+					filterDamage:true,
+					skillTagFilter:function(player,tag,arg){
+						if(player.hasSkillTag('unequip2')) return false;
+						if(arg&&arg.player){
+							if(arg.player.hasSkillTag('unequip',false,{
+								name:arg.card?arg.card.name:null,
+								target:player,
+								card:arg.card,
+							})) return false;
+							if(arg.player.hasSkillTag('unequip_ai',false,{
+								name:arg.card?arg.card.name:null,
+								target:player,
+								card:arg.card,
+							})) return false;
+							if(arg.player.hasSkillTag('jueqing',false,player)) return false;
+						}
+					},
+				},
 			},
 			zhuque_skill:{
 				equipSkill:true,
@@ -931,8 +965,15 @@ game.import('card',function(lib,game,ui,get,ai,_status){
 				},
 				content:function(){
 					trigger.card.nature='fire';
-					player.addSkill('zhuque_skill2');
-					player.storage.zhuque_skill=trigger.card;
+					if(get.itemtype(trigger.card)=='card'){
+						var next=game.createEvent('zhuque_clear');
+						next.card=trigger.card;
+						event.next.remove(next);
+						trigger.after.push(next);
+						next.setContent(function(){
+							delete card.nature;
+						});
+					}
 				}
 			},
 			zhuque_skill2:{

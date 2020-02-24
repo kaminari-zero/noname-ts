@@ -1992,7 +1992,7 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 				},
 			},
 			boss_juhun:{
-				trigger:{player:'phaseEnd'},
+				trigger:{player:'phaseJieshuBegin'},
 				forced:true,
 				content:function(){
 					var list=game.filterPlayer(function(current){
@@ -2084,7 +2084,7 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 				},
 			},
 			boss_shengfu:{
-				trigger:{player:'phaseEnd'},
+				trigger:{player:'phaseJieshuBegin'},
 				forced:true,
 				popup:false,
 				content:function(){
@@ -2124,7 +2124,7 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 				subSkill:{planetarian:{}},
 			},
 			boss_gongzheng:{
-				trigger:{player:'phaseBegin'},
+				trigger:{player:'phaseZhunbeiBegin'},
 				forced:true,
 				filter:function(event,player){
 					return player.countCards('j')>0;
@@ -2134,7 +2134,7 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 				},
 			},
 			boss_xuechi:{
-				trigger:{player:'phaseEnd'},
+				trigger:{player:'phaseJieshuBegin'},
 				forced:true,
 				content:function(){
 					var list=game.players.slice(0);
@@ -2152,7 +2152,7 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 				},
 			},
 			boss_zhadao:{
-				inherit:'qingang_skill',
+				inherit:'qinggang_skill',
 			},
 			boss_zhuxin:{
 				trigger:{player:'die'},
@@ -2164,7 +2164,7 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 						return target!=player&&!game.hasPlayer(function(current){
 							return current!=player&&current!=target&&current.hp<target.hp;
 						})
-					}).ai=function(target){
+					}).set('forceDie',true).ai=function(target){
 						return -get.attitude(_status.event.player,target);
 					};
 					'step 1'
@@ -2176,7 +2176,7 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 				},
 			},
 			boss_leizhou:{
-				trigger:{player:'phaseBegin'},
+				trigger:{player:'phaseZhunbeiBegin'},
 				forced:true,
 				content:function(){
 					var list=game.players.slice(0);
@@ -2233,7 +2233,7 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 				},
 			},
 			boss_kujiu:{
-				trigger:{global:'phaseBegin'},
+				trigger:{global:'phaseZhunbeiBegin'},
 				forced:true,
 				filter:function(event,player){
 					return event.player!=player;
@@ -2264,7 +2264,7 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 				inherit:'boss_manjia',
 			},
 			boss_zhifen:{
-				trigger:{player:'phaseBegin'},
+				trigger:{player:'phaseZhunbeiBegin'},
 				forced:true,
 				content:function(){
 					'step 0'
@@ -2299,7 +2299,7 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 				}
 			},
 			boss_suozu:{
-				trigger:{player:'phaseBegin'},
+				trigger:{player:'phaseZhunbeiBegin'},
 				forced:true,
 				content:function(){
 					var list=game.players.slice(0);
@@ -2355,7 +2355,7 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 				},
 			},
 			boss_lunhui:{
-				trigger:{player:'phaseBegin'},
+				trigger:{player:'phaseZhunbeiBegin'},
 				forced:true,
 				filter:function(event,player){
 					return player.hp<=2&&game.hasPlayer(function(current){
@@ -2424,7 +2424,7 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 					},
 					fangju:{
 						trigger:{
-							player:"damageBegin",
+							player:"damageBegin4",
 						},
 						forced:true,
 						filter:function (event,player){
@@ -2779,8 +2779,8 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 			},
 			boss_zhaohuo:{
 				trigger:{
-					player:'damageBefore',
-					source:'damageBegin',
+					player:'damageBegin4',
+					source:'damageBegin1',
 				},
 				forced:true,
 				filter:function(event,player){
@@ -2810,7 +2810,7 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 					},
 				},
 				forced:true,
-				trigger:{player:'phaseBefore'},
+				trigger:{player:'phaseBegin'},
 				content:function(){
 					'step 0'
 					event.num1=3;
@@ -2818,7 +2818,7 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 					event.togain=[];
 					while(event.togain.length<event.num2){
 						var card=get.cardPile(function(card){
-							return get.color(card)=='red';
+							return !event.togain.contains(card)&&get.color(card)=='red';
 						});
 						if(card) event.togain.push(card);
 						else break;
@@ -2978,7 +2978,7 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 			},
 			/*----分界线----*/
 			boss_zirun:{
-				trigger:{player:'phaseBegin'},
+				trigger:{player:'phaseZhunbeiBegin'},
 				forced:true,
 				logTarget:function(){
 					return game.filterPlayer();
@@ -2992,7 +2992,7 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 				}
 			},
 			boss_juehong:{
-				trigger:{player:'phaseBegin'},
+				trigger:{player:'phaseZhunbeiBegin'},
 				forced:true,
 				logTarget:function(event,player){
 					return player.getEnemies();
@@ -3035,7 +3035,7 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 				},
 				subSkill:{
 					hp:{
-						trigger:{player:'phaseBegin'},
+						trigger:{player:'phaseZhunbeiBegin'},
 						forced:true,
 						mark:true,
 						intro:{
@@ -3106,7 +3106,7 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 				group:'boss_lingqu_cancel',
 				subSkill:{
 					cancel:{
-						trigger:{player:'damageBegin'},
+						trigger:{player:'damageBegin4'},
 						priority:-11,
 						forced:true,
 						filter:function(event){
@@ -3151,7 +3151,7 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 						}
 					},
 					thunder:{
-						trigger:{player:'damageBefore'},
+						trigger:{player:'damageBegin4'},
 						filter:function(event){
 							return event.nature=='thunder'&&game.roundNumber<7;
 						},
@@ -3189,7 +3189,7 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 				}
 			},
 			boss_jiazu:{
-				trigger:{player:'phaseBegin'},
+				trigger:{player:'phaseZhunbeiBegin'},
 				forced:true,
 				getTargets:function(player){
 					var targets=[];
@@ -3451,7 +3451,7 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 				}
 			},
 			boss_xiangde:{
-				trigger:{player:'damageBegin'},
+				trigger:{player:'damageBegin3'},
 				forced:true,
 				filter:function(event,player){
 					return event.source&&event.source.isIn()&&event.source!=player&&event.source.getEquip(1);
@@ -3461,7 +3461,7 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 				}
 			},
 			boss_yinzei:{
-				trigger:{player:'damageAfter'},
+				trigger:{player:'damageEnd'},
 				forced:true,
 				logTarget:'source',
 				filter:function(event,player){
@@ -3472,7 +3472,7 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 				}
 			},
 			boss_zhue:{
-				trigger:{global:'damageAfter'},
+				trigger:{global:'damageEnd'},
 				forced:true,
 				filter:function(event,player){
 					return event.source&&event.source.isIn()&&event.source!=player;
@@ -3495,7 +3495,7 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 			},
 			boss_futai:{
 				global:'boss_futai2',
-				trigger:{player:'phaseBegin'},
+				trigger:{player:'phaseZhunbeiBegin'},
 				logTarget:function(event,player){
 					return game.filterPlayer(function(current){
 						return current.isDamaged();
@@ -3537,7 +3537,7 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 				group:['boss_luanchang_begin','boss_luanchang_end'],
 				subSkill:{
 					begin:{
-						trigger:{player:'phaseBegin'},
+						trigger:{player:'phaseZhunbeiBegin'},
 						forced:true,
 						content:function(){
 							var list=game.filterPlayer(function(current){
@@ -3549,7 +3549,7 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 						}
 					},
 					end:{
-						trigger:{player:'phaseEnd'},
+						trigger:{player:'phaseJieshuBegin'},
 						forced:true,
 						content:function(){
 							var list=game.filterPlayer(function(current){
@@ -3566,7 +3566,7 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 				group:['boss_nitai_in','boss_nitai_out'],
 				subSkill:{
 					in:{
-						trigger:{player:'damageBefore'},
+						trigger:{player:'damageBegin4'},
 						forced:true,
 						filter:function(event,player){
 							return _status.currentPhase==player;
@@ -3576,7 +3576,7 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 						}
 					},
 					out:{
-						trigger:{player:'damageBegin'},
+						trigger:{player:'damageBegin1'},
 						forced:true,
 						filter:function(event,player){
 							return _status.currentPhase!=player&&event.nature=='fire';
@@ -3638,7 +3638,7 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 				group:'boss_tanyu_hp',
 				subSkill:{
 					hp:{
-						trigger:{player:'phaseEnd'},
+						trigger:{player:'phaseJieshuBegin'},
 						forced:true,
 						popup:false,
 						filter:function(event,player){
@@ -3674,7 +3674,7 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 				group:['boss_xiongshou_turn','boss_xiongshou_damage'],
 				subSkill:{
 					damage:{
-						trigger:{source:'damageBegin'},
+						trigger:{source:'damageBegin1'},
 						forced:true,
 						filter:function(event,player){
 							return event.notLink()&&event.card&&event.card.name=='sha'&&event.player.hp<player.hp;
@@ -3773,7 +3773,11 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 			},
 			chixueqingfeng:{
 				equipSkill:true,
-				trigger:{player:'shaBegin'},
+				trigger:{player:'useCardToPlayered'},
+				filter:function(event){
+					return event.card.name=='sha';
+				},
+				logTarget:'target',
 				forced:true,
 				content:function(){
 					trigger.target.addTempSkill('chixueqingfeng2','shaAfter');
@@ -3834,22 +3838,27 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 			},
 			guilongzhanyuedao:{
 				equipSkill:true,
-				trigger:{player:'shaBegin'},
+				trigger:{player:'useCard'},
 				forced:true,
 				filter:function(event,player){
-					return event.card&&get.color(event.card)=='red';
+					return event.card&&event.card.name=='sha'&&get.color(event.card)=='red';
 				},
 				content:function(){
-					trigger.directHit=true;
+					trigger.directHit.addArray(game.players);
 				}
 			},
 			guofengyupao:{
 				equipSkill:true,
 				mod:{
 					targetEnabled:function(card,player,target,now){
-					if(player.hasSkillTag('unequip2')) return false;
+					if(target.hasSkillTag('unequip2')) return false;
 						if(player!=target){
-							if(get.type(card)=='trick') return false;
+							if(player.hasSkillTag('unequip',false,{
+								name:card?card.name:null,
+					 		target:player,
+								card:card
+							})){}
+							else if(get.type(card)=='trick') return false;
 						}
 					}
 				}
@@ -4627,7 +4636,7 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 				onremove:function(player){
 					player.enableSkill('honghuangzhili','boss_shenyi');
 				},
-				trigger:{global:'phaseBegin'},
+				trigger:{global:'phaseZhunbeiBegin'},
 				forced:true,
 				popup:false,
 				filter:function(event,player){
@@ -4661,7 +4670,7 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 				}
 			},
 			boss_fentian:{
-				trigger:{source:'damageBegin'},
+				trigger:{source:'damageBegin1'},
 				forced:true,
 				filter:function(event){
 					return event.nature!='fire';
@@ -4680,18 +4689,18 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 						if(get.color(card)=='red'&&player!=target) return false;
 					}
 				},
-				global:'boss_fentian2'
+				group:'boss_fentian2',
 			},
 			boss_fentian2:{
-				mod:{
-					cardRespondable:function(card,player){
-						var evt=_status.event.parent;
-						if(evt.player&&evt.player.hasSkill('boss_fentian')&&
-							player!=evt.player&&evt.card&&get.color(evt.card)=='red'){
-							return false;
-						}
-					}
-				}
+				trigger:{player:'useCard'},
+				forced:true,
+				filter:function(event,player){
+					return get.color(event.card)=='red';
+				},
+				content:function(){
+					trigger.directHit.addArray(game.players);
+					trigger.directHit.remove(player);
+				},
 			},
 			boss_xingxia:{
 				enable:'phaseUse',
@@ -4841,7 +4850,7 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 				}
 			},
 			boss_chiyi:{
-				trigger:{player:'phaseBegin'},
+				trigger:{player:'phaseZhunbeiBegin'},
 				forced:true,
 				unique:true,
 				filter:function(event,player){
@@ -4884,7 +4893,7 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 				intro:{
 					content:'受到的伤害+1'
 				},
-				trigger:{player:'damageBegin'},
+				trigger:{player:'damageBegin3'},
 				forced:true,
 				popup:false,
 				content:function(){
@@ -5015,7 +5024,7 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 				}
 			},
 			boss_zhongdu:{
-				trigger:{player:'phaseBegin'},
+				trigger:{player:'phaseZhunbeiBegin'},
 				forced:true,
 				mark:true,
 				nopop:true,
@@ -5041,7 +5050,7 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 				}
 			},
 			boss_qingyi:{
-				trigger:{player:'phaseBegin'},
+				trigger:{player:'phaseZhunbeiBegin'},
 				forced:true,
 				unique:true,
 				filter:function(event,player){
@@ -5151,7 +5160,7 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 				},
 			},
 			boss_guimou:{
-				trigger:{player:'phaseEnd'},
+				trigger:{player:'phaseJieshuBegin'},
 				frequent:true,
 				content:function(){
 					var list=game.filterPlayer(function(target){
@@ -5356,7 +5365,7 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 				group:'xiaoxiong_damage',
 				subSkill:{
 					damage:{
-						trigger:{global:'phaseEnd'},
+						trigger:{global:'phaseJieshuBegin'},
 						forced:true,
 						filter:function(event,player){
 							return event.player!=player&&event.player.countUsed()==0;
@@ -5538,7 +5547,7 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 				},
 			},
 			fengqi:{
-				trigger:{player:['phaseBegin','phaseEnd']},
+				trigger:{player:['phaseZhunbeiBegin','phaseJieshuBegin']},
 				direct:true,
 				content:function(){
 					'step 0'
@@ -5812,7 +5821,7 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 				}
 			},
 			mazui2:{
-				trigger:{source:'damageBegin'},
+				trigger:{source:'damageBegin1'},
 				forced:true,
 				mark:'card',
 				filter:function(event){
@@ -5874,7 +5883,7 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 				group:'yunshen2'
 			},
 			yunshen2:{
-				trigger:{player:'phaseBegin'},
+				trigger:{player:'phaseZhunbeiBegin'},
 				forced:true,
 				filter:function(event,player){
 					return player.storage.yunshen>0;
@@ -5921,7 +5930,7 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 			},
 			jiaoxia:{
 				audio:2,
-				trigger:{target:'useCardToBegin'},
+				trigger:{target:'useCardToTargeted'},
 				filter:function(event,player){
 					return event.card&&get.color(event.card)=='red';
 				},
@@ -5950,7 +5959,7 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 				}
 			},
 			boss_ruizhi:{
-				trigger:{global:'phaseBegin'},
+				trigger:{global:'phaseZhunbeiBegin'},
 				forced:true,
 				filter:function(event,player){
 					return event.player!=player&&event.player.countCards('he')>1;
@@ -6027,7 +6036,7 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 								if(card.name=='sha'&&player.hp<5) return Infinity;
 							}
 						},
-						trigger:{source:'damageBegin'},
+						trigger:{source:'damageBegin1'},
 						filter:function(event,player){
 							return event.card&&event.card.name=='sha'&&event.notLink()&&player.hp<5;
 						},
@@ -6050,7 +6059,7 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 				'boss_mengtai_discard','boss_mengtai_end'],
 				subSkill:{
 					begin:{
-						trigger:{player:'phaseBegin'},
+						trigger:{player:'phaseZhunbeiBegin'},
 						forced:true,
 						popup:false,
 						content:function(){
@@ -6086,7 +6095,7 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 						}
 					},
 					end:{
-						trigger:{player:'phaseEnd'},
+						trigger:{player:'phaseJieshuBegin'},
 						forced:true,
 						filter:function(event,player){
 							if(player.storage.boss_mengtai_draw) return true;
@@ -6377,7 +6386,7 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 				}
 			},
 			boss_modao:{
-				trigger:{player:'phaseBegin'},
+				trigger:{player:'phaseZhunbeiBegin'},
 				forced:true,
 				content:function(){
 					player.draw(2);
@@ -6407,7 +6416,7 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 				}
 			},
 			boss_zuijiu:{
-				trigger:{source:'damageBegin'},
+				trigger:{source:'damageBegin1'},
 				filter:function(event){
 					return event.card&&(event.card.name=='sha'||event.card.name=='juedou')&&
 					event.parent.name!='_lianhuan'&&event.parent.name!='_lianhuan2';
@@ -6418,7 +6427,7 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 				}
 			},
 			boss_xixing:{
-				trigger:{player:'phaseBegin'},
+				trigger:{player:'phaseZhunbeiBegin'},
 				direct:true,
 				content:function(){
 					"step 0"
@@ -6436,7 +6445,7 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 				},
 			},
 			boss_suoming:{
-				trigger:{player:'phaseEnd'},
+				trigger:{player:'phaseJieshuBegin'},
 				direct:true,
 				filter:function(event,player){
 					return game.hasPlayer(function(current){
@@ -6478,14 +6487,14 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 				}
 			},
 			boss_baolian:{
-				trigger:{player:'phaseEnd'},
+				trigger:{player:'phaseJieshuBegin'},
 				forced:true,
 				content:function(){
 					player.draw(2);
 				}
 			},
 			boss_xiaoshou:{
-				trigger:{player:'phaseEnd'},
+				trigger:{player:'phaseJieshuBegin'},
 				direct:true,
 				content:function(){
 					"step 0"
@@ -6526,7 +6535,7 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 				}
 			},
 			boss_manjia2:{
-				trigger:{player:'damageBegin'},
+				trigger:{player:'damageBegin3'},
 				filter:function(event,player){
 					if(player.getEquip(2)) return false;
 					if(event.nature=='fire') return true;
@@ -6548,7 +6557,7 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 				}
 			},
 			boss_lianyu:{
-				trigger:{player:'phaseEnd'},
+				trigger:{player:'phaseJieshuBegin'},
 				unique:true,
 				content:function(){
 					"step 0"
@@ -6609,7 +6618,7 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 				}
 			},
 			boss_guihuo:{
-				trigger:{player:'phaseEnd'},
+				trigger:{player:'phaseJieshuBegin'},
 				direct:true,
 				content:function(){
 					"step 0"
@@ -6626,7 +6635,7 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 				},
 			},
 			boss_luolei:{
-				trigger:{player:'phaseBegin'},
+				trigger:{player:'phaseZhunbeiBegin'},
 				direct:true,
 				content:function(){
 					"step 0"
@@ -6681,7 +6690,7 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 				}
 			},
 			boss_didong:{
-				trigger:{player:'phaseEnd'},
+				trigger:{player:'phaseJieshuBegin'},
 				direct:true,
 				content:function(){
 					"step 0"
@@ -6750,7 +6759,7 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 			boss_xuanlin_intro3:{nobracket:true},
 			boss_xuanlin_intro4:{nobracket:true},
 			zhanjiang:{
-				trigger:{player:'phaseBegin'},
+				trigger:{player:'phaseZhunbeiBegin'},
 				filter:function(event,player){
 					var players=game.filterPlayer();
 					for(var i=0;i<players.length;i++){
@@ -6863,7 +6872,7 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 			},
 			wuqin:{
 				audio:2,
-				trigger:{player:'phaseEnd'},
+				trigger:{player:'phaseJieshuBegin'},
 				filter:function(event,player){
 					return player.countCards('h')==0;
 				},
@@ -6877,7 +6886,7 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 			},
 			boss_qiangzheng:{
 				audio:2,
-				trigger:{player:'phaseEnd'},
+				trigger:{player:'phaseJieshuBegin'},
 				forced:true,
 				unique:true,
 				filter:function(event,player){
@@ -6937,7 +6946,7 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 				},
 			},
 			boss_konghun:{
-				trigger:{player:'phaseEnd'},
+				trigger:{player:'phaseJieshuBegin'},
 				direct:true,
 				filter:function(){
 					return game.players.length>=3;
@@ -6958,7 +6967,7 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 				group:'boss_konghun2'
 			},
 			boss_konghun2:{
-				trigger:{player:'phaseBegin'},
+				trigger:{player:'phaseZhunbeiBegin'},
 				forced:true,
 				popup:false,
 				content:function(){
@@ -6972,7 +6981,7 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 			},
 			yuehun:{
 				unique:true,
-				trigger:{player:'phaseEnd'},
+				trigger:{player:'phaseJieshuBegin'},
 				frequent:true,
 				content:function(){
 					player.recover();
@@ -7128,7 +7137,7 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 			},
 			boss_hujia:{
 				audio:2,
-				trigger:{player:'phaseEnd'},
+				trigger:{player:'phaseJieshuBegin'},
 				direct:true,
 				unique:true,
 				filter:function(event,player){
@@ -7223,7 +7232,7 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 				}
 			},
 			huoshen:{
-				trigger:{player:'damageBefore'},
+				trigger:{player:'damageBegin1'},
 				forced:true,
 				unique:true,
 				filter:function(event){
@@ -7332,7 +7341,7 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 			},
 			boss_honglian:{
 				audio:2,
-				trigger:{player:'phaseEnd'},
+				trigger:{player:'phaseJieshuBegin'},
 				forced:true,
 				unique:true,
 				content:function(){
@@ -7364,7 +7373,7 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 			},
 			boss_tianyu:{
 				audio:true,
-				trigger:{player:'phaseEnd'},
+				trigger:{player:'phaseJieshuBegin'},
 				forced:true,
 				filter:function(event,player){
 					if(player.isLinked()) return true;
@@ -7435,7 +7444,7 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 				}
 			},
 			fanghua:{
-				trigger:{player:'phaseEnd'},
+				trigger:{player:'phaseJieshuBegin'},
 				forced:true,
 				unique:true,
 				filter:function(){
@@ -7521,7 +7530,7 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 			},
 			xiuluo:{
 				audio:2,
-				trigger:{player:'phaseBegin'},
+				trigger:{player:'phaseZhunbeiBegin'},
 				direct:true,
 				filter:function(event,player){
 					return player.countCards('j')>0;
@@ -7557,7 +7566,7 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 				}
 			},
 			shangshix2:{
-				trigger:{player:'phaseEnd'},
+				trigger:{player:'phaseJieshuBegin'},
 				forced:true,
 				unique:true,
 				filter:function(event,player){
@@ -7720,7 +7729,7 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 				}
 			},
 			jizhen:{
-				trigger:{player:'phaseEnd'},
+				trigger:{player:'phaseJieshuBegin'},
 				direct:true,
 				filter:function(event,player){
 					return game.hasPlayer(function(current){
@@ -7754,7 +7763,7 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 			shenqu:{
 				audio:2,
 				group:'shenqu2',
-				trigger:{global:'phaseBegin'},
+				trigger:{global:'phaseZhunbeiBegin'},
 				filter:function(event,player){
 					return player.countCards('h')<=player.maxHp;
 				},
@@ -7866,7 +7875,7 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 				derivation:["reyingzi","yinghun"],
 				unique:true,
 				trigger:{
-					player:"phaseBegin",
+					player:"phaseZhunbeiBegin",
 				},
 				filter:function (event,player){
 					return player.hp<=2&&!player.storage.boss_hunzi;
@@ -8269,6 +8278,7 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 			boss_shenen_info:'锁定技，所有己方角色使用牌无距离限制；所有敌方角色摸牌阶段多摸一张牌且手牌上限+1',
 			boss_fentian:'焚天',
 			boss_fentian_info:'锁定技，你造成的伤害视为火焰伤害；你使用红色牌无距离和次数限制，且不可被其他角色使用【闪】或【无懈可击】响应',
+			boss_fentian2:'焚天',
 			boss_xingxia:'行夏',
 			boss_xingxia_info:'每两轮限一次，出牌阶段，你可以对焰灵造成2点火焰伤害，然后令每名敌方角色选择一项：1.弃置一张红色牌；2.你对其造成1点火焰伤害',
 			boss_huihuo:'回火',
@@ -8327,7 +8337,7 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 			tiandao_info:'任意一名角色的判定生效前，你可以打出一张牌替换之',
 			yunshen:'云身',
 			yunshen2:'云身',
-			yunshen_info:'每当你打出一张闪，你可以令你的防御距离+1；准备阶段，你将累计的防御距离清零，然后摸等量的牌',
+			yunshen_info:'每当你使用或打出一张闪时，你可以令你的防御距离+1；准备阶段，你将累计的防御距离清零，然后摸等量的牌',
 			lianji:'连计',
 			lianji_info:'出牌阶段限一次，你可以选择一张手牌并指定两名角色进行拼点，拼点赢的角色获得此牌，并对没赢的角色造成一点伤害',
 			mazui:'麻醉',
@@ -8486,7 +8496,7 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 
 			tinqin:'听琴',
 			boss_guihan:'归汉',
-			boss_guihan_info:'限定技，濒死阶段，你可以将体力回复至体力上限，摸4张牌，令所有敌人的技能恢复，并获得技能【听琴】、【蕙质】',
+			boss_guihan_info:'限定技，濒死阶段，你可以将体力回复至体力上限，摸4张牌，令所有敌人的技能恢复，失去技能【悲歌】和【胡笳】，并获得技能【听琴】、【蕙质】',
 			boss_huixin:'蕙质',
 			boss_huixin_info:'每当你于回合外失去牌，可以进行一次判定，若为黑色，当前回合角色失去一点体力，否则你回复一点体力并摸一张牌',
 			boss_hujia:'胡笳',

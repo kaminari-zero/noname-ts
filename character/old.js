@@ -4,7 +4,7 @@ game.import('character',function(lib,game,ui,get,ai,_status){
 		name:'old',
 		characterSort:{
 			old:{
-				old_shenhua:["yuji","zhangjiao","old_zhugezhan","old_zhoutai","old_caoren","xiahouyuan","xiaoqiao","huangzhong","weiyan","xuhuang","pangde"],
+				old_shenhua:["yuji","zhangjiao","old_zhugezhan","old_guanqiujian"],
 				old_refresh:["old_zhangfei","old_huatuo"],
 				old_yijiang1:["masu","xushu","fazheng","yujin","xin_yujin","old_xusheng","old_lingtong","ol_yujin"],
 				old_yijiang2:["old_madai","old_zhonghui","old_wangyi","old_guanzhang","ol_liaohua"],
@@ -12,22 +12,18 @@ game.import('character',function(lib,game,ui,get,ai,_status){
 				old_yijiang4:["old_caozhen","old_chenqun","old_zhuhuan","ol_wuyi"],
 				old_yijiang5:["old_caoxiu","old_quancong","old_zhuzhi"],
 				old_yijiang67:["ol_xinxianying","ol_zhangrang","ol_liuyu"],
-				old_sp:["old_caochun","old_lingju","old_maliang","old_machao","zhangliang","jsp_caoren","ol_guansuo"],
+				old_sp:["old_lingju","old_maliang","old_machao","zhangliang","jsp_caoren","ol_guansuo","old_zhangxingcai","old_huangfusong"],
+				old_mobile:["old_caochun","old_majun"],
 			},
 		},
 		character:{
+			old_huangfusong:['male','qun',4,['fenyue']],
+			old_majun:["male","wei",3,["xinfu_jingxie1","xinfu_qiaosi"],[]],
+			old_zhangxingcai:['female','shu',3,['oldshenxian','qiangwu']],
 			old_fuhuanghou:['female','qun',3,['oldzhuikong','oldqiuyuan']],
 			old_caochong:['male','wei',3,['oldrenxin','oldchengxiang']],
-			xuhuang:['male','wei',4,['gzduanliang']],
-			pangde:['male','qun',4,['mashu','mengjin']],
-			xiahouyuan:['male','wei',4,['shensu']],
-			huangzhong:['male','shu',4,['liegong']],
-			weiyan:['male','shu',4,['kuanggu']],
-			xiaoqiao:['female','wu',3,['tianxiang','hongyan']],
 			yuji:['male','qun',3,['old_guhuo'],['forbidai']],
 			zhangjiao:['male','qun',3,['leiji','guidao','huangtian'],['zhu']],
-			old_zhoutai:['male','wu',4,['gzbuqu']],
-			old_caoren:['male','wei',4,['moon_jushou','jiewei']],
 			old_zhangfei:['male','shu',4,['paoxiao','retishen']],
 			old_huatuo:['male','qun',3,['jijiu','chulao']],
 			jsp_caoren:['male','wei',4,['kuiwei','yanzheng']],
@@ -69,6 +65,7 @@ game.import('character',function(lib,game,ui,get,ai,_status){
 			ol_guohuai:['male','wei',4,['jingce']],
 			ol_wuyi:['male','shu',4,['benxi']],
 			ol_liuyu:['male','qun',2,['zongzuo','zhige']],
+			old_guanqiujian:["male","wei",4,["drlt_zhenrong","drlt_hongju"],[]],
 		},
 		characterFilter:{
 			old_lingju:function(mode){
@@ -76,6 +73,10 @@ game.import('character',function(lib,game,ui,get,ai,_status){
 			}
 		},
 		skill:{
+			oldshenxian:{
+				audio:'shenxian',
+				inherit:'shenxian',
+			},
 			old_fuhun:{
 				audio:'fuhun',
 				trigger:{player:'phaseDrawBefore'},
@@ -99,7 +100,7 @@ game.import('character',function(lib,game,ui,get,ai,_status){
 				enable:"chooseToUse",
 				filter:function (event,player){
 					if(!player.countCards('h')) return false;
-					var list=['sha','tao','jiu','taoyuan','wugu','juedou','huogong','jiedao','tiesuo','guohe','shunshou','wuzhong','wanjian','nanman'];
+					var list=['sha','tao','shan','jiu','taoyuan','wugu','juedou','huogong','jiedao','tiesuo','guohe','shunshou','wuzhong','wanjian','nanman'];
 					if(get.mode()=='guozhan'){
 						list=list.concat(['xietianzi','shuiyanqijunx','lulitongxin','lianjunshengyan','chiling','diaohulishan','yuanjiao','huoshaolianying']);
 					}
@@ -208,9 +209,11 @@ game.import('character',function(lib,game,ui,get,ai,_status){
 							game.cardsDiscard(trigger.cards);
 							trigger.cancel();
 							game.asyncDraw(event.betray);
-							game.delay();
+							if(trigger.name=='useCard'&&trigger.parent) trigger.parent.goto(0);
 						}
 					}
+					'step 4'
+					game.delay();
 				},
 			},
 			"old_guhuo_respond":{
@@ -237,7 +240,7 @@ game.import('character',function(lib,game,ui,get,ai,_status){
 						event.card=result.cards[0];
 						event.prompt=get.translation(player)+'声明了'+get.translation(event.name)+'，是否质疑？';
 						event.guessers=game.filterPlayer(function(current){
-							return current!=player;
+							return current!=player&&current.hp>0;
 						});
 						event.guessers.sort(lib.sort.seat);
 						event.ally=[];
@@ -747,7 +750,7 @@ game.import('character',function(lib,game,ui,get,ai,_status){
 					return false;
 				},
 				filter:function(event,player){
-					return event.card&&event.card.name=='sha'&&(get.color(event.card)=='red'||event.source.hasSkill('jiu'));
+					return event.card&&event.card.name=='sha'&&(get.color(event.card)=='red'||event.getParent(2).jiu==true);
 				},
 				content:function(){
 					player.loseMaxHp();
@@ -780,13 +783,10 @@ game.import('character',function(lib,game,ui,get,ai,_status){
 			},
 			oldxuanfeng:{
 				audio:'xuanfeng',
-				trigger:{player:'loseEnd'},
+				trigger:{player:'loseAfter'},
 				direct:true,
 				filter:function(event,player){
-					for(var i=0;i<event.cards.length;i++){
-						if(event.cards[i].original=='e') return true;
-					}
-					return false;
+					return event.es&&event.es.length>0;
 				},
 				content:function(){
 					"step 0"
@@ -847,6 +847,8 @@ game.import('character',function(lib,game,ui,get,ai,_status){
 			},
 		},
 		translate:{
+			old_zhangxingcai:'旧张星彩',
+			old_majun:'骰子马钧',
 			old_yuanshu:'手杀袁术',
 			old_xusheng:'旧徐盛',
 			old_lingtong:'旧凌统',
@@ -866,8 +868,6 @@ game.import('character',function(lib,game,ui,get,ai,_status){
 			old_zhugezhan:"旧诸葛瞻",
 			zhangliang:'SP张梁',
 			yuji:'旧于吉',
-			old_zhoutai:'旧周泰',
-			old_caoren:'旧曹仁',
 			old_guanzhang:'旧关兴张苞',
 			old_zhangfei:'OL张飞',
 			old_huatuo:'OL华佗',
@@ -884,6 +884,8 @@ game.import('character',function(lib,game,ui,get,ai,_status){
 			ol_liuyu:'OL刘虞',
 			old_fuhuanghou:'旧伏皇后',
 			old_caochong:'旧曹冲',
+			old_guanqiujian:'旧毌丘俭',
+			old_huangfusong:'旧皇甫嵩',
 
 			old_fuhun:'父魂',
 			old_fuhun_info:'摸牌阶段开始时，你可以放弃摸牌，改为从牌堆顶亮出两张牌并获得之，若亮出的牌颜色不同，你获得技能“武圣”、“咆哮”，直到回合结束。',
@@ -928,6 +930,7 @@ game.import('character',function(lib,game,ui,get,ai,_status){
 			old_yijiang5:'一将成名2015',
 			old_yijiang67:'原创设计',
 			old_sp:'SP',
+			old_mobile:'移动版',
 		}
 	};
 });

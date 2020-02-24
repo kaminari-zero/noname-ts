@@ -178,21 +178,21 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 				game.broadcastAll(function(singleTranslate,characterSingle){
 					_status.mode='normal';
 					for(var j in singleTranslate) lib.translate[j]=singleTranslate[j];
-					_status.characterList=[];
+					_status.characterlist=[];
 					for(var i in characterSingle){
 						lib.character[i]=characterSingle[i];
 						if(!lib.character[i][4]){
 							lib.character[i][4]=[];
 						}
-						_status.characterList.push(i);
+						_status.characterlist.push(i);
 					}
 				},lib.singleTranslate,lib.characterSingle);
 			}
 			else if(_status.mode=='changban'){
-				_status.characterList=[];
+				_status.characterlist=[];
 				for(var i=0;i<lib.changbanCharacter.length;i++){
 					var name=lib.changbanCharacter[i];
-					if(lib.character[name]&&!lib.filter.characterDisabled(name)) _status.characterList.push(name);
+					if(lib.character[name]&&!lib.filter.characterDisabled(name)) _status.characterlist.push(name);
 				}
 				game.broadcastAll(function(){
 					_status.mode='changban';
@@ -340,9 +340,9 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 						if(lib.filter.characterDisabled(i)) continue;
 						list.push(i);
 					}
-					_status.characterList=list;
+					_status.characterlist=list;
 					var filter=function(name){
-						return !_status.characterList.contains(name);
+						return !_status.characterlist.contains(name);
 					};
 					var dialog=ui.create.characterDialog('heightset',filter,'expandall').open();
 					dialog.videoId=event.videoId;
@@ -383,9 +383,9 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 					}
 					"step 1"
 					_status.characterChoice={
-						zhu:_status.characterList.randomRemove(3),
-						fan:_status.characterList.randomRemove(3),
-						all:_status.characterList.randomRemove(6),
+						zhu:_status.characterlist.randomRemove(3),
+						fan:_status.characterlist.randomRemove(3),
+						all:_status.characterlist.randomRemove(6),
 					};
 					event.videoIdx=lib.status.videoId++;
 					game.broadcastAll(function(id,list){
@@ -555,7 +555,7 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 					for(var i=0;i<lib.configOL.characterPack.length;i++){
 						var pack=lib.characterPack[lib.configOL.characterPack[i]];
 						for(var j in pack){
-							if(j=='zuoci'||j=='miheng') continue;
+							if(j=='zuoci') continue;
 							if(lib.character[j]) libCharacter[j]=pack[j];
 						}
 					}
@@ -564,9 +564,9 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 						list.push(i);
 					}
 					game.broadcastAll(function(list,id){
-						_status.characterList=list;
+						_status.characterlist=list;
 						var filter=function(name){
-							return !_status.characterList.contains(name);
+							return !_status.characterlist.contains(name);
 						};
 						var dialog=ui.create.characterDialog('heightset',filter,'expandall').open();
 						dialog.videoId=id;
@@ -578,6 +578,7 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 					"step 2"
 					game.broadcastAll(function(player,character,id){
 						player.init(character);
+						if(player==game.me) game.addRecentCharacter(character);
 					},game.zhu,result.links[0]);
 					game.fan.chooseButton(true).set('ai',function(button){
 						return Math.random();
@@ -590,6 +591,7 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 							dialog.close();
 						}
 						player.init(character);
+						if(player==game.me) game.addRecentCharacter(character);
 						setTimeout(function(){
 							ui.arena.classList.remove('choose-character');
 						},500);
@@ -616,9 +618,9 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 					}
 					"step 1"
 					_status.characterChoice={
-						zhu:_status.characterList.randomRemove(3),
-						fan:_status.characterList.randomRemove(3),
-						all:_status.characterList.randomRemove(6),
+						zhu:_status.characterlist.randomRemove(3),
+						fan:_status.characterlist.randomRemove(3),
+						all:_status.characterlist.randomRemove(6),
 					};
 					event.videoIdx=lib.status.videoId++;
 					game.broadcastAll(function(id,list){
@@ -1148,31 +1150,7 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 					}
 				},
 			},
-			botu:{
-				audio:2,
-				group:'botu_kanade',
-				trigger:{player:'phaseAfter'},
-				frequent:true,
-				filter:function(event,player){
-					return player.storage.botu&&player.storage.botu.length>=4;
-				},
-				content:function(){
-					player.insertPhase();
-				},
-				subSkill:{
-					kanade:{
-						trigger:{player:['useCard','phaseBefore']},
-						silent:true,
-						content:function(){
-							if(trigger.name=='phase') player.storage.botu=[];
-							else{
-								var suit=get.suit(trigger.card);
-								if(suit) player.storage.botu.add(suit);
-							}
-						},
-					},
-				},
-			},
+			
 			_changeHandcard:{
 				trigger:{global:'gameDrawAfter'},
 				silent:true,
@@ -1256,8 +1234,6 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 			yinli_info:'其他角色的装备牌于其回合内进入弃牌堆后，你可以获得之。',
 			shenju:'慎拒',
 			shenju_info:'锁定技，你的手牌上限+X（X为你对手的体力值）。',
-			botu:'博图',
-			botu_info:'回合结束时，若你本回合使用的牌包含四种花色，则你可以进行一个额外回合。',
 		},
 		help:{
 		'血战长坂':'<div style="margin:10px">游戏规则</div><ul style="margin-top:0"><li>选将阶段<br>双方在游戏开始时由系统随机分配身份。分配到先手身份的玩家优先出牌，分配到后手身份的玩家优先选将。<br>双方各自随机获得3名暗置武将，同时从将池中随机选出6名明置武将，由后手玩家开始，按照一次1张-2张-2张-1张的顺序，轮流选择获得明置武将。之后双方各从自己的6名武将中选择2名分别作为主将和副将进行游戏。<li>胜利条件<br>对方死亡。'+

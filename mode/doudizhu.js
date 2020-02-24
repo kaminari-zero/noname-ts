@@ -78,6 +78,7 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 			game.addVideo('init',null,info);
 
 			game.gameDraw(game.zhu||_status.firstAct||game.me);
+			if(_status.connectMode&&lib.configOL.change_card) game.replaceHandcards(game.players.slice(0));
 			game.phaseLoop(game.zhu||_status.firstAct||game.me);
 		},
 		game:{
@@ -424,6 +425,7 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 						}
 					}
 					event.list.randomSort();
+					_status.characterlist=event.list.slice(0);
 					list3.randomSort();
 					var num=get.config('choice_'+game.me.identity);
 					list=event.list.slice(0,num);
@@ -598,6 +600,10 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 						}
 					}
 					"step 3"
+					for(var i=0;i<game.players.length;i++){
+						_status.characterlist.remove(game.players[i].name);
+						_status.characterlist.remove(game.players[i].name2);
+					}
 					setTimeout(function(){
 						ui.arena.classList.remove('choose-character');
 					},500);
@@ -629,7 +635,7 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 					for(var i=0;i<lib.configOL.characterPack.length;i++){
 						var pack=lib.characterPack[lib.configOL.characterPack[i]];
 						for(var j in pack){
-							if(j=='zuoci'||j=='miheng') continue;
+							if(j=='zuoci') continue;
 							if(lib.character[j]) libCharacter[j]=pack[j];
 						}
 					}
@@ -638,6 +644,7 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 						event.list.push(i);
 						event.list2.push(i);
 					}
+					_status.characterlist=event.list.slice(0);
 					"step 1"
 					var list=[];
 					var selectButton=(lib.configOL.double_character?2:1);
@@ -700,6 +707,10 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 							ui.arena.classList.remove('choose-character');
 						},500);
 					},result,game.zhu);
+					for(var i=0;i<game.players.length;i++){
+						_status.characterlist.remove(game.players[i].name);
+						_status.characterlist.remove(game.players[i].name2);
+					}
 					setTimeout(function(){
 						ui.arena.classList.remove('choose-character');
 					},500);
@@ -795,7 +806,7 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 				},
 			},
 			_bahu:{
-				trigger:{player:'phaseBegin'},
+				trigger:{player:'phaseZhunbeiBegin'},
 				forced:true,
 				filter:function(event,player){
 					return player==game.zhu;
