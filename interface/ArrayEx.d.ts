@@ -51,4 +51,25 @@ interface Array<T> {
      * @param target 所有玩家
      */
     sortBySeat(target:any):Array<T>;
+    /** 
+     * 将一个Array中所有位于处理区的卡牌过滤出来
+     * 
+     * 例：设一list为[c1,c2,c3,c4]，其中c1和c3是位于处理区的卡牌
+     * 那么list.filterInD()得到的结果即为[c1,c3]
+     * 
+     * 在1.9.97.8.1或更高的版本中: 
+     * 可通过直接在括号中填写一个区域 来判断处于特定区域的卡牌 
+     * 例：list.filterInD('h') 即判断数组中所有位于手牌区的卡牌
+     */
+    filterInD(poiston?:string);
+
+    //关于处理区：
+    /*
+    不知道处理区是什么的同学们 请自行查阅凌天翼规则集相关内容太长了我懒得贴
+    处理区在无名杀的代码为ui.ordering
+    为方便兼容旧扩展 使用get.position(card)方法读取处理区的卡牌 默认得到的仍然是弃牌堆（'d'）
+    使用get.position(card,true) 才会得到处理区（'o'）的结果
+    */
+
+    
 }

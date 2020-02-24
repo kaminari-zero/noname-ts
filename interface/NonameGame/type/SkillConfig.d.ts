@@ -185,7 +185,8 @@ interface ExSkillData {
     /**
      * 失去技能时发动
      * 当值为string时:
-     *  若为“storage”，删除player.storage中该技能的缓存；
+     *  若为“storage”，删除player.storage中该技能的缓存（用于保存标记等信息）；
+     *      注：失去这个技能时销毁标记。
      *  若为“discard”，若player.storage[skill]缓存的是卡牌时，执行game.cardsDiscard，并播放丢牌动画，然后移除player.storage[skill]；
      *  若为“lose”，和“discard”差不多，不过不播丢牌动画；
      * 当值为true时，都是直接移除player.storage[skill]；
@@ -280,7 +281,8 @@ interface ExSkillData {
     limited?: boolean;
     /** 
      * 获得技能时是否显示此标记，
-     * 若为false，可以用markSkill()来显示此标记
+     * 若为false，可以用markSkill()来显示此标记，
+     * 可以用unmarkSkill不显示标记
      */
     mark?: boolean;
     /** 标记显示内容 */
@@ -289,8 +291,19 @@ interface ExSkillData {
          * 标记显示内容？
          * 为cards时显示标记内的牌.
          * 
-         * 当标记显示内容是文本时，
-         * 例：标记显示内容为当前有多少个标记
+         * 当标记显示内容是文本:(新内容)
+            "mark":有（数）个标记；
+            "card":一张牌；
+            "cards":多张牌；
+            “limited”:限定技，觉醒技专用；
+            "time":剩余发动次数；
+            "turn":剩余回合数；
+            "cardCount":牌数；
+            "info":技能描述；
+            "character":武将牌；
+         * 其本质就是player.storage[intro.content],获取storage内对应的内容
+         * 
+         * 也可以是个自定义的方法
          */
         content: string | ThreeParmFun<SMap<any>, Player, Skill, string>;
         markcount?: number | TwoParmFun<any, Player, number>;

@@ -302,7 +302,11 @@ declare namespace Lib.element {
          * @param arg4 过滤条件3
          */
         get(arg1: string, arg2?: any, arg3?: any, arg4?: any): any;
-        /** 添加录像记录，并更新所有标记信息 */
+        /** 
+         * 同步该技能的标记（同步Storage的内容）
+         * 
+         * 添加录像记录，并更新所有标记信息 
+         */
         syncStorage(skill: string): void;
         /** 【联机】通信同步技能 */
         syncSkills(): void;
@@ -543,8 +547,10 @@ declare namespace Lib.element {
          * useCard1(声明使用牌后)和useCard2(使用牌选择目标后)
             useCard1目前在无名杀里只有朱雀羽扇（程普没有使用这个时机）
             useCard2一般是一些（可以令一些其他角色也成为XXX牌目标）的技能
+
             之后就是大家熟悉的useCard(牌被使用时)时机
             一般用于一些纯粹摸牌系和全体强命系的技能
+
             而useCardToPlayer(指定目标时)和useCardToTarget(成为目标时) 则往往是一些会改变卡牌目标数的技能
             useCardToPlayer和useCardToTarget这两个时机 对卡牌的所有目标都会依次触发一遍 此时trigger.target即为被触发的目标
             需要特别注意的是：这两个时机的trigger本身并不是useCard事件 trigger.parent/trigger.getParent()才是
@@ -557,6 +563,8 @@ declare namespace Lib.element {
             想让此牌完全不能被响应，把场上所有角色都加进这个列表就行了。
          * 
          * 只想让卡牌不能被无懈：直接把玩家目标的nowuxie属性设置为true即可。
+         * 
+         * customArgs
          * 
          * 关于该事件非常复杂，还需要另外详细讨论（之前有一版旧版该方法的讨论，需要更新 by2020-2-23）
          */
@@ -579,6 +587,12 @@ declare namespace Lib.element {
          *      “bottom”：设置next.bottom=true，即设置从牌堆底抽卡;
          */
         draw(...args): Event;
+        /**
+         * 角色将手牌摸至X张，若角色手牌数不小于X则无事发生
+         * @param num 
+         * @param args 基本与draw一致，改成了数组的存储模式
+         */
+        drawTo(num:number,args:any[]): Event;
         /**
          * 随机弃置x张牌（手牌和装备区）
          */
@@ -847,14 +861,14 @@ declare namespace Lib.element {
         //标记相关
         /**
          * 技能标记（显示，更新标记）
-         * @param name 标记名
+         * @param name 标记名/技能名（规定标记名必须和技能名相同）
          * @param info 标记的显示信息
          * @param card 若有则标记记录的是卡牌信息
          */
         markSkill(name: string, info?: any, card?: Card[]): Player;
         /**
-         * 取消技能标记
-         * @param name 标记名
+         * 取消技能标记(不显示该技能的标记)
+         * @param name 标记名/技能名
          */
         unmarkSkill(name: string): Player;
         /**
@@ -886,6 +900,16 @@ declare namespace Lib.element {
          * @param info 
          */
         unmark(name: any, info: any): void;
+        //添加全新mark相关方法   by2020-2-25（代码版本暂时未跟上）
+        /** 是否有该技能的标记 */
+        hasMark(skill:string):boolean;
+        /** 有多少该技能的标记（若标记为数组，返回数组长度） */
+        countMark(skill:string):number;
+        /** 添加标记（只适用于标记是数字） */
+        addMark(skill:string,num:number,log?:boolean);
+        /** 移除标记（只适用于标记是数字） */
+        removeMark(skill:string,num:number,log?:boolean);
+        
 
         /** 添加“连环”UI */
         addLink(): void;
