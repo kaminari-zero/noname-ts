@@ -405,10 +405,11 @@ interface Get {
      */
     info(item:string|{name:string}):ExCommonConfig;
     /**
-     * 获取当前可选择的目标数，范围。
+     * 获取当前可选择的目标数，范围
+     * （具具体而定，不同配置指定的两个数字意义不一致，后面具体分析）。
      * 若没有默认返回[1,1]
      * @param select 
-     * @return [number,number] 数组第一个目标数（可选目标数），数组第二个值为进攻范围，若为-1，则无距离限制（还不确定，目前来看，好像就是0，1指定范围区间）
+     * @return [number,number] 具具体而定(数组第一个目标数（可选目标数），数组第二个值为进攻范围)/(指定范围区），若为-1，则无距离限制/能选的必须选，即南蛮之类
      */
     select(select:number|Select|NoneParmFum<number|Select>):Select;
     /**
@@ -696,4 +697,11 @@ interface Is {
     pos(str:string): boolean;
     /** 判断该技能是否是强制触发的（强制触发：locked，trigger&&forced，mod） */
     locked(skill:string): boolean;
+
+    /** 用于判断是否开启了【幸运星模式】的选项 */
+    isLuckyStar():boolean;
+
+    //新增的国战专用函数：(直接查阅苏大佬的文档，到时候给各个不同model的玩法，另外分开新的描述文档......)
+    guozhanRank();
+    guozhanReverse(xxx,yyy);
 }

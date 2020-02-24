@@ -48,6 +48,7 @@ declare namespace UI {
         mousedown(): any;
         mouseentercancel(): any;
         hoverplayer(e): any;
+        /** 长按相关 */
         longpressdown(e): any;
         longpresscallback(): any;
         longpresscancel(): any;

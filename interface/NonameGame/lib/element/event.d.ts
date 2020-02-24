@@ -176,6 +176,8 @@ declare namespace Lib.element {
         /** 记录一个number类型的数字，每个事件代表都不一样 */
         num:number;
 
+        /** 基础伤害，最初是在userCard事件中，从卡牌配置的信息获得，作为某张卡牌造成的伤害数值在事件中传递 */
+        baseDamage:number;
 
         /** 是否强制结束出牌阶段，同时也可以让result.bool为false跳过 */
         skipped:boolean;

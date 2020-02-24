@@ -24,7 +24,12 @@ namespace NG {
         CardPlie = "c",
         /** 弃牌区 */
         Discard = "d",
-        /** 特殊显示区 */
+        /** 
+         * 特殊显示区
+         * (特殊卡牌去，游戏外卡牌区，在该区域的卡牌，会被排除出上面那些区域，
+         * 而上面那些区域是在游戏内的卡牌，
+         * 所以该区域是指例如：“移除出游戏外”，“某些技能的标记，例如周泰的不屈”......)
+         */
         Special = "s",
 
         /** 玩家场上的牌（武器，判定） */
@@ -33,6 +38,19 @@ namespace NG {
         Use = "he",
         /** 玩家所有的牌 */
         All = "hej",
+
+        //ui上指定的区域，用于某些特殊字段，统一归类到这里(玩家的牌应该都在player对象内)：
+        //场上卡牌所在位置：
+        // ui.control=ui.create.div('#control',ui.arena).animate('nozoom');
+        // ui.cardPile=ui.create.div('#cardPile');
+        // ui.discardPile=ui.create.div('#discardPile');
+        // ui.special=ui.create.div('#special');
+        /** 牌堆 */
+        c = "cardPile",
+        /** 弃牌堆 */
+        d = "discardPile",
+        /** 特殊卡牌区，游戏外卡牌区 */
+        s = "special",
     }
 
     /** 性别 */
@@ -108,6 +126,18 @@ namespace NG {
 
         /** 弃牌阶段 */
         phaseDiscard = "phaseDiscard",
+        
+        //新版2020-2-24增加的时机：(流程阶段更细致)
+        /** 准备阶段 */
+        phaseZhunbei = "phaseZhunbei",
+        /** 结束阶段 */
+        phaseJieshu = "phaseJieshu",
+
+        //特化出来的常用阶段，不需要拼接
+        /** 准备阶段时(同“phaseBegin”) */
+        phaseZhunbeiBegin = "phaseZhunbeiBegin",
+        /** 结束阶段后（同“phaseEnd”） */
+        phaseJieshuBegin = "phaseJieshuBegin",
     }
 
     /**
@@ -148,6 +178,9 @@ namespace NG {
 
         /** 弃牌 */
         discard = "discard",
+
+        /** 失去某张牌 */
+        lose_ = "lose_"
     }
     
     /**
@@ -183,6 +216,27 @@ namespace NG {
 
         /** 死亡 */
         die = "die",
+
+        //新增特殊受伤时机(不需要拼接) by2020-2-23
+        /*
+        新版本的伤害事件中 
+        添加了damageBegin1 damageBegin2 damageBegin3 damageBegin4这四个新时机
+        分别对应图中的造成伤害时1 造成伤害时2 受到伤害时2 受到伤害时3
+        1，2是造成伤害时
+        3，4是受到伤害时
+        这么规定的
+        1，3可以改变伤害大小
+        2，4不能
+        (具体到时分析)
+        */
+        /** 造成伤害时1 */
+        damageBegin1 = "damageBegin1",
+        /** 造成伤害时2 */
+        damageBegin2 = "damageBegin2",
+        /** 受到伤害时2 */
+        damageBegin3 = "damageBegin3",
+        /** 受到伤害时3 */
+        damageBegin4 = "damageBegin4"
     }
 
     /**
@@ -245,9 +299,9 @@ namespace NG {
         Equip1 = "equip1",
         /** 防具 */
         Equip2 = "equip2",
-        /** 攻马 */
+        /** 防马（+1） */
         Equip3 = "equip3",
-        /** 防马 */
+        /** 攻马（-1） */
         Equip4 = "equip4",
         /** 法宝 */
         Equip5 = "equip5",
@@ -369,6 +423,34 @@ namespace NG {
         Give2 ="give2",
         Throw ="throw",
         Throw2 = "throw2"
+    }
+
+    /**
+     * 装备栏位置
+     * 1=武器栏 2=防具栏 3=加一马栏 4=减一马栏 5=宝物栏
+     */
+    export const enum EquipPos {
+        /** 武器 */
+        E1 = 1,
+        /** 防具 */
+        E2 = 2,
+        /** 防马（+1） */
+        E3 = 3,
+        /** 攻马（-1） */
+        E4 = 4,
+        /** 法宝 */
+        E5 = 5,
+
+        /** 武器 */
+        Equip1 = "equip1",
+        /** 防具 */
+        Equip2 = "equip2",
+        /** 防马（+1） */
+        Equip3 = "equip3",
+        /** 攻马（-1） */
+        Equip4 = "equip4",
+        /** 法宝 */
+        Equip5 = "equip5",
     }
 
     // subCardType 卡牌子类型

@@ -161,6 +161,16 @@ interface ExSkillData {
      */
     contentAfter?: ContentFunc;
 
+    //新版本出牌阶段主动技的新参数（均仅在discard为false且lose不为false时有效）
+    /** 让角色失去卡牌的过程中强制视为正面朝上失去 */
+    visible?:boolean;
+    /** 
+     * 指定失去特殊区卡牌的去向 (即设置卡牌的position)
+     * 其值采用的是ui的成员，即通过ui[info.loseTo]，获取实体对象设置；
+     * 默认为："special",
+     * 取值："special","discardPile","cardPile","control"(这一般都不会用上)
+     */
+    loseTo?:string;
 
     //技能初始化与移除：
     /**
@@ -406,6 +416,15 @@ interface ExSkillData {
      * 若不是字符串，则执行该方法
      */
     prepare?: string | ThreeParmFun<Card[], Player, Target[], string>;
+    /** 在lose事件中使用，触发执行“lose_卡牌名”事件的content */
+    onLose?:ContentFunc|ContentFunc[];
+    /**
+     *  在lose事件中使用，必须要失去的卡牌为“equips”（装备牌），有onLose才生效。
+     * 若符合以上条件，则检测该牌是否需要后续触发执行“lose_卡牌名”事件，既上面配置的onLose
+     */
+    filterLose?:TwoParmFun<Card,Player,boolean>;
+    /** 在lose事件中使用，取值为true，作用貌似强制延迟弃牌动画处理 */
+    loseDelay?:boolean;
 
 
     /** 
@@ -770,6 +789,17 @@ interface ExModData {
      * @param result 
      */
     judge?(player: Player, result: JudgeResultData);
+
+    //2020-2-23版本：
+    /** 
+     * 为技能配置一个自定义在事件中处理的回调事件，该事件的使用需要自己使用，实际是一个自定义事件，没什么实际意义；
+     * 其设置的位置在技能content期间设置，设置在期间引发的事件中；
+     * 用于以下场合：judge，chooseToCompareMultiple，chooseToCompare
+     * 
+     * 新版本的judge事件中 可以通过设置callback事件 在judgeEnd和judgeAfter时机之前对判定牌进行操作
+     * 在判断结果出来后，若事件event.callback存在，则发送“judgeCallback”事件
+     */
+    callback?:ContentFunc;
 
     //无懈相关：主要在_wuxie中，（此时应时无懈询问阶段），检测触发卡牌以下对应mod
     /*

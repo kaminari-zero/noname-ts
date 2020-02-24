@@ -375,6 +375,13 @@ interface ExCardData {
 
     /** 一次性卡牌，只能使用一次，使用完，移除出卡牌外（不置入弃牌堆中的） */
     vanish?: boolean;
+    
+    /** 
+     * 卡牌的基础伤害数值，不填时默认为1 
+     * 
+     * 在useCard事件中使用，在event中传递
+     */
+    baseDamage?:number;
 
     //ai部分
     ai: ExAIData,

@@ -123,5 +123,12 @@ interface JudgeResultData extends BaseResultData {
      * 注：在获得最终结果之前有一个“judge”的mod检测。
      */
     judge: number;
+
+    /** 
+     * 新版本的judge事件中 可以通过设置callback事件 在judgeEnd和judgeAfter时机之前对判定牌进行操作
+     * 
+     * 在判断结果出来后，若事件event.callback存在，则发送“judgeCallback”事件
+     */
+    callback:TwoParmFun<Player,any,void>|ContentFunc;
 }
 

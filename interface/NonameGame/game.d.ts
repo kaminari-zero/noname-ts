@@ -7,9 +7,21 @@ interface Game {
      * 卡牌弃置
      * 创建“cardsDiscard”事件，
      * 该事件逻辑是遍历cards，调用它们的discard舍弃；
+     * 
+     * 苏版解析:将不属于任何人的卡牌置入弃牌堆
      * @param cards 
      */
     cardsDiscard(cards:Card|Card[]):Event;
+    //新增方法 by2020-2-24
+    /**
+     * 将卡牌送至ui.special
+     * 
+     * 同样是创建“cardsDiscard”事件，触发“addCardToStorage”时机
+     * @param cards 
+     * @param bool 默认触发“addCardToStorage”时机，设置值false不触发
+     */
+    cardsGotoSpecial(cards:Card|Card[],bool?:boolean):Event;
+
 
     //【联机】相关属性
     online:boolean;

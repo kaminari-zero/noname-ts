@@ -42,12 +42,24 @@ declare namespace Lib.element {
          */
         swapEquip(target: Player): Event;
         /**
-         * 判断当前玩家是否能与目标玩家拼点（必须双方都持有手牌）
+         * 判断当前玩家是否能与目标玩家拼点
+         * 
+         * 按照三国杀规则 拼点发起者想和一名角色拼点 需要满足以下条件：
+            1. 拼点发起者不是拼点目标
+            2. 拼点发起者和拼点目标都有手牌(所以别指望秦宓白嫖拼点了 )
+            3. 拼点目标不是陆抗 
+            只有同时满足以上三个条件 函数才会返回true 否则返回结果为false
          * @param target 
          */
         canCompare(target: Player): boolean;
         /**
          * 废除一个指定装备栏
+         * 
+         * 这一类主要都是两种写法：
+         * 直接数字：
+         * 1=武器栏 2=防具栏 3=加一马栏 4=减一马栏 5=宝物栏
+         * 
+         * 使用字符串，既“equip”+对应的数字
          * @param pos 
          */
         disableEquip(pos: number|string): Event;
@@ -60,10 +72,14 @@ declare namespace Lib.element {
         enableEquip(pos: number|string): Event;
         /** 【动画】恢复装备栏动画 */
         $enableEquip(skill: string): Player;
-        /** 判断'equip'+arg 的装备区是否可以使用 */
+        /** 
+         * 判断玩家一个装备栏有没有被废除
+         * 
+         * 判断'equip'+arg 的装备区是否可以使用
+         */
         isDisabled(arg: number | string): boolean;
         /**
-         * 判断指定装备区的指定类型区域是否为空的（没有装备）
+         * 判断指定装备区的指定类型区域是否为空的（即既没有被废除 栏内也没有装备牌）
          * 例如：防具区（equip6）是否有防具
          * @param num 
          */
@@ -522,6 +538,27 @@ declare namespace Lib.element {
         useResult(result: any, event: any): Event;
         /**
          * 使用卡牌
+         * 
+         * 关于useCard流程中的各种新时机(摘抄自苏大佬的资料)
+         * useCard1(声明使用牌后)和useCard2(使用牌选择目标后)
+            useCard1目前在无名杀里只有朱雀羽扇（程普没有使用这个时机）
+            useCard2一般是一些（可以令一些其他角色也成为XXX牌目标）的技能
+            之后就是大家熟悉的useCard(牌被使用时)时机
+            一般用于一些纯粹摸牌系和全体强命系的技能
+            而useCardToPlayer(指定目标时)和useCardToTarget(成为目标时) 则往往是一些会改变卡牌目标数的技能
+            useCardToPlayer和useCardToTarget这两个时机 对卡牌的所有目标都会依次触发一遍 此时trigger.target即为被触发的目标
+            需要特别注意的是：这两个时机的trigger本身并不是useCard事件 trigger.parent/trigger.getParent()才是
+            之后依然是一连串的useCardToPlayered(指定目标后)和useCardToTargeted(成为目标后)的时机了
+            注意要点和上面差不多。
+         * 
+         * 另外关于新版本卡牌强命的方法
+            除原有的wuxieRespondable的mod和norespond的skillTag之外 还可以通过以下的方法实现卡牌强命/不可无懈
+            useCard事件的directHit列表 即为【不能使用或打出牌响应卡牌】的角色
+            想让此牌完全不能被响应，把场上所有角色都加进这个列表就行了。
+         * 
+         * 只想让卡牌不能被无懈：直接把玩家目标的nowuxie属性设置为true即可。
+         * 
+         * 关于该事件非常复杂，还需要另外详细讨论（之前有一版旧版该方法的讨论，需要更新 by2020-2-23）
          */
         useCard(...args): Event;
         /**
@@ -592,7 +629,8 @@ declare namespace Lib.element {
          *          "give","gain","gain2","draw2","giveAuto"...... 实质是调用它们对应”$动画名“的方法；
          *  itemtype为以下特殊字符串：
          *      “log”：设置next.log=true；
-         *      “fromStorage”：设置next.fromStorage=true，标记是否来自缓存中；
+         *      “fromStorage”：设置next.fromStorage=true，标记是否来自游戏外（从游戏外获得牌）；
+         *          注1：所谓游戏外，指非玩家手牌，场地，弃牌，牌堆区的牌，常用于某些特殊技能。
          *      “bySelf”：设置next.bySelf；
          */
         gain(...args): Event;
@@ -621,6 +659,9 @@ declare namespace Lib.element {
          *      “nocard”：若card/cards没有，若没设置该值，默认使用event.card/event.cards；
          *      “nosource”：若source没有，若没设置该值，默认使用event.player；
          *      "notrigger"：若设置该值，则设置next._triggered=null，next.notrigger=true，即不触发后续阶段；
+         *      "toStorage":涉及将牌“移除游戏外”，例：一般在将自己的牌放到游戏外的时候 都会lose到ui.special，在括号里加上'toStorage' 作为标记 就可以触发周妃的技能了
+         *          注1：检测移除牌时的时机：event.trigger("addCardToStorage")
+         *          注2：需要从游戏外获得牌：player.gain(player.storage.xxx,'gain2','fromStorage');
          */
         damage(...args): Event;
         /**
@@ -1301,6 +1342,18 @@ declare namespace Lib.element {
          */
         getDebuff(...num:number[]): Player;
         
+        // 新方法2020-2-23
+        /** 用于计算玩家已损失的体力值（若因旧周泰等而导致体力值小于0 则以0作为当前体力值进行计算） */
+        getDamagedHp():number;
+        /**
+         * 用于切换玩家的国籍
+         * 
+         * （在国战模式下不影响势力，胜利条件，野心家判断等）
+         * @param group 势力名，例如：“wei” =》魏
+         * @param log 是否打印日志，默认打印，设置false不打印
+         */
+        changeGroup(group:string,log?:boolean);
+
 
         //动画,UI相关的方法（前置$符）[不过也有些内部混如一些操作逻辑，没分离彻底]
         $drawAuto(cards: any, target: any): any;
@@ -1519,7 +1572,7 @@ type StatInfo = {
     damage:number;
     /** 受到伤害 */
     damaged:number;
-    /** 摸排 */
+    /** 摸牌 */
     gain:number;
     /** 杀敌 */
     kill:number;
