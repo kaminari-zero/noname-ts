@@ -90,8 +90,8 @@ type TriggerName = string;
 type Skill = string;
 /** nogeme中button的link列表 */
 type Links = any[];
-/** (Storage 被占用了) */
-type Storages = Map<string,any>;
+/** 标记等信息的缓存(Storage 被占用了) */
+type GameStorage = Map<string,any>;
 
 /** 
  * nogame的选择范围类型

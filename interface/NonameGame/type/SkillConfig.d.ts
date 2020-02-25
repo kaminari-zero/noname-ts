@@ -281,32 +281,46 @@ interface ExSkillData {
     limited?: boolean;
     /** 
      * 获得技能时是否显示此标记，
-     * 若为false，可以用markSkill()来显示此标记，
-     * 可以用unmarkSkill不显示标记
+     * 若为false，可以用 markSkill 来显示此标记，
+     * 可以用 unmarkSkill 不显示标记
+     * 
+     * mark的常量值："card","cards","image","character"
+     * 则表示，标记显示的形式
      */
-    mark?: boolean;
+    mark?: boolean|string;
     /** 标记显示内容 */
     intro?: {
+        mark?:ThreeParmFun<Dialog,GameStorage,Player,string>;
         /** 
          * 标记显示内容？
          * 为cards时显示标记内的牌.
          * 
-         * 当标记显示内容是文本:(新内容)
+         * 当标记显示内容是文本:
             "mark":有（数）个标记；
             "card":一张牌；
             "cards":多张牌；
-            “limited”:限定技，觉醒技专用；
+            “limited”:限定技，觉醒技专用；(若没设置，在info.limited为true下回默认设置这个)
             "time":剩余发动次数；
             "turn":剩余回合数；
             "cardCount":牌数；
             "info":技能描述；
             "character":武将牌；
-         * 其本质就是player.storage[intro.content],获取storage内对应的内容
+         * 在get.storageintro 中使用,以上，即为该方法的type，返回标记的描述内容
+         * 
+         * 若info.mark为“character”，则为一个描述文本；
+         * 其中，文本可使用以下占位符：
+         *  "#"：(this.storage[skill])获取对应的计数,
+         *  "&"：get.cnNumber(this.storage[skill])获取对应的计数(需要使用到get.cnNumber来获取的数量),
+         *  "$"：get.translation(this.storage[skill])获取对应描述(一般是描述的角色名)
          * 
          * 也可以是个自定义的方法
          */
-        content: string | ThreeParmFun<SMap<any>, Player, Skill, string>;
-        markcount?: number | TwoParmFun<any, Player, number>;
+        content: string | TwoParmFun<GameStorage, Player, string>;
+        /** 
+         * 标记数，
+         * 主要在player.updateMark时使用，实际顶替this.storage[i+'_markcount']获取标记数 
+         */
+        markcount?: number | TwoParmFun<GameStorage, Player, number>;
         /** 是否不启用技能标记计数 */
         nocount?: boolean;
         /**
@@ -314,7 +328,7 @@ interface ExSkillData {
          * 若值为字符串“throw”，该玩家缓存中该技能标记的为牌时，播放丢牌动画；
          * 若是方法，则直接使用该回调方法处理。
          */
-        onunmark?: TwoParmFun<any, Player, void> | string;
+        onunmark?: TwoParmFun<GameStorage, Player, void> | string;
     };
     /** 
      * 是否开启觉醒动画

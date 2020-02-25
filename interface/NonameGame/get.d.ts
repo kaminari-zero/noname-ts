@@ -437,10 +437,15 @@ interface Get {
     players(sort:Function|boolean,dead:boolean,out?:boolean):Player[];
     /**
      * 获取卡牌所在的位置：
-     * 位置：e装备区，j判定区，h手牌，c抽牌区，d弃牌区，s特殊区（special）
+     * 位置：e装备区，j判定区，h手牌，c抽牌区，d弃牌区，s特殊区（special）,o处理区
+     * 
+     * 【1.9.98】为方便兼容旧扩展 使用get.position(card)方法读取处理区的卡牌，
+     *  默认得到的仍然是弃牌堆（'d'）；
+     * 使用get.position(card,true) 才会得到处理区（'o'）的结果
      * @param card 若是卡牌，则返回卡牌的位置；若是玩家，则返回玩家的位置
+     * @param ordering 是否检测o处理区
      */
-    position(card:Card | Player):string;
+    position(card:Card | Player,ordering?:boolean):string;
 
     /**
      * 获取技能的翻译名

@@ -201,6 +201,17 @@ declare namespace Lib.element {
         /** 选中的技能 */
         _skillChoice:string[];
 
+        //【1.9.98】在lose事件里 可以直接通过event.hs/es/js 来判断一张卡牌在此次失去事件中原先所处的区域
+        /** 手牌区失去的牌 */
+        hs:Card[];
+        /** 装备区失去的牌 */
+        es:Card[];
+        /** 判定区失去的牌 */
+        js:Card[];
+
+        /** 这是gain事件中 如果获得其他角色的卡牌时 其他角色失去卡牌的事件(只在gain事件链中使用) */
+        relatedLose:GameEvent;
+
         //game.check 一些核心过滤参数，目前都额外存放在CheckEventData定义中
         // filterButton:any;
         // selectButton:any;

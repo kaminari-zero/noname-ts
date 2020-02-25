@@ -141,7 +141,7 @@ declare namespace Lib.element {
          *  【联机】获取玩家当前的状态信息
          *  注：主要是联机同步信息用，将信息打包成json结果（不过不知为什么把div打包了）
          */
-        getState(): PlayerStateInfo;
+        getState(key): PlayerStateInfo;
         /** 【联机】设置nickname */
         setNickname(str: string): Player;
 
@@ -900,7 +900,8 @@ declare namespace Lib.element {
          * @param info 
          */
         unmark(name: any, info: any): void;
-        //添加全新mark相关方法   by2020-2-25（代码版本暂时未跟上）
+
+        //【1.9.98】添加全新mark相关方法   by2020-2-25（代码版本暂时未跟上）
         /** 是否有该技能的标记 */
         hasMark(skill:string):boolean;
         /** 有多少该技能的标记（若标记为数组，返回数组长度） */
@@ -1065,7 +1066,7 @@ declare namespace Lib.element {
          * 使用技能次数（不区分统一计数）allSkills
          * @param key 当轮的统计数据的key，若没有，则获取当轮的统计数据
          */
-        getStat(key?: string): StatInfo;
+        getStat(key?: keyof StatInfo): StatInfo;
 
         queue(time?: number): void;//UI相关
 
@@ -1378,6 +1379,20 @@ declare namespace Lib.element {
          */
         changeGroup(group:string,log?:boolean);
 
+        //【1.9.98】
+        /**
+         * 获取玩家当前回合内使用/打出卡牌的所有事件，以及获取玩家当前回合跳过过的阶段
+         * @param key 要取出指定的事件的使用记录,若不填，则取出当前玩家回合的所有使用记录
+         * @param filter 过滤条件,过滤某一事件记录类型中的指定事件
+         * @returns 若两个参数都没有，则返回当前玩家回合的记录，若有key，则获取指定类型的记录
+         */
+        getHistory():ActionHistoryData;
+        getHistory(key?:keyof ActionHistoryData,filter?:OneParmFun<GameEvent,boolean>):GameEvent[];
+        /**
+         * 获取玩家本回合内使用倒数第X+1张牌的事件 
+         * @param num 倒数第x张,不填默认为0
+         */
+        getLastUsed(num?:number):GameEvent;
 
         //动画,UI相关的方法（前置$符）[不过也有些内部混如一些操作逻辑，没分离彻底]
         $drawAuto(cards: any, target: any): any;
@@ -1579,6 +1594,10 @@ declare namespace Lib.element {
         outSkills: string[];
 
         queueCount:number;
+
+        //【1.9.98】
+        /** 记录游戏中事件的使用记录 */
+        actionHistory:ActionHistoryData[];
     }
 }
 
@@ -1647,4 +1666,26 @@ type PlayerAIInfo = {
         source: any[]; 
         viewed: any[];
     }
+}
+
+/**
+ * 玩家执行的事件的统计数据
+ */
+type ActionHistoryData = {
+    /** 使用卡牌 */
+    useCard:GameEvent[],
+    /** 响应 */
+    respond:GameEvent[],
+    /** 跳过 */
+    skipped:GameEvent[],
+    /** 失去卡牌 */
+    lose:GameEvent[],
+    /** 获得卡牌 */
+    gain:GameEvent[],
+    /** 伤害来源 */
+    sourceDamage:GameEvent[],
+    /** 造成伤害 */
+    damage:GameEvent[],
+    /** 客户端操作 */
+    custom:GameEvent[]
 }

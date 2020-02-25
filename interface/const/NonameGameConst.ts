@@ -31,6 +31,9 @@ namespace NG {
          * 所以该区域是指例如：“移除出游戏外”，“某些技能的标记，例如周泰的不屈”......)
          */
         Special = "s",
+        
+        /** 处理区(详情请看处理区相关信息，未确定，在无名杀是否完成实验这套规则) */
+        Ordering = "o",
 
         /** 玩家场上的牌（武器，判定） */
         Area = "ej",
@@ -88,7 +91,7 @@ namespace NG {
 
     }
 
-    //阶段重新整理：阶段名+时机
+    //阶段重新整理：阶段名+时机 （需手动拼接完整阶段，有些比较特殊的阶段除外）
     export const enum TriggerEnum {
         /** 开始前 */
         Before = "Before",
@@ -133,11 +136,22 @@ namespace NG {
         /** 结束阶段 */
         phaseJieshu = "phaseJieshu",
 
+
         //特化出来的常用阶段，不需要拼接
         /** 准备阶段时(同“phaseBegin”) */
         phaseZhunbeiBegin = "phaseZhunbeiBegin",
         /** 结束阶段后（同“phaseEnd”） */
         phaseJieshuBegin = "phaseJieshuBegin",
+
+        //【1.9.98】细节化摸牌阶段的相关时机：（并无特殊实现，这是根据规则书完整瓜分的阶段，可以细分先后顺序）
+        /** 摸牌阶段开始前 */
+        phaseDrawBefore = "phaseDrawBefore",
+        /** 摸牌阶段开始时1 */
+        phaseDrawBegin = "phaseDrawBegin",
+        /** 摸牌阶段开始时2 */
+        phaseDrawBegin1 = "phaseDrawBegin1",
+        /** 摸牌阶段 */
+        phaseDrawBegin2 = "phaseDrawBegin2",
     }
 
     /**

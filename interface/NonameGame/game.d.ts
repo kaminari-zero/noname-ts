@@ -582,6 +582,18 @@ interface Game {
      */
     countGroup():number;
 
+    //【1.9.98】
+    /**
+     * 获取本回合内发生过的 不属于任何角色的一些事件
+     * (类似于player.getHistory())
+     * 
+     * 注：目前仅支持cardMove参数（cardsDiscard cardsGotoOrdering cardsGotoSpecial等涉及卡牌位置改变的事件）
+     * @param key 要取出指定的事件的使用记录,若不填，则取出当前玩家回合的所有使用记录
+     * @param filter 过滤条件,过滤某一事件记录类型中的指定事件
+     * @returns 若两个参数都没有，则返回当前玩家回合的记录，若有key，则获取指定类型的记录
+     */
+    getGlobalHistory():GlobalHistoryData;
+    getGlobalHistory(key?:keyof GlobalHistoryData,filter?:OneParmFun<GameEvent,boolean>):GameEvent[];
 
     /** 正在游戏中的玩家 */
     players:Player[];
@@ -724,4 +736,11 @@ type LineConfig = {
     color?:any;
     dashed?:any;
     duration?:any;
+}
+
+/** 全局事件的使用记录 */
+type GlobalHistoryData = {
+    /** （cardsDiscard cardsGotoOrdering cardsGotoSpecial等涉及卡牌位置改变的事件 */
+    cardMove:GameEvent[],
+    custom:GameEvent[],
 }
