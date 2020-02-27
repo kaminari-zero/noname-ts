@@ -1,4 +1,4 @@
-namespace NG {
+declare namespace NG {
     /** 导入类型 */
     export const enum ImportType {
         Extension = "extension",
@@ -465,6 +465,16 @@ namespace NG {
         Equip4 = "equip4",
         /** 法宝 */
         Equip5 = "equip5",
+    }
+
+    /** effect指定返回的最终受益结果 */
+    export const enum AIEffectResultConst {
+        /** 对使用者的收益值0 */
+        zeroplayer="zeroplayer",
+        /** 对目标的收益值0 */
+        zerotarget="zerotarget",
+        /** 对使用者，目标的收益值0 */
+        zeroplayertarget="zeroplayertarget"
     }
 
     // subCardType 卡牌子类型

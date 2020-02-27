@@ -511,6 +511,8 @@ interface ExSkillData {
     onChooseToUse?(event: Trigger): void;
 
     /**
+     * 改变拼点用的牌
+     * 
      * 在chooseToCompare和chooseToCompareMultiple，step2中使用，返回玩家用于的拼点的牌
      * @param player 
      */
@@ -825,6 +827,10 @@ interface ExModData {
      * 
      * 新版本的judge事件中 可以通过设置callback事件 在judgeEnd和judgeAfter时机之前对判定牌进行操作
      * 在判断结果出来后，若事件event.callback存在，则发送“judgeCallback”事件
+     * 
+     * 同理拼点,在拼点结果出来后，发送“compare”/“compareMultiple”事件
+     * 
+     * callback就是作为以上事件的content使用
      */
     callback?:ContentFunc;
 
@@ -912,6 +918,54 @@ interface ExTriggerData {
 
 /** ai的配置信息 */
 interface ExAIData {
+    //技能标签(告诉ai的细致的信息，用来自己处理时使用，甚至可以视为一般标记使用)
+    // player.hasSkillTag('xxxx') 检测是否有指定技能标签
+    /** 不能成为拼点目标 */
+    noCompareTarget?:boolean;
+    /** 不会受到火焰伤害 */
+    nofire?:boolean;
+    /** 不会受到雷电伤害 */
+    nothunder?:boolean;
+    /** 不会受到伤害 */
+    nodamage?:boolean;
+    /** 使用毒会有收益 */
+    usedu?:boolean;
+    /** 不受毒影响 */
+    nodu?:boolean;
+    /** 此技能可以用于自救  */
+    save?: boolean;
+    /** 此技能可以用于救人，一般用于视为技 */
+    respondTao?: boolean;
+    /** 
+     * 此技能可以响应闪，一般用于视为技 
+     * 作用是告诉AI手里没『闪』也可能出『闪』,防止没『闪』直接掉血
+     */
+    respondShan?: boolean;
+    /** 此技能可以响应杀，一般用于视为技 */
+    respondSha?: boolean;
+    /** 
+     * 卖血（技能标签）：
+     * 用于其他AI检测是否是卖血流(if(target.hasSkillTag('maixie')))。并非加了这个AI就会卖血。
+     */
+    maixie?: boolean;
+    maixie_hp?: boolean;
+    maixie_defend?:boolean;
+    /**
+     * 无牌（技能标签）：
+     * 目前只出现在“连营”和“伤逝”中,用于其它AI检测是否含有标签『无牌』,
+     * 从而告诉其他AI不要拆迁(因为生生不息)。
+     */
+    noh?: boolean,
+    notrick?: boolean,
+    nosha?: boolean,
+    noe2?: boolean,
+    reverseEquip?: boolean;
+    noLose?: boolean;
+
+    /** 独立自定的一些标记 */
+    tag?: Map<string,boolean|TwoParmFun<string,string,boolean>>;
+
+    //ai基础属性值
     /** 
      * ai发动技能的优先度
      * 要具体比什么先发发动，可以使用函数返回结果
@@ -930,57 +984,54 @@ interface ExAIData {
     /**
      * 态度：
      * 态度只由identity决定。不同身份对不同身份的att不同。
-     * 例如在身份局中,主对忠att值为6,忠对主att值为10;
+     * 例如：在身份局中,主对忠att值为6,忠对主att值为10;
+     * 
+     * 〖主动技〗
+            如果技能发动无须指定目标: effect=result*ai.get.attitude(player,player);
+            如果技能发动须指定目标 总效果=对使用者的收益值 * 使用者对自己的att+对目标的收益值 * 使用者对目标的att; 实际还会考虑嘲讽值,这里简化了;
+       〖卖血技〗
+            总效果=对使用者的收益值 * 使用者对自己的att+对目标的收益值 * 使用者对目标的att; 实际还会考虑嘲讽值,这里简化了;
      */
     attitude?: number;
-
-    /** 
-     * 此技能可以用于自救 
-     */
-    save?: boolean;
-    /** 此技能可以用于救人，一般用于视为技 */
-    respondTao?: boolean;
-    /** 
-     * 此技能可以响应闪，一般用于视为技 
-     * 作用是告诉AI手里没『闪』也可能出『闪』,防止没『闪』直接掉血
-     */
-    respondShan?: boolean;
-    /** 此技能可以响应杀，一般用于视为技 */
-    respondSha?: boolean;
-    /** 
-     * 卖血（技能标签）：
-     * 用于其他AI检测是否是卖血流(if(target.hasSkillTag('maixie')))。并非加了这个AI就会卖血。
-     */
-    maixie?: boolean;
-    maixie_hp?: boolean;
-    /**
-     * 无牌（技能标签）：
-     * 目前只出现在“连营”和“伤逝”中,用于其它AI检测是否含有标签『无牌』,
-     * 从而告诉其他AI不要拆迁(因为生生不息)。
-     */
-    noh?: boolean,
-    notrick?: boolean,
-    nosha?: boolean,
-    noe2?: boolean,
-    reverseEquip?: boolean;
-    noLose?: boolean;
-
-    basic?: any;
-    tag?: any;
 
     /** 
      * 效果：
      * 影响ai出牌（例如什么时候不出杀）等 
      * 效果值为正代表正效果,反之为负效果,AI会倾向于最大效果的目标/卡牌;
+     * 
+     * ai里面的effect是上帝视角,
+        target不代表目标角色,
+        player也不代表拥有此技能的玩家本身,
+        因为effect是写给别的AI看的,
+        所以target代表玩家本身,
+        player代表其他人,可以是正在犹豫是否要杀你的任何一位玩家。
+
+     * 若不是个对象，可以直接是一个target(一种简写形式，不收录了)
+     * 在get.effect中使用
      */
     effect?: {
-        target?(card, player, target, current): string | number;
-    }
+        /** 
+         * 牌对你的影响
+         * 
+         * 返回结果的字符串："zeroplayer","zerotarget","zeroplayertarget",指定最终结果的:对使用者的收益值,对目标的收益值为0
+         * @param result1 即当前ai.result.player的结果
+         */
+        player?(card:Card, player:Player, target:Target,result1:number):string | number;
+        /** 
+         * 一名角色以你为牌的目标时对你的影响
+         * 
+         * 返回结果的字符串："zeroplayer","zerotarget","zeroplayertarget",指定最终结果的:对使用者的收益值,对目标的收益值为0
+         * @param result2 即当前ai.result.target的结果
+         */
+        target?(card:Card, player:Player, target:Target, result2:number): string | number;
+    };
     /** 
      * 收益：
      * 收益值未在AI声明默认为0(对玩家对目标均是如此)。
      * 一般用于主动技
      * 关于收益的算法，待会再详细描述
+     * 
+     * 在get.result中使用
      */
     result?: {
         /**
@@ -988,22 +1039,26 @@ interface ExAIData {
          * 返回负，选敌人，返回正，选队友;
          * 没有返回值则不选;
          * 注：写了这个就不用写player(player){}了，因为player可以在这里进行判断
-         * @param player 
-         * @param target 
          */
-        target?(player, target): number | void;
+        target?(player:Player,target:Target,card:Card): number;
         /**
          * ai是否发动此技能（对玩家（自身）的收益）：
          * 返回正，发动，否则不发动
-         * @param player 
          */
-        player?(player): number;
+        player?(player:Player,target:Target,card:Card): number;
     }
     /**
-     * 视为技专属，ai什么时候可以发动视为技
-     * @param player 
+     * 技能标签的生效限制条件
+     * 
+     * 视为技中使用，ai什么时候可以发动视为技
+     * 在player.hasSkillTag,player.hasGlobalTag中使用
      */
-    skillTagFilter?(player): boolean;
+    skillTagFilter?(player:Player,tag:string,arg:any): boolean;
+
+    /** 有许多复杂的属性方法，在里面,具体暂不清楚怎么使用 */
+    basic?: {
+
+    };
 
     //日后还有很多属性要添加的
     [key: string]: any;

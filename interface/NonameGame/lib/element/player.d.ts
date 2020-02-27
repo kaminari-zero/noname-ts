@@ -1293,7 +1293,7 @@ declare namespace Lib.element {
          * 【AI】判断是否有指定的技能标签tag(ai相关)
          * @param tag 技能标签
          * @param hidden 若为true，获取技能附带隐藏技能hiddenSkills
-         * @param arg 参数列表
+         * @param arg 参数列表,应该是一个携带参数，具体不知什么用
          * @param globalskill 是否是全局技能
          */
         hasSkillTag(tag: string, hidden?: boolean, arg?: any, globalskill?: boolean): boolean;

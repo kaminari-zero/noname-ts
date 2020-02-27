@@ -562,12 +562,12 @@ interface Get {
      */
     totalPopulation(identity?:number):number;
     /**
-     * 获取ai.tag（？暂时不知是什么）
-     * @param item 
-     * @param tag 
-     * @param item2 
+     * 获取ai.tag对应的key有没有存在
+     * @param item 技能名/卡牌名
+     * @param tag 配置中，ai.tag的key
+     * @param item2 若返回结果是方法，则把该参数作为该方法的入参:result(item,item2)
      */
-    tag(item:{name:string},tag:string,item2?:string):boolean;
+    tag(item:string|{name:string},tag:string,item2?:string):boolean;
     /**
      * 获取排序卡牌的方法
      * @param sort 指定排序方法：type_sort，suit_sort，number_sort

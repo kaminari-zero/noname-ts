@@ -15,6 +15,7 @@ type NoneParmFum<T> = () => T;
 type OneParmFun<U, T> = (arg0: U) => T;
 type TwoParmFun<U1, U2, T> = (arg0: U1, arg1: U2) => T;
 type ThreeParmFun<U1, U2, U3, T> = (arg0: U1, arg1: U2, arg2: U3) => T;
+type FourParmFun<U1, U2, U3, U4,T> = (arg0: U1, arg1: U2, arg2: U3,arg3:U4) => T;
 type RestParmFun<T> = (...args) => T;
 
 //尝试增加的符合类型声明：(后续看看是否要用上)
@@ -37,6 +38,17 @@ interface BaseResultData {
      * 一般用来标记当前事件是否按预定执行的，即执行成功
      */
     bool:boolean;
+    
+    links:any[];
+
+    [key:string]:any;
+}
+
+/**
+ * 一般用于带操作的事件的最终结果
+ * 例如：choose系列
+ */
+interface BaseCommonResultData extends BaseResultData {
     /** 记录返回当前事件操作过程中的卡牌 */
     cards:Card[];
     /** 记录返回当前事件操作过程中的目标 */
@@ -45,10 +57,6 @@ interface BaseResultData {
     buttons:Button[];
     /** 记录返回当前事件操作过程中，面板按钮的确定取消 */
     confirm:string;
-
-    links:any[];
-
-    [key:string]:any;
 }
 
 /**

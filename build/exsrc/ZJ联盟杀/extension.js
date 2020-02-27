@@ -21,6 +21,7 @@ var ZJNGEx;
                     precontent: function (event, step, source, player, target, targets, card, cards, skill, forced, num, trigger, result) {
                         player.storage.zj_laobo_targets = [];
                         player.storage.zj_laobo_num = 0;
+                        "gameDrawAfter";
                     },
                     content: function (event, step, source, player, target, targets, card, cards, skill, forced, num, trigger, result) {
                         var storageTargets = player.storage.zj_laobo_targets;

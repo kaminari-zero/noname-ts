@@ -132,3 +132,43 @@ interface JudgeResultData extends BaseResultData {
     callback:TwoParmFun<Player,any,void>|ContentFunc;
 }
 
+/** 
+ * 拼点事件的result
+ * 
+ * 用于chooseToCompare
+ * 示例：
+ * result.bool==true;//6>1
+    result.tie==false;//不是平局
+    result.player  //你的拼点牌
+    result.target  //目标的拼点牌
+    result.num1==6   //你的点数为6
+    result.num2==1   //目标的点数为1
+ */
+interface PingDianResultData extends BaseResultData {
+    /** 是否平局 */
+    tie:boolean;
+    /** 你的拼点牌 */
+    player:Card;
+    /** 目标的拼点牌 */
+    target:Card;
+    /** 你的点数 */
+    num1:number;
+    /** 目标的点数 */
+    num2:number;
+}
+
+/**
+ * 多人拼点事件的result
+ * 
+ * 用于chooseToCompareMultiple
+ */
+interface PingDianMultipleResultData extends BaseResultData {
+    /** 你的拼点牌 */
+    player:Card;
+    /** 目标的拼点牌 */
+    targets:Card[];
+    /** 你的点数 */
+    num1:number[];
+    /** 目标的点数 */
+    num2:number[];
+}
