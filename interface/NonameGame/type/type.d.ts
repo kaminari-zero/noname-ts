@@ -20,9 +20,15 @@ type RestParmFun<T> = (...args) => T;
 
 //尝试增加的符合类型声明：(后续看看是否要用上)
 /** SingleAndArrayType:单体与集合类型 */
-type SAAType<T> = T | T[] | RestParmFun<T>;
+type SAAType<T> = T | T[];
+/** 再价格可以返回这种类型的方法 */
+type SAAFType<T> = T | T[] | RestParmFun<T>;
 /** 有name属性的对象 */
 type NameType = {name:string};
+/** 技能或者卡牌 */
+type SkillOrCard = string|NameType|Card;
+/** 卡牌或者卡牌集合 */
+type CCards = SAAType<Card>;
 
 /**
  * 基础result结构
@@ -84,6 +90,8 @@ type Target = Lib.element.Player;
 type Source = Lib.element.Player;
 /** nogame的player类型->当前操作中的玩家（一般指遍历回调中正在操作的数据） */
 type Current = Lib.element.Player;
+/** nogame的player类型->一般用于AI相关的方法中，代表视角,一般指代player(玩家自身)或者target(目标)，视角决定效果的正负 */
+type Viewer = Lib.element.Player;
 /** nogame的button类型 */
 type Button = Lib.element.Button;
 /** nogame的dialog类型 */

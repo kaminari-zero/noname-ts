@@ -66,6 +66,7 @@ interface Get {
     groupnature(group:string,method?:string):string;
     /**
      * 获取数字的符号(以-1负，0，1正表示)
+     * 也可以表示，是否是负数-1，0，正数1
      * @param num 
      */
     sgn(num:number):number;
@@ -594,11 +595,6 @@ interface Get {
      */
     discardPile(name: string | OneParmFun<Card, boolean>): Card;
 
-
-    /** 获取ai的态度 */
-    aiStrategy():number;
-
-
     //获取各种描述信息，用于ui显示上
     /** 获取指定武将的技能信息描述 */
     skillintro(name: string, learn?: boolean, learn2?: boolean):string;
@@ -619,42 +615,145 @@ interface Get {
     links(buttons:Button[]):any[];
 
 
-    //ai相关的操作
-    threaten(target,player,hp):any;
-    condition(player):any;
+    //ai相关的操作（使用里面的【常用】就行，其他一般都是在内部算的）
+    /** 获取ai的态度 */
+    aiStrategy():number;
     /**
-     * 获取两个之间玩家，ai的态度
+     * 【常用】嘲讽值检测
+     * @param target 目标
+     * @param player 默认当前事件中的玩家
+     * @param hp 是否检测血量（与手牌数）
+     */
+    threaten(target:Target,player?:Player,hp?:boolean):number;
+    /**
+     * 玩家状态健康程度检测
+     * 
+     * 健康程度：血量，手牌数，装备数
+     * @param player 
+     */
+    condition(player:Player):number;
+    /**
+     * 【常用】态度值检测
+     * 
+     * 检测玩家1对玩家2的态度值
      * 注：需要mode实现get.rawAttitude
      * @param from 
      * @param to 
      */
-    attitude(from,to):number;
-    sgnAttitude():any;
-    useful(card):any;
-    unuseful(card):any;
-    unuseful2(card):any;
-    unuseful3(card):any;
-    value(card,player,method):any;
-    equipResult(player,target,name):any;
-    equipValue(card,player):any;
-    equipValueNumber(card):any;
-    disvalue(card,player):any;
-    disvalue2(card,player):any;
-    skillthreaten(skill,player,target):any;
-    order(item):any;
-    result(item,skill):any;
+    attitude(from?:Player,to?:Player):number;
+    /** attitude,from默认为当前事件的player */
+    attitude2(to:Player):number;
+    /** 返回该[态度值检测]，最终结果是否是：负数-1，0，正数1 */
+    sgnAttitude(from?:Player,to?:Player):number;
     /**
-     * (比较重要的方法，由于代码过多，骚后研究)
-     * @param target 
+     * 【常用】回合外留牌的价值
+     * 
+     * 即弃牌阶段按useful顺序选
+     * @param card 
+     */
+    useful(card:Card):number;
+    /**
+     * 回合外弃牌的价值
+     * 
+     * 与useful相反
+     * @param card 
+     */
+    unuseful(card:Card):number;
+    /** unuseful2 */
+    unuseful2(card:Card):number;
+    /** unuseful3,若是“du”,则返回20 */
+    unuseful3(card:Card):number;
+    /**
+     * 【常用】牌的使用价值
+     * 
+     * 五谷按value顺序选
      * @param card 
      * @param player 
-     * @param player2 
+     * @param method 取值“raw”(ai总体都不太懂)
      */
-    effect(target,card,player,player2):any;
-    damageEffect(target,player,viewer,nature):any;
-    recoverEffect(target,player,viewer):any;
-    buttonValue(button):any;
-    attitude2(to):any;
+    value(card:CCards,player:Player,method?:string):number;
+    /**
+     * 获取目标在当前事件中装备卡牌的“收益”值
+     * @param player 暂时无用
+     * @param target 目标
+     * @param name 指定卡牌名
+     */
+    equipResult(player:Player,target:Target,name?:string):number;
+    /**
+     * 【常用】获取【装备】卡牌的价值
+     * 
+     * 即info.ai.equipValue
+     * @param card 
+     * @param player 优先默认，当前card的拥有者，若没有则指定为当前事件的player
+     */
+    equipValue(card:Card,player?:Player):number;
+    /** equipValue2，注：equipValue则无视，算是个多余的方法 */
+    equipValueNumber(card:Card):number;
+    /**
+     * 牌的无使用价值
+     * 
+     * 与value相反
+     * @param card 
+     * @param player 
+     */
+    disvalue(card:CCards,player:Player):number;
+    /** disvalue2，默认设置了“raw”参数 */
+    disvalue2(card:CCards,player:Player):number;
+    /**
+     * 获取技能的嘲讽值
+     * 
+     * ai.threaten
+     * @param skill 
+     * @param player 
+     * @param target 
+     */
+    skillthreaten(skill:string,player:Player,target?:Target):number;
+    /**
+     * 【常用】获取技能/卡牌的优先级order
+     * 
+     * 获取ai.order,或者ai.basic.order
+     * @param item 
+     */
+    order(item:SkillOrCard):number;
+    /** 获取技能/卡牌的收益值result（game.effect内部使用） */
+    result(item:SkillOrCard,skill?:string):Object;
+    /**
+     * 【常用】效果值检测
+     * 
+     * 检测牌/技能对目标角色的效果值
+     * (比较重要的方法，由于代码过多，骚后研究)
+     * @param target 目标
+     * @param card 技能/卡牌
+     * @param player 默认指当前事件中的玩家
+     * @param player2 视角，一般填target/player，例如我方杀敌方满血『曹丕』,对我方来说是负效果,但对敌方是正效果,视角决定效果的正负。
+     */
+    effect(target:Target,card:string|NameType,player:Player,player2:Viewer):number;
+    /**
+     * 【常用】检测伤害效果
+     * 
+     * 检测的是[target玩家对player玩家]的伤害效果
+     * @param target 
+     * @param player 
+     * @param viewer 视角
+     * @param nature 伤害属性
+     */
+    damageEffect(target:Target,player:Player,viewer:Viewer,nature:NG.Nature):number;
+    /**
+     * 【常用】检测回复效果
+     * 
+     * 检测的是[target玩家对player玩家]的回复效果
+     * @param target 
+     * @param player 
+     * @param viewer 视角
+     */
+    recoverEffect(target:Target,player:Player,viewer:Viewer):number;
+    /**
+     * 【常用】检测操作选项的优先度
+     * 
+     * 操作选项：手牌，装备区，判定区......卡牌选项
+     * @param button 
+     */
+    buttonValue(button:Button):number;
 }
 
 /**
