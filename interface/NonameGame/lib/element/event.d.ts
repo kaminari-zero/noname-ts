@@ -25,7 +25,7 @@ declare namespace Lib.element {
         /**
          * 设置一个key到event里，用于保存，传递数据
          * 设置进event的值，还会另外保存在_set集合中，用于缓存，set的数据（有可能也用于标记）
-         * @param key 若key不为字符串，且只有一个参数时，则执行批量set
+         * @param key 若key不为字符串，且只有一个参数时，则执行批量set，即[[key,value],[key,value]....]
          * @param value 
          */
         set(key: string | [string, any][], value?: any): Event;
@@ -201,6 +201,9 @@ declare namespace Lib.element {
         /** 选中的技能 */
         _skillChoice:string[];
 
+        /** ai,不同事件，其传入的参数都不一样 */
+        ai?:AICheckFun;
+
         //【1.9.98】在lose事件里 可以直接通过event.hs/es/js 来判断一张卡牌在此次失去事件中原先所处的区域
         /** 手牌区失去的牌 */
         hs:Card[];
@@ -229,5 +232,4 @@ declare namespace Lib.element {
         // ai1:any;
         // ai2:any;
     }
-
 }

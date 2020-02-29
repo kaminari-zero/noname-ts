@@ -641,7 +641,7 @@ interface Get {
      * @param to 
      */
     attitude(from?:Player,to?:Player):number;
-    /** attitude,from默认为当前事件的player */
+    /** attitude,from默认为当前事件的player，作为player.chooseTarget，player.chooseCardTarget默认检测ai */
     attitude2(to:Player):number;
     /** 返回该[态度值检测]，最终结果是否是：负数-1，0，正数1 */
     sgnAttitude(from?:Player,to?:Player):number;
@@ -656,12 +656,14 @@ interface Get {
      * 回合外弃牌的价值
      * 
      * 与useful相反
+     * 
+     * 作为player.chooseToDiscard，的默认检测ai
      * @param card 
      */
     unuseful(card:Card):number;
-    /** unuseful2 */
+    /** unuseful2，作为player.chooseCard，的默认检测ai */
     unuseful2(card:Card):number;
-    /** unuseful3,若是“du”,则返回20 */
+    /** unuseful3,若是“du”,则返回20，作为player.chooseToRespond，的默认检测ai */
     unuseful3(card:Card):number;
     /**
      * 【常用】牌的使用价值
@@ -742,6 +744,12 @@ interface Get {
      * 【常用】检测回复效果
      * 
      * 检测的是[target玩家对player玩家]的回复效果
+     * 
+     * 注：一般带viewer参数时：
+     * viewei默认为玩家player,公式为:
+     * 总效果=对使用者的收益值*使用者对自己的att+对目标的收益值*使用者对目标的att; 
+     * 假如viewer不为player,公式为:
+     * 总效果=对使用者的收益值*使用者对自己的att+对目标的收益值*viewer对目标的att;
      * @param target 
      * @param player 
      * @param viewer 视角

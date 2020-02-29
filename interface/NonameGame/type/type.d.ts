@@ -120,3 +120,4 @@ type Select = [number,number];
  * div的左距离坐标，上距离坐标
  */
 type DivPosition = [number,number,number,number];
+

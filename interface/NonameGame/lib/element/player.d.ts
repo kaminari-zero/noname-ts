@@ -760,7 +760,7 @@ declare namespace Lib.element {
         unMad(): void;
         /** 添加临时技能：潜行 */
         tempHide(): string;
-        /** [ai相关]暴露身份 */
+        /** 【AI】暴露身份 */
         addExpose(num: number): Player;
         /**
          * 使用装备
@@ -1284,7 +1284,7 @@ declare namespace Lib.element {
          */
         hasZhuSkill(skill: string, player?: Player): boolean;
         /**
-         * 是否有全局技能标签tag(ai相关)
+         * 【AI】是否有全局技能标签tag(ai相关)
          * @param tag 
          * @param arg 
          */
