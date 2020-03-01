@@ -1,0 +1,8 @@
+app/
+
+app.html
+main.js
+pckage.json
+
+这几个是属于挂载到
+apk，ipa，exe这几个版得启动，检查更新文件

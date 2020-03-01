@@ -143,8 +143,33 @@ interface Game {
     export(textToWrite,name):void;
 
     //下载相关  用于更新信息
+    /** 做些处理，调用game.download下载 */
     multiDownload2(list,onsuccess,onerror,onfinish,process,dev):void;
+    /**
+     * 下载列表内所有文件
+     * 
+     * 将文件列表分三分请求下载：
+     * 核心下载调用multiDownload2 （game.download）
+     * @param list 要下载的文件列表
+     * @param onsuccess 下载成功
+     * @param onerror 下载失败
+     * @param onfinish 所有下载完成
+     * @param process 处理将要下载的文件，返回将要使用的路径信息列表(game.download使用)
+     * @param dev (game.download使用)
+     */
     multiDownload(list,onsuccess,onerror,onfinish,process,dev):void;
+    /**
+     * 需要当前版本支持：
+     * 
+     * 主要分Android/ios的本地版FileTransfer（cordova.js），和pc版的nodejs环境
+     * @param url 
+     * @param folder 
+     * @param onsuccess 
+     * @param onerror 
+     * @param dev 
+     * @param onprogress 
+     */
+    download(url,folder,onsuccess,onerror,dev,onprogress);
     fetch(url,onload,onerror,onprogress):any;
 
     //录像相关
