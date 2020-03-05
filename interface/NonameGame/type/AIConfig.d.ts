@@ -239,16 +239,16 @@ interface ExAIData {
     value?:number;
     /** 该装备的价值 */
     equipValue?:number;
-    /** 主要是使用在card的ai属性，武将可以无视 */
+    /** 主要是使用在card的ai属性，武将技能可以无视 */
     basic?: {
         /** 该装备的价值，同equipValue，优先使用equipValue，没有则ai.basic.equipValue */
         equipValue:number|TwoParmFun<Card,Player,number>;
         /** 优先度 */
         order:number|TwoParmFun<Card,Player,number>;
-        /** 回合外留牌的价值(该牌可用价值) */
-        useful:SAAType<number>|TwoParmFun<Card,Player,SAAType<number>>;
+        /** 回合外留牌的价值(该牌可用价值),number为当前事件玩家的手牌的下标 */
+        useful:SAAType<number>|TwoParmFun<Card,number,SAAType<number>>;
         /** 该牌的使用价值 */
-        value:SAAType<number>|TwoParmFun<Card,Player,SAAType<number>>;
+        value:SAAType<number>|TwoParmFun<Card,number,SAAType<number>>;
 
         [key: string]:SAAType<number>|string|Function;
     };

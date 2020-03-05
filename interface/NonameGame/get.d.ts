@@ -636,6 +636,7 @@ interface Get {
      * 【常用】态度值检测
      * 
      * 检测玩家1对玩家2的态度值
+     * 态度值，主要和玩家的身份相关；
      * 注：需要mode实现get.rawAttitude
      * @param from 
      * @param to 
@@ -756,7 +757,7 @@ interface Get {
      */
     recoverEffect(target:Target,player:Player,viewer:Viewer):number;
     /**
-     * 【常用】检测操作选项的优先度
+     * 【常用】检测卡牌选项（其实就是卡牌）的价值
      * 
      * 操作选项：手牌，装备区，判定区......卡牌选项
      * @param button 

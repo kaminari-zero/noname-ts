@@ -12,7 +12,7 @@ interface Game {
      * @param cards 
      */
     cardsDiscard(cards:Card|Card[]):Event;
-    //新增方法 by2020-2-24
+    //【1.9.98.2】新增方法 by2020-2-24
     /**
      * 将卡牌送至ui.special
      * 
@@ -21,7 +21,22 @@ interface Game {
      * @param bool 默认触发“addCardToStorage”时机，设置值false不触发
      */
     cardsGotoSpecial(cards:Card|Card[],bool?:boolean):Event;
-
+    //20203-5新增
+    /**
+     * 可以通过指定一个事件而不一定是强制使用当前事件，
+     * 在这个事件之后丢弃所有还在处理区未被移动的卡牌
+     * 
+     * 使用方法：通过将relatedEvent设置为当前事件的parent（即useCard），
+     *  在这一事件结束时而不是contentBefore结束时再丢弃所有卡牌。例子：
+     * contentBefore:function(){
+        ...
+        var cards=get.cards(num);
+        game.cardsGotoOrdering(cards).relatedEvent=event.getParent();
+        ...
+        }
+     * @param cards 
+     */
+    cardsGotoOrdering(cards:Card|Card[]):Event;
 
     //【联机】相关属性
     online:boolean;

@@ -71,6 +71,12 @@ declare namespace Lib.element {
         //【1.9.98】
         /** 失去的卡牌来源,e装备,j判定,h手牌，非以上3个区域，则为null（只在lose事件链中存在） */
         original:string;
+        
+        //【1.9.98.2】新增方法 by2020-3-5
+        /**
+         *  这张牌是否为【转化】的卡牌(视为牌)
+         */
+        isCard:boolean;
 
         /** 
          * card的dataset:储存数据

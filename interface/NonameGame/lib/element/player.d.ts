@@ -1394,6 +1394,23 @@ declare namespace Lib.element {
          */
         getLastUsed(num?:number):GameEvent;
 
+        //【1.9.98。2】2020-3-5 
+        /**
+         * 判断一名角色能否使用XX牌
+         */
+        hasUsableCard(name:string):boolean;
+        /**
+         * 判断target是否在player的攻击范围内
+         * @param target 
+         */
+        inRange(target:Target):boolean;
+        /**
+         * 判断player是否在source的攻击范围内
+         * @param source 
+         */
+        inRangeOf(source:Source):boolean;
+        
+
         //动画,UI相关的方法（前置$符）[不过也有些内部混如一些操作逻辑，没分离彻底]
         $drawAuto(cards: any, target: any): any;
         $draw(num: any, init: any, config: any): any;
@@ -1584,20 +1601,30 @@ declare namespace Lib.element {
          * 主要添加时机：player.markSkill
          */
         marks:SMap<any>;
+        
+        //player.out
+        outCount: number;
+        outSkills: string[];
+        
+        queueCount:number;
+        
+        //【1.9.98】
+        /** 记录游戏中事件的使用记录 */
+        actionHistory:ActionHistoryData[];
+        
+        //ai相关
         /**
          * 玩家的ai（日后研究）
          */
         ai:PlayerAIInfo;
+        //身份局玩法相关：
+        /** 身份是否显示了 */
+        identityShown:boolean;
+        /** 身份：“zhu”,"nei","fan"，“zhong” */
+        identity:string;
 
-        //player.out
-        outCount: number;
-        outSkills: string[];
-
-        queueCount:number;
-
-        //【1.9.98】
-        /** 记录游戏中事件的使用记录 */
-        actionHistory:ActionHistoryData[];
+        //联机相关：
+        ws:Lib.message.Client;
     }
 }
 
@@ -1656,6 +1683,8 @@ type PlayerStateInfo = {
 /**
  * 玩家的ai
  * （具体内容日后讨论）
+ * 
+ * 主要都是记录当前玩家的敌方法/友方.....等信息，目前使用很少
  */
 type PlayerAIInfo = {
     friend: any[]; 
@@ -1665,7 +1694,19 @@ type PlayerAIInfo = {
         global: any[]; 
         source: any[]; 
         viewed: any[];
-    }
+    };
+    /**
+     * 记录当前玩家的“敌人”列表
+     * 在phasing（回合开始时），重置该列表；
+     * 在player.useCard/player.useSkill,使用get.attitude检测值为-1（敌人）的目标，保存到该集合里 
+     * 
+     * 使用：主要在get.rawAttitude使用，用于get.attitude计算态度值
+     */
+    tempIgnore:any[];
+    /** 和身份暴露度相关(暴露程度) */
+    shown:number;
+    /** 标记身份（并非真实身份） */
+    identity_mark:string;
 }
 
 /**

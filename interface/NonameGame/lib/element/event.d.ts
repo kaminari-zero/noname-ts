@@ -218,6 +218,7 @@ declare namespace Lib.element {
         /** 判定的名字 ,在judge事件中，记录了判定的名字*/
         judgestr:string;
 
+
         //game.check 一些核心过滤参数，目前都额外存放在CheckEventData定义中
         // filterButton:any;
         // selectButton:any;
