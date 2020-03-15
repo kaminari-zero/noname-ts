@@ -177,7 +177,7 @@ interface Get {
     /** 获取当前游戏状况信息（联机模式下） */
     arenaState():AreanStateInfo;
     /** 【联机】获取当前游戏skill状态信息（主要用于联机通信同步下），返回玩家一部分数据 */
-    skillState(player?:Player):Player;
+    skillState(player?:Player):SkillStateData;
     /** 随机获取一个id */
     id():string;
     /**
@@ -817,4 +817,28 @@ interface Is {
     //新增的国战专用函数：(直接查阅苏大佬的文档，到时候给各个不同model的玩法，另外分开新的描述文档......)
     guozhanRank();
     guozhanReverse(xxx,yyy);
+}
+
+/** get.skillState方法的返回数据 */
+interface SkillStateData {
+    /** 全局技能 */
+    global:ExSkillData[];
+
+    /** 获取lib.playerOL所有玩家技能相关信息保存 */
+    [key:string]:{
+        skills:ExSkillData[];
+        hiddenSkills:ExSkillData[];
+        additionalSkills:ExSkillData[];
+        disabledSkills:ExSkillData[];
+        tempSkills:ExSkillData[];
+        storage:SMap<any>;
+    }|any;
+
+    /** 所有带chooseButton，且enable为true的技能（主动发动） */
+    skillinfo:{
+        [key:string]:ChooseButtonConfigData;
+    };
+
+    /** 若传入玩家参数，则获取该玩家的player.getStat */
+    stat:PlayerStateInfo;
 }

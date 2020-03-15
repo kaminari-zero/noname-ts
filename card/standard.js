@@ -1586,6 +1586,11 @@ game.import('card',function(lib,game,ui,get,ai,_status){
 				trigger:{player:'useCardToPlayered'},
 				audio:true,
 				logTarget:'target',
+				check:function(event,player){
+					if(get.attitude(player,event.target)>0) return true;
+					var target=event.target;
+					return target.countCards('h')==0||!target.hasSkillTag('noh');
+				},
 				filter:function(event,player){
 					if(event.card.name!='sha') return false;
 					if(player.sex=='male'&&event.target.sex=='female') return true;
@@ -1680,6 +1685,7 @@ game.import('card',function(lib,game,ui,get,ai,_status){
 				selectCard:2,
 				position:'h',
 				viewAs:{name:'sha'},
+				complexCard:true,
 				filter:function(event,player){
 					return player.countCards('h')>=2;
 				},
@@ -1687,7 +1693,7 @@ game.import('card',function(lib,game,ui,get,ai,_status){
 				prompt:'将两张手牌当杀使用或打出',
 				check:function(card){
 					if(card.name=='sha') return 0;
-					return 6-get.useful(card)
+					return 5-get.value(card)
 				},
 				ai:{
 					respondSha:true,
@@ -2018,7 +2024,7 @@ game.import('card',function(lib,game,ui,get,ai,_status){
 									if(eff>=0) return 0;
 									return state*get.attitude(_status.event.player,source);
 								}
-								else{
+								else if(target){
 									var triggerevent=_status.event.getTrigger();
 									if(triggerevent&&triggerevent.parent&&
 										triggerevent.parent.postAi&&
@@ -2039,6 +2045,21 @@ game.import('card',function(lib,game,ui,get,ai,_status){
 									}
 									if(Math.abs(get.attitude(_status.event.player,target))<3) return 0;
 									return -get.effect(target,card,source,_status.event.player)*state;
+								}
+								else{
+									var triggerevent=_status.event.getTrigger();
+									if(triggerevent&&triggerevent.parent&&
+										triggerevent.parent.postAi&&
+										triggerevent.player.isUnknown(_status.event.player)){
+										return 0;
+									}
+									var info=get.info(card);
+									if(info.ai&&info.ai.wuxie){
+										var aiii=info.ai.wuxie(target,card,source,_status.event.player,state);
+										if(typeof aiii=='number') return aiii;
+									}
+									if(Math.abs(get.attitude(_status.event.player,source))<3) return 0;
+									return -get.attitude(_status.event.player,source)
 								}
 							},
 							source:target,

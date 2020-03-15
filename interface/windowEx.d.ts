@@ -1,5 +1,5 @@
 //一些附加到window的对象的提示
-declare interface Window {
+declare interface Window extends INodeJsData {
     /** 游戏更新信息配置 */
     noname_update :{
         version:string,
@@ -31,11 +31,19 @@ declare interface Window {
 
     game:Game;
 
-
     //自定义test扩展
     /** 游戏测试日志 */
     gameTestLog(...args):void;
 
     /** 流程测试 */
     testLog(type:number, name:string,...args):void;
+}
+
+interface INodeJsData {
+    /** 一般是只有nodejs环境自带这个库，这边用于判断是否有这方法，有这方法，即是nodejs环境 */
+    require:any;
+    /** Node.js中提供,表示当前文件所在的目录 */
+    __dirname:string;
+    /** Node.js中提供,表示正在执行脚本的文件名 */
+    __filename:string;
 }

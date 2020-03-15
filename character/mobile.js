@@ -6,12 +6,15 @@ game.import('character',function(lib,game,ui,get,ai,_status){
 		connect:true,
 		characterSort:{
 			mobile:{
-				mobile_default:["miheng","taoqian","liuzan","lingcao","sunru","lifeng","zhuling","liuye","zhaotongzhaoguang","majun","simazhao","wangyuanji","pangdegong","shenpei","hujinding"],
-				mobile_others:["re_jikang","old_bulianshi","old_yuanshu","re_wangyun","re_baosanniang","re_weiwenzhugezhi","re_zhanggong","re_xugong","xin_yuanshao","re_liushan"],
+				mobile_default:["miheng","taoqian","liuzan","lingcao","sunru","lifeng","zhuling","liuye","zhaotongzhaoguang","majun","simazhao","wangyuanji","pangdegong","shenpei","hujinding","zhangyì","jiakui"],
+				mobile_others:["re_jikang","old_bulianshi","old_yuanshu","re_wangyun","re_baosanniang","re_weiwenzhugezhi","re_zhanggong","re_xugong","xin_yuanshao","re_liushan","xin_xiahoudun"],
 				mobile_sunben:["re_sunben"],
 			},
 		},
 		character:{
+			xin_xiahoudun:['male','wei',4,['reganglie','xinqingjian']],
+			zhangyì:['male','shu',4,['zhiyi']],
+			jiakui:['male','wei',3,['zhongzuo','wanlan']],
 			re_jikang:["male","wei",3,["new_qingxian","new_juexiang"]],
 			old_bulianshi:['female','wu',3,['anxu','zhuiyi']],
 			miheng:['male','qun',3,['kuangcai','shejian']],
@@ -44,6 +47,8 @@ game.import('character',function(lib,game,ui,get,ai,_status){
 			re_sunben:['male','wu',4,['jiang','rehunzi','zhiba'],['zhu']],
 		},
 		characterIntro:{
+			zhangyì:'张翼（？－264年），字伯恭，益州犍为郡武阳县人。三国时期蜀汉将领。历任梓潼、广汉、蜀郡三郡太守，出任庲降都督，后随诸葛亮和姜维北伐，官至左车骑将军，领冀州刺史。初封关内侯，进爵都亭侯。蜀汉灭亡后，魏将钟会密谋造反，成都大乱，张翼亦为乱兵所杀。张翼是蜀汉第三任庲降都督，由于执法严厉，不得南夷欢心。在北伐上，张翼认为国小民疲，不应滥用武力，是蜀汉朝廷当时极少敢当朝和姜维争辩北伐问题的大臣。',
+			jiakui:'贾逵（174年—228年），本名贾衢，字梁道，河东襄陵人（今山西临汾县）。汉末三国时期魏国名臣，西晋开国功臣贾充父亲。初为并州郡吏，迁渑池县令，拜弘农太守，历仕曹操、曹丕、曹叡三世，是曹魏政权中具有军政才干的人物，终其一生为魏国统一事业作出卓越贡献。担任豫州刺史期间，兴修水利，凿通运河二百余里，时称“贾侯渠”，便利民生。随同曹丕伐吴，进封阳里亭侯，加号建威将军。石亭之战，率军救出曹休。太和二年，去世，赠本官，谥号为肃，《唐会要》将其尊为魏晋八君子之一。',
 			shenpei:'审配（？－204年），字正南，魏郡阴安（今河北清丰北）人。为人正直， 袁绍领冀州，审配被委以腹心之任，并总幕府。河北平定，袁绍以审配、逢纪统军事，审配恃其强盛，力主与曹操决战。曾率领弓弩手大破曹军于官渡。官渡战败，审配二子被俘，反因此受谮见疑，幸得逢纪力保。袁绍病死，审配等矫诏立袁尚为嗣，导致兄弟相争，被曹操各个击破。曹操围邺，审配死守数月，终城破被擒，拒不投降，慷慨受死。',
 			hujinding:'胡金定，女，传说中关羽之妻。关索之母，配偶关羽，出处《花关索传》和元代《三国志评话》民间传说人物。',
 		},
@@ -86,7 +91,168 @@ game.import('character',function(lib,game,ui,get,ai,_status){
 		},
 		characterFilter:{},
 		skill:{
-			
+			xinqingjian:{
+				audio:'qingjian',
+				trigger:{player:'gainEnd'},
+				direct:true,
+				usable:1,
+				filter:function(event,player){
+					return event.getParent('phaseDraw').player!=player&&player.countCards('he')>0;
+				},
+				content:function(){
+					'step 0'
+					player.chooseCard(get.prompt2('xinqingjian'),'he',[1,player.countCards('he')]).ai=function(){return -1};
+					'step 1'
+					if(result.bool){
+						player.addSkill('xinqingjian2');
+						player.storage.xinqingjian2.addArray(result.cards);
+						game.log(player,'将'+get.cnNumber(player.lose(result.cards,ui.special,'toStorage').cards.length)+'张牌置于其武将牌上');
+						player.markSkill('xinqingjian2');
+					}
+					else player.storage.counttrigger.xinqingjian--;
+				},
+			},
+			xinqingjian2:{
+				audio:'xinqingjian',
+				charlotte:true,
+				trigger:{global:'phaseEnd'},
+				forced:true,
+				filter:function(event,player){
+					return player.storage.xinqingjian2&&player.storage.xinqingjian2.length>0;
+				},
+				init:function(player){
+					if(!player.storage.xinqingjian2) player.storage.xinqingjian2=[];
+				},
+				content:function(){
+					'step 0'
+					player.chooseTarget(true,lib.filter.notMe).set('createDialog',['清俭：选择一名角色获得这些牌'+(player.storage.xinqingjian2.length>1?'，然后摸一张牌':''),player.storage.xinqingjian2]);
+					'step 1'
+					if(result.bool){
+						var target=result.targets[0];
+						player.line(target,'thunder');
+						if(target.gain(player.storage.xinqingjian2,player,'giveAuto','fromStorage').cards.length>1) player.draw();
+						player.storage.xinqingjian2.length=0;
+						player.removeSkill('xinqingjian2');
+					}
+				},
+				intro:{
+					onunmark:'throw',mark:function(dialog,content,player){
+						if(content&&content.length){
+							if(player==game.me||player.isUnderControl()){
+								dialog.addAuto(content);
+							}
+							else{
+								return '共有'+get.cnNumber(content.length)+'张牌';
+							}
+						}
+					},
+					content:function(content,player){
+						if(content&&content.length){
+							if(player==game.me||player.isUnderControl()){
+								return get.translation(content);
+							}
+							return '共有'+get.cnNumber(content.length)+'张牌';
+						}
+					}
+				},
+			},
+			zhongzuo:{
+				audio:2,
+				trigger:{global:'phaseEnd'},
+				direct:true,
+				filter:function(event,player){
+					return player.getHistory('damage').length>0||player.getHistory('sourceDamage').length>0;
+				},
+				content:function(){
+					'step 0'
+					player.chooseTarget(get.prompt('zhongzuo'),'令一名角色摸两张牌。若其已受伤，则你摸一张牌。').set('ai',function(target){
+						if(target.hasSkillTag('nogain')&&target!=_status.currentPhase) return target.isDamaged()?0:1;
+						var att=get.attitude(_status.event.player,target);
+						if(target.isDamaged()) att=att*1.2;
+						return att;
+					});
+					'step 1'
+					if(result.bool){
+						var target=result.targets[0];
+						player.logSkill('zhongzuo',target);
+						target.draw(2);
+						if(target.isDamaged()) player.draw();
+					}
+				},
+			},
+			wanlan:{
+				audio:2,
+				trigger:{global:'dying'},
+				check:function(){return false},
+				limited:true,
+				unique:true,
+				filter:function(event,player){
+					return event.player.hp<=0;
+				},
+				skillAnimation:true,
+				animationColor:'thunder',
+				logTarget:'player',
+				content:function(){
+					'step 0'
+					player.awakenSkill('wanlan');
+					var hs=player.getCards('h')
+					if(hs.length) player.discard(hs);
+					'step 1'
+					var num=1-trigger.player.hp;
+					if(num) trigger.player.recover(num);
+					'step 2'
+					if(_status.currentPhase&&_status.currentPhase.isAlive()) _status.currentPhase.damage();
+				},
+			},
+			zhiyi:{
+				audio:2,
+				trigger:{player:['useCard','respond']},
+				forced:true,
+				filter:function(event,player){
+					if(get.type(event.card)!='basic') return false;
+					var history=player.getHistory('useCard',function(evt){
+						return get.type(evt.card)=='basic';
+					}).concat(player.getHistory('respond',function(evt){
+						return get.type(evt.card)=='basic';
+					}));
+					return history.length==1&&history[0]==event;
+				},
+				content:function(){
+					'step 0'
+					var info=get.info(trigger.card);
+					if(!info||!info.enable) event._result={index:0};
+					else{
+						var evt=trigger;
+						if(evt.respondTo&&evt.getParent('useCard').name=='useCard') evt=evt.getParent('useCard');
+						event.evt=evt;
+						player.chooseControl().set('prompt','执义：请选择一项').set('choiceList',[
+							'摸一张牌',
+							'于'+get.translation(evt.card)+'的使用结算结束之后视为使用一张'+get.translation({name:trigger.card.name,nature:trigger.card.nature,isCard:true}),
+						]).set('ai',function(){return _status.event.choice}).set('choice',function(){
+							var card={name:trigger.card.name,nature:trigger.card.nature,isCard:true};
+							if(card.name=='sha'){
+								if(player.getUseValue(card)>0) return 1;
+							}
+							else if(card.name=='tao'){
+								var hp=player.maxHp-player.hp;
+								if(trigger.targets.contains(player)) hp--;
+								return hp>0?1:0;
+							}
+							return 0;
+						}());
+					}
+					'step 1'
+					if(result.index==0){
+						player.draw();
+					}
+					else{
+						var next=player.chooseUseTarget({name:trigger.card.name,nature:trigger.card.nature},false);
+						_status.event.next.remove(next);
+						event.evt.after.push(next);
+						next.logSkill='zhiyi';
+					}
+				},
+			},
 			//表演测试
 			qiaosi_map:{charlotte:true},
 			qiaosi:{
@@ -1685,6 +1851,18 @@ game.import('character',function(lib,game,ui,get,ai,_status){
 			},
 		},
 		translate:{
+			xin_xiahoudun:'手杀夏侯惇',
+			xinqingjian:'清俭',
+			xinqingjian2:'清俭',
+			xinqingjian_info:'每回合限一次。当你不因摸牌阶段的额定摸牌而获得牌时，你可以将任意张牌扣置于武将牌上。回合结束时，你将这些牌交给一名其他角色。若这些牌的数量大于1，你摸一张牌。',
+			zhangyì:'张翼',
+			jiakui:'贾逵',
+			zhiyi:'执义',
+			zhiyi_info:'锁定技，当你于一回合内使用或打出第一张基本牌时，你选择一项：1.摸一张牌。2.于此牌A（若此牌是因响应牌B而使用或打出的，则改为牌B）的使用或打出流程结算完成后，视为使用一张与此牌名称和属性相同的卡牌。',
+			zhongzuo:'忠佐',
+			zhongzuo_info:'一名角色的回合结束时，若你于此回合内造成或受到过伤害，则你可以令一名角色摸两张牌。若该角色已受伤，则你摸一张牌。',
+			wanlan:'挽澜',
+			wanlan_info:'限定技，当一名角色进入濒死状态时，你可以弃置所有手牌并令其回复体力至1点，然后对当前回合角色造成1点伤害。',
 			re_jikang:"手杀嵇康",
 			old_bulianshi:'手杀步练师',
 			old_caochun:'旧曹纯',

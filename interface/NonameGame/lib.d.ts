@@ -1,4 +1,4 @@
-declare var lib:Lib;
+declare var lib: Lib;
 /**
  * 游戏内的主要信息储存区域，与核心游戏方法对象
  */
@@ -20,8 +20,8 @@ interface Lib {
     /**
      * 记录更新用的方法，在game.run中执行
      */
-    updates: OneParmFun<number,boolean>[];
-    canvasUpdates: TwoParmFun<number,any,boolean>[];
+    updates: OneParmFun<number, boolean>[];
+    canvasUpdates: TwoParmFun<number, any, boolean>[];
     /** 录像信息 */
     video: VideoData[];
     /**
@@ -38,7 +38,7 @@ interface Lib {
     /** 武将包 */
     characterPack: SMap<HeroData>;
     /** 武将的过滤方法（参数为一个mode，用于过滤玩法模式） */
-    characterFilter:SMap<OneParmFun<string,boolean>>;
+    characterFilter: SMap<OneParmFun<string, boolean>>;
     /** 用于筛选（具体日后讨论） */
     characterSort: SMap<SMap<string[]>>;
     /** 系列卡包（卡牌的系列集合） */
@@ -51,14 +51,14 @@ interface Lib {
     /** 保存多个洗牌方法进行洗牌 */
     onwash: NoneParmFum<string>[];
     /** gameover后执行的一些列结束方法 */
-    onover: OneParmFun<string,void>[];
+    onover: OneParmFun<string, void>[];
 
     //记录数据，读取数据库
     ondb: any[];
     ondb2: any[];
 
     /** 聊天历史 */
-    chatHistory: [string,string][];
+    chatHistory: [string, string][];
     /** 主要在lib.init记录场景加载的系列方法，在ui.arena中取出执行 */
     arenaReady: NoneParmFum<void>[];
     /** 保存一些UI处理的方法，在合适时机取出来执行 */
@@ -96,7 +96,7 @@ interface Lib {
          * 
          * 注：实际上的类型是SMap<string[]，另一个只是为了解决冲突
          */
-        [key:string]:SMap<string[]|SMap<string[]>>;
+        [key: string]: SMap<string[] | SMap<string[]>>;
     };
     /**
      * 记录当前预定处理游戏中的触发map
@@ -109,8 +109,8 @@ interface Lib {
     imported: string;
 
     layoutfixed: string[];
-    characterDialogGroup: SMap<(name: any, capt: any)=>void>;
-    listenEnd(node: any):any;
+    characterDialogGroup: SMap<(name: any, capt: any) => void>;
+    listenEnd(node: any): any;
 
     /** 菜单配置 */
     configMenu: SMap<CommonMenuConfigData>;
@@ -119,6 +119,8 @@ interface Lib {
     /** 开始模式选择菜单配置 */
     mode: SMap<CommonMenuConfigData>;
 
+    /** 记录当前运行的设备类型："android","ios",不存在（一般是在指移动设备的类型） */
+    device: string;
 
     status: {
         running: boolean,
@@ -130,9 +132,9 @@ interface Lib {
         videoId: number,
         globalId: number,
 
-        date:Date;
-        dateDelayed:number;
-        dateDelaying:Date;
+        date: Date;
+        dateDelayed: number;
+        dateDelaying: Date;
 
     };
     /** 
@@ -144,25 +146,25 @@ interface Lib {
 
     //ui相关
     /** 设置点击/触摸打开信息面板的节点 */
-    setIntro(node: HTMLElement, func?: Function, left?: boolean):void;
+    setIntro(node: HTMLElement, func?: Function, left?: boolean): void;
     /** 设置弹出的面板节点 */
-    setPopped(node: HTMLElement, func: Function, width: number, height: number, forceclick: any, paused2: any):void;
+    setPopped(node: HTMLElement, func: Function, width: number, height: number, forceclick: any, paused2: any): void;
     /** 弹出会话面板 */
-    placePoppedDialog(dialog: Dialog, e: any):void;
+    placePoppedDialog(dialog: Dialog, e: any): void;
     /** 设置节点的hover（鼠标悬停在上方） */
-    setHover(node: HTMLElement, func: Function, hoveration: number, width: number):HTMLElement;
+    setHover(node: HTMLElement, func: Function, hoveration: number, width: number): HTMLElement;
     /** 设置触摸的滚动 */
-    setScroll(node: HTMLElement):HTMLElement;
+    setScroll(node: HTMLElement): HTMLElement;
     /** 设置鼠标的滚轮 */
-    setMousewheel(node: HTMLElement):void;
+    setMousewheel(node: HTMLElement): void;
     /** 设置节点的长按 */
-    setLongPress(node: HTMLElement, func: any):HTMLElement;
-    updateCanvas(time: any):any;
-    run(time: any):any;
+    setLongPress(node: HTMLElement, func: any): HTMLElement;
+    updateCanvas(time: any): any;
+    run(time: any): any;
 
     /** 获得该时间的（UTC）时间 */
-    getUTC(date: Date):number;
-    saveVideo():any;
+    getUTC(date: Date): number;
+    saveVideo(): any;
 
     /** 游戏初始化方法与相关工具库 */
     init: Lib.Init;
@@ -189,7 +191,7 @@ interface Lib {
         client: Lib.element.Client;
         nodews: Lib.element.Nodews;
         ws: Lib.element.WS;
-    }, 
+    },
     /** 
      * 卡片数据中心 
      * （所有扩展的card都会集中到这里）
@@ -198,7 +200,7 @@ interface Lib {
         /** 保存所有的卡牌的基本信息 */
         list: CardBaseData[];
         /** 所有卡牌的配置集中在这里 */
-        [key:string]:ExCardData|CardBaseData[];
+        [key: string]: ExCardData | CardBaseData[];
     };
     /** 游戏内自定义的过滤方法 */
     filter: Lib.Filter;
@@ -309,7 +311,7 @@ interface Lib {
         _lianhuan3: ExSkillData;
         _lianhuan4: ExSkillData;
 
-        [key:string]:SMap<any>|ExSkillData;
+        [key: string]: SMap<any> | ExSkillData;
     };
 
     /**
@@ -337,6 +339,291 @@ interface Lib {
     linked: string[];
     /** 势力的样式配置（颜色UI） */
     groupnature: SMap<string>;
-    
+
+    /** 挂载额外方法的保存节点：联机相关方法，文件操作方法.... */
+    node: {
+        //网络操作：
+        //创建服务器
+        /** 
+         * 保存connection接入的client 
+         * 
+         * 经常有用这个判断是否联机
+         */
+        clients: BaseClientData[];
+        banned: any[];
+        observing: any[];
+
+        //联机相关：
+        torespond: SMap<Function | string>;
+        torespondtimeout: SMap<number>;
+
+
+        //文件操作：
+        //以下对象，大多是nodejs的操作对象
+        fs: any;
+        debug(): void;
+        http: any;
+        https: any;
+
+    };
+
+    /** 貌似是所有的那些配置的那些选项的状态都保存在这里了 */
+    config: LibConfigData;
 }
 
+/** 基础客户端链接对象的数据 */
+interface BaseClientData extends Lib.element.Client {
+    ws: WebSocket;
+    id: number;
+    closed: boolean;
+}
+
+/** 直接复制console的信息，没想到这么多 */
+interface LibConfigData {
+    addedpile: SMap<any[]>,
+    all: SMap<any>,
+    alteredSkills: any[],
+    animation: boolean,
+    appearence: boolean,
+    asset_font: boolean,
+    asset_image: boolean,
+    asset_version: string,
+    auto_check_update: boolean,
+    auto_confirm: boolean,
+    auto_popped_config: boolean,
+    auto_popped_history: boolean,
+    auto_skill: boolean,
+    autoborder_count: string,
+    autoborder_start: string,
+    autoskilllist: any[],
+    background_audio: boolean,
+    background_music: string,
+    background_speak: boolean,
+    banned: any[],
+    bannedcards: any[],
+    bannedpile: SMap<any[]>,
+    blur_ui: boolean,
+    border_style: string,
+    boss_enable_playpackconfig: boolean,
+    boss_enableai_playpackconfig: boolean,
+    brokenFile: any[],
+    button_press: boolean,
+    buttoncharacter_style: string,
+    card_font: string,
+    card_style: string,
+    cardback_style: string,
+    cardpile_enable_playpackconfig: boolean,
+    cardpile_guohe_playpackconfig: string,
+    cardpile_huosha_playpackconfig: string,
+    cardpile_jiu_playpackconfig: string,
+    cardpile_leisha_playpackconfig: string,
+    cardpile_nanman_playpackconfig: string,
+    cardpile_sha_playpackconfig: string,
+    cardpile_shan_playpackconfig: string,
+    cardpile_shunshou_playpackconfig: string,
+    cardpile_tao_playpackconfig: string,
+    cardpile_tiesuo_playpackconfig: string,
+    cardpile_wanjian_playpackconfig: string,
+    cardpile_wuxie_playpackconfig: string,
+    cards: string[],
+    cardshape: string,
+    cardtext_font: string,
+    change_skin: boolean,
+    change_skin_auto: string,
+    character_dialog_tool: string,
+    characters: string[],
+    cheat: boolean,
+    clear_log: boolean,
+    coin: number,
+    coin_canvas_playpackconfig: boolean,
+    coin_display_playpackconfig: string,
+    coin_enable_playpackconfig: boolean,
+    compatiblemode: boolean,
+    config_menu: boolean,
+    confirm_exit: boolean,
+    connect_avatar: string,
+    connect_cards: any[],
+    connect_characters: any[],
+    connect_nickname: string,
+    control_style: string,
+    current_mode: SMap<any>,
+    cursor_style: string,
+    customBackgroundPack: any[],
+    custom_button: boolean,
+    custom_button_control_bottom: string,
+    custom_button_control_top: string,
+    custom_button_system_bottom: string,
+    custom_button_system_top: string,
+    customcardpile: SMap<any>,
+    customforbid: any[],
+    damage_shake: boolean,
+    defaultcards: string[],
+    defaultcharacters: string[],
+    dev: boolean,
+    dialog_transform: number[],
+    die_move: string,
+    doubleclick_intro: boolean,
+    duration: number,
+    enable_drag: boolean,
+    enable_dragline: boolean,
+    enable_pressure: boolean,
+    enable_touchdragline: boolean,
+    enable_vibrate: boolean,
+    equip_audio: boolean,
+    errstop: boolean,
+    extensionInfo: SMap<any>
+    extension_ZJ联盟杀_enable: boolean,
+    extension_ZJ联盟杀_start_wuxing: boolean,
+    extension_ZJ联盟杀_start_wuxingSkill: boolean,
+    extensions: any[],
+    favouriteCharacter: any[],
+    favouriteMode: any[],
+    filternode_button: boolean,
+    fold_card: boolean,
+    fold_mode: boolean,
+    forbid: any[][];
+    forbidai: string[],
+    forbidai_user: any[],
+    forbidall: any[],
+    forbidboss: string[],
+    forbidchess: string[],
+    forbiddouble: string[],
+    forbidlist: any[],
+    forbidstone: string[],
+    forbidthreecard: string[],
+    game: string,
+    gameRecord: SMap<any>,
+    game_speed: string,
+    gameconfig: boolean,
+    glass_ui: boolean,
+    global_font: string,
+    glow_phase: string,
+    handcard_scroll: number,
+    hiddenBackgroundPack: any[],
+    hiddenCardPack: any[],
+    hiddenCharacterPack: any[],
+    hiddenModePack: any[],
+    hiddenPlayPack: any[],
+    hide_card_image: boolean,
+    hide_card_prompt_basic: boolean,
+    hide_card_prompt_equip: boolean,
+    hover_all: boolean,
+    hover_handcard: boolean,
+    hoveration: number,
+    hp_style: string,
+    identity_font: string,
+    image_background: string,
+    image_background_blur: boolean,
+    image_background_random: boolean,
+    image_character: string,
+    intro: string,
+    jiu_effect: boolean,
+    keep_awake: boolean,
+    layout: string,
+    link_style2: string,
+    log_highlight: boolean,
+    long_info: boolean,
+    longpress_info: boolean,
+    low_performance: boolean,
+    lucky_star: boolean,
+    mark_identity_style: string,
+    max_loadtime: string,
+    menu_style: string,
+    mode: string,
+    mode_config: SMap<any>,
+    modeconfig: boolean,
+    mousewheel: boolean,
+    name_font: string,
+    new_tutorial: boolean,
+    only_fullskin: boolean,
+    paused: boolean,
+    phonelayout: boolean,
+    player_border: string,
+    player_height: string,
+    player_height_nova: string,
+    player_style: string,
+    plays: any[],
+    pop_logv: boolean,
+    popequip: boolean,
+    pressure_taptic: boolean,
+    radius_size: string,
+    recentIP: any[],
+    recent_character_number: string,
+    remember_dialog: boolean,
+    remember_round_button: boolean,
+    repeat_audio: boolean,
+    right_click: string,
+    right_info: boolean,
+    right_range: boolean,
+    round_menu_func: string,
+    seperate_control: boolean,
+    show_auto: boolean,
+    show_ban_menu: boolean,
+    show_card_prompt: boolean,
+    show_cardpile: boolean,
+    show_cardpile_number: boolean,
+    show_charactercard: boolean,
+    show_connect: boolean,
+    show_discardpile: boolean,
+    show_extensionmaker: boolean,
+    show_extensionshare: boolean,
+    show_favmode: boolean,
+    show_favourite: boolean,
+    show_favourite_menu: boolean,
+    show_giveup: boolean,
+    show_handcardbutton: boolean,
+    show_history: string,
+    show_log: string,
+    show_name: boolean,
+    show_pause: boolean,
+    show_phase_prompt: boolean,
+    show_phaseuse_prompt: boolean,
+    show_playerids: boolean,
+    show_replay: boolean,
+    show_round_menu: boolean,
+    show_scrollbar: boolean,
+    show_sortcard: boolean,
+    show_splash: string,
+    show_stat: boolean,
+    show_statusbar_android: boolean,
+    show_statusbar_ios: string,
+    show_time: boolean,
+    show_time2: boolean,
+    show_time3: boolean,
+    show_volumn: boolean,
+    show_wuxie: boolean,
+    show_wuxie_self: boolean,
+    skill_animation_type: string,
+    skin: SMap<any>,
+    skip_shan: boolean,
+    sort: string,
+    sort_card: Function,
+    storageImported: boolean,
+    swipe: boolean,
+    swipe_down: string,
+    swipe_left: string,
+    swipe_right: string,
+    swipe_up: string,
+    sync_speed: boolean,
+    tao_enemy: boolean,
+    target_shake: string,
+    textequip: string,
+    theme: string,
+    threed_card: boolean,
+    title: boolean,
+    touchscreen: boolean,
+    turned_style: boolean,
+    ui_zoom: string,
+    update_link: string,
+    version: string,
+    vertical_scroll: boolean,
+    video: string,
+    vintageSkills: any[],
+    volumn_audio: number,
+    volumn_background: number,
+    watchface: string,
+    wuxie_right: boolean,
+    wuxie_self: boolean,
+    wuxing_enable_playpackconfig: boolean,
+    wuxing_num_playpackconfig: string,
+}

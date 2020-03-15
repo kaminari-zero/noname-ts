@@ -96,4 +96,15 @@ declare namespace UI {
         cardsAsync(): any;
         cards(ordered): any;
     }
+
+
+    /**
+     * 由ui.create.arena创建的场景；
+     * 目前列出一些场景的常规操作，
+     * 便于后面可直接使用
+     */
+    // interface arena extends HTMLDivElement {
+    //     /** 设置显示人数 */
+    //     setNumber(num);
+    // }
 }

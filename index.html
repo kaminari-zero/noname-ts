@@ -6,9 +6,11 @@
 <title>无名杀</title>
 <!-- 可以考虑直接在下面引入一些第三方库，不过内部貌似已经准备好加载第三方库的方式 -->
 <!-- ts编译的代码 -->
-<!-- <script src="build/interface/const/NonameGameConst.js"></script> -->
-<script src="build/interface/Utils/Utils.js"></script>
-<script src="build/interface/Utils/GameUtil.js"></script>
+<!-- 第一种编译方式：指定编译后文件输出的位置，输出的文件不合并（缺点，编写代码的单文件庞大） -->
+<!-- <script src="build/interface/Utils/Utils.js"></script>
+<script src="build/interface/Utils/GameUtil.js"></script> -->
+<!-- 第二种编译方式：编译后输出的文件，输出文件合并成一个指定js（缺点：每次只能指定编译成一个文件，不利于多扩展编译）
+临时解决方案：可在另一个项目内完成，编译完后，打包扩展 -->
 <!-- 游戏主流程，主逻辑 -->
 <script src="game/update.js"></script>
 <script src="game/config.js"></script>

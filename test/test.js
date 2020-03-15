@@ -148,14 +148,31 @@ window.gameTestLog = function(){
 /**
  * 方便扩展自己的扩展（动态加载进去，方便测试，后期可能把扩展包分离）
  */
-window.loadSelfExtensionConfig = ["ZJ联盟杀"];
+window.loadSelfExtensionConfig = ["ZJ联盟杀"];//,"加载测试扩展"
 /*
 代码保存，代码添加到loadPack方法得末尾
 搜索关键字：var loadPack=function()
+
+第一种编译方式：指定编译后文件输出的位置，输出的文件不合并（缺点，编写代码的单文件庞大）
+导入方式：
 code:
 //最终还是选择改代码，增加自定义扩展简单导入
 toLoad += window.loadSelfExtensionConfig.length;
 for (var i = 0; i < window.loadSelfExtensionConfig.length;i++){
     lib.init.js(lib.assetURL + "build/exsrc/" + window.loadSelfExtensionConfig[i], "extension", packLoaded, packLoaded);
 }
+
+第二种编译方式：编译后输出的文件，输出文件合并成一个指定js（缺点：每次只能指定编译成一个文件，不利于多扩展编译）
+临时解决方案：可在另一个项目内完成，编译完后，打包扩展；
+导入方式：
+1.制作成extension扩展，采用游戏的扩展导入方式导入；
+2.每次新扩展，手动改tsconfig文件的编译，输出路径，可以做到类似的独立，就是很麻烦；
+3.快速测试用：直接代码中导入
+
+准备写个专门测试用扩展
+*/
+
+/*
+
+
 */

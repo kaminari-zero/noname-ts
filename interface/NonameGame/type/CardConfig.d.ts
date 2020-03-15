@@ -238,7 +238,7 @@ interface ExCardData {
     /**
      * 视为指定牌
      */
-    viewAs?: CardBaseUIData;
+    viewAs?: CardBaseUIData|string;
     /** 
      * 自动视为该指定牌 
      * 

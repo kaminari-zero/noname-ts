@@ -5,8 +5,10 @@
         "experimentalDecorators": true, //启用实验性的ES装饰器。
         "emitDecoratorMetadata": true, //给源码里的装饰器声明加上设计类型元数据
         // "preserveConstEnums": true, //保留 const和 enum声明
-        // "outFile": "./build/build.js", //编译后输出的文件，输出文件合并成一个指定js，为了方便，集中编译在一起，
-        "outDir":"./build", //指定编译后文件输出的位置，输出的文件不合并
+        // "outFile": "./build/extension.js", //编译后输出的文件，输出文件合并成一个指定js，为了方便，集中编译在一起，
+        // "outFile":"./build/exsrc/ZJ联盟杀/extension.js", //才用这种方式指定输出到一个指定文件夹内（下面include也要对应改）
+        "outFile":"./build/exsrc/加载测试扩展/extension.js", //才用这种方式指定输出到一个指定文件夹内（下面include也要对应改）
+        // "outDir":"./build", //指定编译后文件输出的位置，输出的文件不合并
         // "outDir":"extension", 
         // "sourceRoot": "./exsrc/", //源文件路径
         // "sourceMap": true,
@@ -32,7 +34,12 @@
     },
     //编译目录
     "include": [ 
-        "exsrc",
-        "interface"
+        "interface",
+        //这样时编译所有
+        // "exsrc",
+        // "exsrc/*"
+        //采用第二种方式时，需要自己指定编译文件的具体路径：
+        // "exsrc/ZJ联盟杀/*"
+        "exsrc/加载测试扩展/*"
     ]
 }

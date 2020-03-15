@@ -1,7 +1,22 @@
 declare namespace Lib.element {
-
+    /** 
+     * 客户端玩家的联机基本操作 
+     * sendTo,connection
+     */
     interface Client {
-        send(): any;
-        close(): any;
+        /**
+         * 发送信息
+         */
+        send(...args): Client;
+        /**
+         * 断连
+         */
+        close(): Client;
+
+        inited:boolean;
+        /** 是否断连 */
+        closed:boolean;
+
+        ws:WebSocket;
     }
 }

@@ -62,6 +62,10 @@ declare namespace Lib {
         stringify(obj: Object): string;
         /** 将（json）对象转换成json字符串2（带换行，应该是用于将配置格式化字符串输出） */
         stringifySkill(obj: Object): string;
+
+
+        /** cordova库，用于移动端 */
+        cordovaReady?:any;
     }
 
 }

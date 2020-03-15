@@ -1,0 +1,1 @@
+/// <reference path="./skill/skipPhaseSkill.ts" />

@@ -1085,17 +1085,24 @@ game.import('character',function(lib,game,ui,get,ai,_status){
 				direct:true,
 				content:function(){
 					'step 0'
+					var choiceList=[
+						'手牌上限-1且发动【忠鉴】时可以多展示对方的一张牌'
+					];
+					if(!trigger.numFixed){
+						choiceList.push('摸牌阶段多摸两张牌，然后本回合内不能发动【忠鉴】');
+						if(trigger.num>0){
+							choiceList.unshift('摸牌阶段少摸一张牌，发动【忠鉴】时可以多展示自己的一张牌直到回合结束');
+							event.first=true;
+						}
+					}
 					var next=player.chooseControl('cancel2');
-					next.set('choiceList',[
-						'摸牌阶段少摸一张牌，发动【忠鉴】时可以多展示自己的一张牌直到回合结束',
-						'手牌上限-1且发动【忠鉴】时可以多展示对方的一张牌',
-						'摸牌阶段多摸两张牌，然后本回合内不能发动【忠鉴】',
-					]);
+					next.set('choiceList',choiceList);
 					next.set('prompt',get.prompt('xincaishi'));
 					next.set('ai',function(){return 2});
 					'step 1'
 					if(result.control!='cancel2'){
 						player.logSkill('xincaishi');
+						if(!event.first) result.index++;
 						trigger.num+=(result.index>1?2:(result.index-1));
 						player.addTempSkill('xincaishi_'+result.index);
 					}
@@ -1676,7 +1683,7 @@ game.import('character',function(lib,game,ui,get,ai,_status){
 						}
 					}
 				},
-				group:'pindi_clear',
+				//group:'pindi_clear',
 				check:function(card){
 					var num=_status.event.player.getStat('skill').pindi||0;
 					return 6+num-get.value(card);
@@ -1693,12 +1700,25 @@ game.import('character',function(lib,game,ui,get,ai,_status){
 					player.storage.pindi_target.push(target);
 					player.storage.pindi_type.push(get.type2(cards[0]));
 					event.num=player.getStat('skill').pindi;
-					player.chooseControlList([
-						'令'+get.translation(target)+'摸'+get.cnNumber(event.num)+'张牌',
-						'令'+get.translation(target)+'弃置'+get.cnNumber(event.num)+'张牌'
-					],function(){
-						return _status.event.choice;
-					}).set('choice',get.attitude(player,target)>0?0:1);
+					var evt=_status.event.getParent('phase');
+					if(evt&&evt.name=='phase'&&!evt.pindi){
+						var next=game.createEvent('rerende_clear');
+						_status.event.next.remove(next);
+						evt.after.push(next);
+						evt.pindi=true;
+						next.player=player;
+						next.setContent(lib.skill.pindi_clear.content);
+					}
+					player.syncStorage();
+					if(target.countCards('he')==0) event._result={index:0};
+					else{
+ 					player.chooseControlList([
+ 						'令'+get.translation(target)+'摸'+get.cnNumber(event.num)+'张牌',
+ 						'令'+get.translation(target)+'弃置'+get.cnNumber(event.num)+'张牌'
+ 					],function(){
+ 						return _status.event.choice;
+ 					}).set('choice',get.attitude(player,target)>0?0:1);
+					}
 					'step 1'
 					if(result.index==0){
 						target.draw(event.num);
@@ -1717,7 +1737,7 @@ game.import('character',function(lib,game,ui,get,ai,_status){
 					result:{
 						target:function(player,target){
 							var att=get.attitude(player,target);
-							var num=player.getStat('skill').pindi+1;
+							var num=(player.getStat('skill').pindi||0)+1;
 							if(att<=0&&target.countCards('he')<num) return 0;
 							return get.sgn(att);
 						}
@@ -2809,7 +2829,7 @@ game.import('character',function(lib,game,ui,get,ai,_status){
 					});
 				},
 				direct:true,
-				delay:0,
+				delay:false,
 				filterCard:true,
 				discard:false,
 				lose:false,
@@ -3064,6 +3084,9 @@ game.import('character',function(lib,game,ui,get,ai,_status){
 						filter:function(event,player){
 							return typeof player.storage.fumian_draw=='number';
 						},
+						filter:function(event,player){
+							return !event.numFixed;
+						},
 						content:function(){
 							trigger.num+=player.storage.fumian_draw;
 						}
@@ -3135,9 +3158,7 @@ game.import('character',function(lib,game,ui,get,ai,_status){
 				filter:function(event,player){
 					if(!player.countCards('h')) return false;
 					if(player.getStat('skill').zhongjian&&!player.hasSkill('zhongjian2')) return false;
-					return game.hasPlayer(function(current){
-						return current!=player&&current.countCards('h')>current.hp;
-					});
+					return true;
 				},
 				filterCard:true,
 				check:function(){
@@ -3146,7 +3167,7 @@ game.import('character',function(lib,game,ui,get,ai,_status){
 				discard:false,
 				lose:false,
 				filterTarget:function(card,player,target){
-					return target!=player;
+					return target!=player&&target.countCards('h')>0;
 				},
 				content:function(){
 					'step 0'
@@ -3459,7 +3480,7 @@ game.import('character',function(lib,game,ui,get,ai,_status){
 						content:function(){
 							if(player.storage.xinsidi4.isAlive()&&!player.getHistory('useCard',function(evt){
 								return evt.card.name=='sha';
-							})){
+							}).length&&player.storage.xinsidi4.canUse({name:'sha',isCard:true},player,false)){
 								player.storage.xinsidi4.logSkill('xinsidi',player);
 								player.storage.xinsidi4.useCard({name:'sha',isCard:true},player);
 							}
@@ -4007,7 +4028,7 @@ game.import('character',function(lib,game,ui,get,ai,_status){
 				filterCard:true,
 				discard:false,
 				lose:false,
-				delay:0,
+				delay:false,
 				content:function(){
 					'step 0'
 					player.showCards(cards);
@@ -5149,7 +5170,7 @@ game.import('character',function(lib,game,ui,get,ai,_status){
 					return target==_status.event.dying;
 				},
 				direct:true,
-				delay:0,
+				delay:false,
 				selectTarget:-1,
 				content:function(){
 					"step 0"
@@ -5298,14 +5319,14 @@ game.import('character',function(lib,game,ui,get,ai,_status){
 				trigger:{global:'phaseJudgeBegin'},
 				direct:true,
 				filter:function(event,player){
-					return event.player!=player&&event.player.countCards('j')>0&&player.inRange(event.player)<=1;
+					return event.player!=player&&event.player.countCards('j')>0&&player.inRange(event.player);
 				},
 				content:function(){
 					'step 0'
 					var att=get.attitude(player,trigger.player);
 					var nh=trigger.player.countCards('h');
-					var eff=get.effect(trigger.player,{name:'sha'},player,player);
-					if(!player.canUse({name:'sha'},trigger.player)) eff=0;
+					var eff=get.effect(trigger.player,{name:'sha',isCard:true},player,player);
+					if(!player.canUse({name:'sha',isCard:true},trigger.player)) eff=0;
 					player.discardPlayerCard(get.prompt('yonglve',trigger.player),trigger.player,'j').set('ai',function(button){
 						var name=button.link.viewAs||button.link.name;
 						var att=_status.event.att;
@@ -5610,11 +5631,10 @@ game.import('character',function(lib,game,ui,get,ai,_status){
 				}
 			},
 			longyin:{
-				trigger:{global:'shaBegin'},
+				trigger:{global:'useCard'},
 				direct:true,
 				filter:function(event,player){
-					return event.target==event.targets[0]&&player.countCards('he')>0&&event.card.name=='sha'&&
-					_status.currentPhase==event.player&&event.parent.parent.parent.name=='phaseUse';
+					return event.card.name=='sha'&&player.countCards('he')>0&&event.player.isPhaseUsing();
 				},
 				content:function(){
 					'step 0'
@@ -5781,7 +5801,7 @@ game.import('character',function(lib,game,ui,get,ai,_status){
 				audio:2,
 				enable:'phaseUse',
 				usable:1,
-				delay:0,
+				delay:false,
 				filter:function(event,player){
 					return player.countCards('h',{color:'red'})&&player.countCards('h',{color:'black'});
 				},
@@ -7066,8 +7086,12 @@ game.import('character',function(lib,game,ui,get,ai,_status){
 					}
 				},
 				ai:{
-					expose:0.2
-				}
+					unequip_ai:true,
+					skillTagFilter:function(player,tag,arg){
+						if(arg&&arg.name=='sha'&&arg.target.getEquip(2)) return true;
+						return false;
+					}
+				},
 			},
 			xinpojun2:{
 				trigger:{global:'phaseEnd'},
@@ -8238,7 +8262,7 @@ game.import('character',function(lib,game,ui,get,ai,_status){
 							filterCard:function(){return false},
 							selectCard:-1,
 							card:links[0],
-							delay:0,
+							delay:false,
 							content:lib.skill.paiyi.contentx,
 							ai:{
 								order:10,
@@ -8866,6 +8890,9 @@ game.import('character',function(lib,game,ui,get,ai,_status){
 				audio:2,
 				trigger:{player:'phaseDrawBegin1'},
 				direct:true,
+				filter:function(event,player){
+					return !event.numFixed;
+				},
 				content:function(){
 					"step 0"
 					player.chooseTarget(get.prompt2('xinxuanhuo'),function(card,player,target){
@@ -8882,7 +8909,7 @@ game.import('character',function(lib,game,ui,get,ai,_status){
 					});
 					"step 1"
 					if(result.bool){
-						trigger.cancel(null,null,'notrigger');
+						trigger.changeToZero();
 						player.logSkill('xinxuanhuo',result.targets);
 						event.target=result.targets[0];
 						event.target.draw(2);
@@ -9420,6 +9447,7 @@ game.import('character',function(lib,game,ui,get,ai,_status){
 				}
 			},
 			jiushi:{
+				audio:'jiushi1',
 				group:['jiushi1','jiushi2','jiushi3'],
 			},
 			jiushi1:{
@@ -9520,7 +9548,7 @@ game.import('character',function(lib,game,ui,get,ai,_status){
 				}
 			},
 			jiushi3:{
-				audio:2,
+				audio:'jiushi1',
 				trigger:{player:'damageEnd'},
 				check:function(event,player){
 					return player.isTurnedOver();
@@ -9550,10 +9578,12 @@ game.import('character',function(lib,game,ui,get,ai,_status){
 				check:function(event,player){
 					return player.countCards('h')<=player.maxHp||player.skipList.contains('phaseUse');
 				},
+				filter:function(event,player){
+					return !event.numFixed;
+				},
 				content:function(){
 					trigger.num+=game.countGroup();
 					player.addTempSkill('zishou2');
-
 				},
 				ai:{
 					threaten:1.5
@@ -9830,6 +9860,9 @@ game.import('character',function(lib,game,ui,get,ai,_status){
 				audio:2,
 				trigger:{player:'phaseDrawBegin2'},
 				direct:true,
+				filter:function(event,player){
+					return !event.numFixed;
+				},
 				content:function(){
 					"step 0"
 					player.chooseControl('jiangchi_less','jiangchi_more','cancel2',function(){
@@ -10159,6 +10192,7 @@ game.import('character',function(lib,game,ui,get,ai,_status){
 				trigger:{global:'dying'},
 				//priority:6,
 				audio:2,
+				audioname:['re_wuguotai'],
 				filter:function(event,player){
 					return event.player.hp<=0&&event.player.countCards('h')>0;
 				},
@@ -10527,7 +10561,7 @@ game.import('character',function(lib,game,ui,get,ai,_status){
 				forceaudio:true,
 				direct:true,
 				prompt:'弃置一名有【逆】的角色的两张【逆】，然后视为对包含其在内的角色使用【杀】。',
-				delay:0,
+				delay:false,
 				log:false,
 				precontent:function(){
 					"step 0"

@@ -1469,7 +1469,6 @@ declare namespace Lib.element {
         /** 是否是单数血（双将模式下两血相加取一半模式，记录是否是单数的血量） */
         singleHp:boolean;
 
-        nickname:string;
         avatar: string;
         version: string;
 
@@ -1624,7 +1623,12 @@ declare namespace Lib.element {
         identity:string;
 
         //联机相关：
+        /** lib.node.clients中保存的一个子元素被保存到这里 */
         ws:Lib.message.Client;
+        /** 既ws.id */
+        playerid:number;
+        /** 既ws.nickname */
+        nickname:string;
     }
 }
 

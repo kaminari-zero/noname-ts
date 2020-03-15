@@ -207,6 +207,8 @@ type ExtensionFunc = (lib: Lib, game: Game, ui: UI, get: Get, ai: AI, _status: S
  * game.import的回调返回值结构
  */
 interface ExtensionInfoConfigData extends ExCommonConfig {
+    /** 用于解析用的key，不直接参与游戏逻辑，参与自己定义的解析流程，统一该包的前缀 */
+    key?:string;
     /** 
      * 是否可编辑该扩展（需要打开显示制作扩展）
      * （都满足条件，则可以开启“编辑此扩展”功能）

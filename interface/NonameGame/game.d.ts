@@ -2,7 +2,7 @@ declare var game:Game;
 /**
  * 游戏主逻辑相关方法
  */
-interface Game {
+interface Game extends IDownLoadFun {
     /**
      * 卡牌弃置
      * 创建“cardsDiscard”事件，
@@ -783,4 +783,15 @@ type GlobalHistoryData = {
     /** （cardsDiscard cardsGotoOrdering cardsGotoSpecial等涉及卡牌位置改变的事件 */
     cardMove:GameEvent[],
     custom:GameEvent[],
+}
+
+/** 保存在game的下载方法 */
+interface IDownLoadFun {
+    download(url,folder,onsuccess,onerror,dev,onprogress);
+    readFile(filename,callback,onerror);
+    writeFile(data,path,name,callback);
+    removeFile(filename,callback);
+    getFileList(dir,callback);
+    ensureDirectory(list,callback,file);
+
 }

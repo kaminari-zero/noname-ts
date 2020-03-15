@@ -17,6 +17,7 @@ type TwoParmFun<U1, U2, T> = (arg0: U1, arg1: U2) => T;
 type ThreeParmFun<U1, U2, U3, T> = (arg0: U1, arg1: U2, arg2: U3) => T;
 type FourParmFun<U1, U2, U3, U4,T> = (arg0: U1, arg1: U2, arg2: U3,arg3:U4) => T;
 type RestParmFun<T> = (...args) => T;
+type RestParmFun2<U,T> = (...args:U[]) => T;
 
 //尝试增加的符合类型声明：(后续看看是否要用上)
 /** SingleAndArrayType:单体与集合类型 */

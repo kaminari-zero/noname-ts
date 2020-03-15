@@ -355,7 +355,11 @@ game.import('character',function(lib,game,ui,get,ai,_status){
 				trigger:{player:'phaseDiscardEnd'},
 				direct:true,
 				filter:function(event,player){
-					return event.cards&&event.cards.length>1
+					var cards=[];
+					player.getHistory('lose',function(evt){
+						if(evt.type=='discard'&&evt.getParent('phaseDiscard')==event) cards.addArray(evt.cards2);
+					});
+					return cards.length>1;
 				},
 				content:function(){
 					"step 0"
@@ -743,7 +747,7 @@ game.import('character',function(lib,game,ui,get,ai,_status){
 				filterCard:lib.filter.cardDiscardable,
 				discard:false,
 				lose:false,
-				delay:0,
+				delay:false,
 				selectCard:[1,Infinity],
 				prompt:'弃置一枚“忍”，然后弃置任意张牌并摸等量的牌。若弃置了所有的手牌，则可以多摸一张牌。',
 				check:function(card){
@@ -793,7 +797,7 @@ game.import('character',function(lib,game,ui,get,ai,_status){
 				audio:true,
 				trigger:{player:'useCard'},
 				filter:function(event,player){
-					return (get.type(event.card,'trick')=='trick'&&event.card.isCard);
+					return (get.type(event.card,'trick')=='trick'&&event.card.isCard&&player.hasMark('renjie'));
 				},
 				init:function(player){
 					player.storage.jilue_jizhi=0;
@@ -843,10 +847,10 @@ game.import('character',function(lib,game,ui,get,ai,_status){
 			wushen:{
 				mod:{
 					cardname:function(card,player,name){
-						if(get.suit(card)=='heart') return 'sha';
+						if(get.position(card)=='h'&&get.suit(card)=='heart') return 'sha';
 					},
-					cardnature:function(card,player,name){
-						if(get.suit(card)=='heart') return null;
+					cardnature:function(card,player){
+						if(get.position(card)=='h'&&get.suit(card)=='heart') return false;
 					},
 					targetInRange:function(card){
 						if(get.suit(card)=='heart') return true;
@@ -1618,7 +1622,7 @@ game.import('character',function(lib,game,ui,get,ai,_status){
 				trigger:{player:'phaseDrawBegin2'},
 				//priority:-5,
 				filter:function(event,player){
-					return player.hp<player.maxHp;
+					return !event.numFixed&&player.hp<player.maxHp;
 				},
 				forced:true,
 				content:function(){
@@ -1779,9 +1783,12 @@ game.import('character',function(lib,game,ui,get,ai,_status){
 			shelie:{
 				audio:2,
 				trigger:{player:'phaseDrawBegin1'},
+				filter:function(event,player){
+					return !event.numFixed;
+				},
 				content:function(){
 					"step 0"
-					trigger.cancel();
+					trigger.changeToZero();
 					event.cards=get.cards(5);
 					event.videoId=lib.status.videoId++;
 					game.broadcastAll(function(player,id,cards){

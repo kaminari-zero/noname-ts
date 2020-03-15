@@ -1120,7 +1120,7 @@ game.import('character',function(lib,game,ui,get,ai,_status){
 			gaizao:{
 				trigger:{player:'useCardToBegin'},
 				filter:function(event,player){
-					if(player.countCards('e')==5) return false;
+					if(player!=event.target&&player.countCards('e')==5) return false;
 					return lib.skill.gaizao.filterx(event.card,player)&&event.target==player;
 				},
 				direct:true,
@@ -1159,7 +1159,8 @@ game.import('character',function(lib,game,ui,get,ai,_status){
 							lib.translate[name]=lib.translate[trigger.card.name];
 							lib.translate[name+'_info']=lib.translate[trigger.card.name+'_info'];
 						}
-						trigger.card.init([trigger.card.suit,trigger.card.number,name,trigger.card.nature]);
+						trigger.card.name=name;
+						trigger.cards[0].init([trigger.card.suit,trigger.card.number,name,trigger.card.nature]);
 					}
 				},
 				ai:{
@@ -2753,9 +2754,6 @@ game.import('character',function(lib,game,ui,get,ai,_status){
 					"step 1"
 					if(result.bool){
 						trigger.target=player;
-						trigger.untrigger();
-						trigger.trigger('useCardToBefore');
-						trigger.trigger('shaBefore');
 						player.addSkill('hzhenwei2');
 						game.delay();
 					}

@@ -11,6 +11,8 @@ interface ExSkillData {
      * 注：用得挺少得，貌似主要是使用翻译得
      */
     name?: string;
+    /** 用于解析用的key，不直接参与游戏逻辑，参与自己定义的解析流程，实质就是技能的名字，规范按技能名命名 */
+    // key?:string;
 
     /**
      * 继承
@@ -686,10 +688,15 @@ interface ExSkillData {
     /**
      * 内容描述
      * 
-     * 在addCard时，设置“技能名_info”的翻译；
-     * 若时subSkill子技能，则设置“技能名_子技能名_info”的翻译；
+     * 在addCard时，设置“技能名_info”的翻译；（addCard很少使用）
+     * 
+     * 若时subSkill子技能，则设置“技能名_子技能名_info”的翻译；(主要适用于子技能描述)
+     * 
+     * 该技能的描述（自定义，非子技能时和game逻辑无关,用于自己的解析逻辑）
      */
     description?: string;
+    /** 该技能的描述（自定义，和game逻辑无关,用于自己的解析逻辑） */
+    // infoDescription?:string;
     /** 
      * 来源：
      * 貌似时联机用的，具体还没确定
