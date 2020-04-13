@@ -11,12 +11,12 @@ namespace NG {
         }
 
         /** 默认返回true的方法 */
-        export function getDefaultTrueFun() {
+        function getDefaultTrueFun() {
             return defaultTrue;
         }
 
         /** 默认返回false的方法 */
-        export function getDefaultFalseFun() {
+        function getDefaultFalseFun() {
             return defaultFalse;
         }
 

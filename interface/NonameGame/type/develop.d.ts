@@ -4,7 +4,7 @@ interface DevCharacterData {
     /** 武将用于读取用的key名 */
     name: string;
     /** 角色的昵称 */
-    nickName:string;
+    nickName?:string;
     
     /** 联机武将禁用列表 */
     connectBanned?: boolean;

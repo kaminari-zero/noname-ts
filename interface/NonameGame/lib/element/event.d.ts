@@ -198,8 +198,27 @@ declare namespace Lib.element {
 
         /** 一些额外操作，目前看到最常用在game.check中 */
         custom:{
-            add:SMap<any>,
-			replace:SMap<any>
+            // add:SMap<any>,
+            // replace:SMap<any>
+            /** 
+             * 作为game.check,ui.click.xxxx系列的取代处理方法，当前事件设置了该系列的方法，
+             * 在点击对应的目标时，会直接走这个处理，忽略原来的选中操作逻辑 
+             */
+            replace:{
+                card:OneParmFun<Card,void>;
+                target:TwoParmFun<Target,UIEvent,void>;
+                button:OneParmFun<Button,void>;
+                confirm:OneParmFun<boolean,void>
+            },
+            /**
+             * 作为game.check,ui.click.xxxx系列的点击后处理方法，是为点击对应目标，改变状态之后，额外增加的处理
+             */
+            add:{
+                card:NoneParmFum<void>;
+                target:NoneParmFum<void>;
+                button:NoneParmFum<void>;
+                confirm:OneParmFun<boolean,void>
+            }
         }
         
         _aiexclude:any;
@@ -233,6 +252,20 @@ declare namespace Lib.element {
         /** 判断一个出牌阶段「有没有被放弃摸牌」 */
         numFixed:boolean;
 
+        //2020-2-23版本：
+        /** 
+         * 为技能配置一个自定义在事件中处理的回调事件，该事件的使用需要自己使用，实际是一个自定义事件，没什么实际意义；
+         * 其设置的位置在技能content期间设置，设置在期间引发的事件中；
+         * 用于以下场合：judge，chooseToCompareMultiple，chooseToCompare
+         * 
+         * 新版本的judge事件中 可以通过设置callback事件 在judgeEnd和judgeAfter时机之前对判定牌进行操作
+         * 在判断结果出来后，若事件event.callback存在，则发送“judgeCallback”事件
+         * 
+         * 同理拼点,在拼点结果出来后，发送“compareMultiple”事件（“compare”暂时没有）
+         * 
+         * callback就是作为以上事件的content使用
+         */
+        callback:ContentFunc;
         
         //game.check 一些核心过滤参数，目前都额外存放在CheckEventData定义中
         // filterButton:any;

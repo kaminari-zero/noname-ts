@@ -24,7 +24,7 @@ declare namespace Lib.element {
         chooseToEnable(): Event;
         /**
          * 选择废除一个装备栏
-         * @param horse 
+         * @param horse 若为true,则不能弃置马
          */
         chooseToDisable(horse?: boolean): Event;
         /**
@@ -169,7 +169,8 @@ declare namespace Lib.element {
 
         /**
          * 玩家信息更新
-         * 注：主要更新血量，手牌数，标记
+         * 
+         * 注：主要更新血量，手牌数，标记(可用于直接修改某些数值，例如血量，不会触发相关事件)
          */
         update(): Player;
         /**
@@ -354,16 +355,43 @@ declare namespace Lib.element {
         phaseDiscard(...args): Event;
         /**
          * 选择使用
-         * @param use 若只有一个参数，则采用map方式入参
+         * 
+         * 参数列表：
+         *  number类型/select类型：设置next.selectTarget，默认lib.filter.selectTarget；
+         *  object类型且是itemtype时player/已经设置了next.filterCard：设置next.filterTarget，其结果是对象get.filter(next.filterTarget,2)，默认lib.filter.filterTarget；
+         *  object类型且itemtype不是player，也没设置了next.filterCard：设置next.filterCard，其结果是对象get.filter(next.filterCard)，默认lib.filter.filterCard；
+         *  boolean类型：设置next.forced；
+         *  string类型：next.prompt；
+         *  next.selectCard，默认[1,1]，可由map结构来设置；
+         * @param use 若只有一个参数,且时json结构（对象），则采用map方式入参
          */
         chooseToUse(...args): Event;
         /**
          * 选择响应
          * 发起“respond”响应事件
+         * 
+         * 参数列表：
+         *  number/select类型：设置next.selectCard,默认[1,1];
+         *  boolean类型：设置next.forced；
+         *  itemtype类型为“position”：设置next.position；
+         *  function类型：依次设置next.filterCard(默认lib.filter.all)，next.ai（默认get.unuseful2）；
+         *  object类型：设置next.filterCard为get.filter(object参数)，设置filter，用于next.pormpt默认显示时，打出的那张牌；
+         *  string类型：设置next.prompt，默认的话，提示“请打出n张x牌，响应....”（该x需要设置object类型）;
+         *  特殊字符串类型：
+         *      "nosource":设置next.nosource为true，指明没有来源，若该值不为true,且当前没有next.source，默认来源为自己;
          */
         chooseToRespond(...args): Event;
         /**
          * 选择弃牌
+         * 
+         * 参数列表：
+         *  number/select类型：设置next.selectCard;
+         *  dialog类型：设置next.dialog，并且默认设置next.prompt为false;
+         *  boolean类型：设置next.forced；
+         *  itemtype类型为“position”：设置next.position；
+         *  function类型：依次设置next.filterCard，next.ai；
+         *  object类型：设置next.filterCard为get.filter(object参数)；
+         *  string类型：使用get.evtprompt设置该参数；
          */
         chooseToDiscard(...args): Event;
         /**
@@ -376,12 +404,20 @@ declare namespace Lib.element {
         chooseToCompare(target: Player|Player[], check?: OneParmFun<Card,any>): Event;
         /**
          * 选择获得一项技能
+         * 
+         * 参数列表：
+         *  target参数：设置next.target，若是字符串，则使用get.gainableSkillsName获取指定人物名的一个技能；
+         *              若是target玩家，则直接调用玩家的getGainableSkills，获取身上一个技能；
+         * 其余参数：
+         *  string类型：设置next.prompt，会话面板的内容；
+         *  function类型：设置next.func，用于get.gainableSkillsName，target.getGainableSkills过滤目标的方法；
          * @param target 
          */
-        chooseSkill(target: any): Event;
+        chooseSkill(target: any,...args): Event;
         /**
-         * 选择一张牌进行操作(使用之/获得之/装备之... ...)
-         * @param list 
+         * 选择一个（非游戏中）牌进行操作(使用之/获得之/装备之... ...)
+         * 
+         * @param list 由chooseVCardButton创建选项;
          */
         discoverCard(list: string[]|Card[],...args): Event;
 
@@ -397,8 +433,10 @@ declare namespace Lib.element {
          *  function类型：对应next.filterButton，若没有，默认lib.filter.filterButton;
          *  数组类型：next.createDialog,核心，创建dialog的信息，常用基本结构：
          *      [
-         *      string的prompt文本,[item,type],  (上面部分主要是提供给dialog.add的参数，可直接参考add的参数)
-         *      "hidden"/”notouchscroll“/”forcebutton“,布尔类型值 (下面部分是主要提供ui.create.dialog)
+         *      string的prompt文本,
+         *      [item,type],  (上面部分主要是提供给dialog.add的参数，可直接参考add的参数)
+         *      "hidden"/”notouchscroll“/”forcebutton“,
+         *      布尔类型值 (下面部分是主要提供ui.create.dialog)
          *      ]；
          */
         chooseButton(...args): Event;
@@ -418,10 +456,14 @@ declare namespace Lib.element {
          * 发起“chooseButton”事件；
          * 
          * 参数列表：
-         *  数组类型：卡牌名数字string[]；
-         *  boolean类型：对应next.forced，若没有，默认false(手动执行)；
-         *  string类型：对应next.prompt/;
-         *  "notype"：不传入卡牌类型
+         *  数组类型：card名集合（string列表）；
+         *  boolean类型：设置chooseButton参数forced为true，若没有，默认false(手动执行)；
+         *  string类型：设置chooseButton参数prompt;
+         *  特殊字符串类型：
+         *      "notype"：不传入卡牌类型；
+         *  number类型/itemtype为"select"类型：设置chooseButton参数select(即selectButton)；
+         * 
+         * 这些参数，最终是用于chooseButton，创建“vcard”；
          */
         chooseVCardButton(...args): Event;
 
@@ -436,7 +478,7 @@ declare namespace Lib.element {
          *  itemtype为"select"类型/number类型：对应next.selectCard，没有就默认[1,1],可选卡牌数目;
          *  boolean类型：对应next.forced，若没有，默认false(手动执行)；
          *  function类型：对应next.filterCard，若没有，默认lib.filter.all;
-         *  itemtype为“position”类型：对应next.position,应该就是窗口位置了
+         *  itemtype为“position”类型：对应next.position,指定提示手牌/装备,默认指手牌；
          *  string类型：对应next.prompt/prompt2，可以用"###+prompt+###+prompt2"格式字符串;
          *  “glow_result”：设置next.glow_result=true;
          */
@@ -459,7 +501,7 @@ declare namespace Lib.element {
          *      都不是则，为get.evtprompt的参数；
          *  boolean类型：
          *      true:设置next.forced为true,是否强制发动；
-         *      false:设置next.addCount为false;
+         *      false:设置next.addCount为false,不记录信息到player.stat，即可以不计入使用;
          */
         chooseUseTarget(...args): Event;
         /**
@@ -476,71 +518,161 @@ declare namespace Lib.element {
         /**
          * 选择卡牌与目标
          * 
+         * 参数列表：
+         *  这里虽然参数key和常规CheckEventData基本一致，但是有些参数可特殊输入：
+         *      filterCard：若为object，则get.filter(next.filterCard)，没有则默认lib.filter.all;
+         *      filterTarget：若为object，则get.filter(next.filterTarget,2)，没有则默认lib.filter.all;
+         *          注：目前来看该object，可以时一个itemtype为card的类型，也可以是一个key-value的map结构对象；
+         *      selectCard，selectCard，没有默认1；
          * @param choose 只有一个参数时，使用map结构入参,目前总结了choose系列得参数为CheckEventData
          */
         chooseCardTarget(choose: CheckEventData): Event;
         /**
          * 选择列表的控制面板
+         * 
+         * 参数列表：
+         *  string类型：按顺序设置prompt，list列表（即第一个出现的字符串时设置说明文本的，之后的都是设置按钮的list列表）；
+         *  array类型：设置list列表（直接覆盖）；
+         *  true值：设置forced；
+         *  function类型：设置func；
+         * 
+         * 设置用于调用chooseControl（.....其实作用差不多）
+         * this.chooseControl(forced,func).set('choiceList',list).set('prompt',prompt);
          * @param args 
          */
         chooseControlList(...args): Event;
         /**
          * 选择的控制面板
+         * 
+         * 参数列表：
+         *  string类型：
+         *      "dialogcontrol":设置next.dialogcontrol为true，将选项生成在弹框内；
+         *      "seperate":设置next.seperate为true,可分离当前的操作选项;
+         *      其余字符串：添加到next.controls，作为面板的按钮；
+         *  array集合类型：
+         *      添加到next.controls，作为面板的按钮；
+         *  function类型：设置next.ai；
+         *  number类型：设置next.choice，若没设置event.ai时，则默认选择该指定的下标的选项；
+         *  itemtype类型为"dialog"：设置next.dialog；
          * @param args 
          */
         chooseControl(...args): Event;
         /**
          * 拥有“确认”，“取消”的选择面板
+         * 
+         * 参数列表：
+         *  boolean类型：设置next.choice，默认为true,若没有event.ai情况下，默认就用这个结果；
+         *  function类型：设置next.ai；
+         *  string类型：使用get.evtprompt设置显示的文本；
+         *  dialog类型：设置next.dialog；
          */
         chooseBool(...args): Event;
         /**
          * 选择摸牌或者回血
+         * 
+         * 参数列表：
+         *  number类型：依次设置next.num1 摸牌的数量，next.num2 回复的血量，默认都是1；
+         *  boolean类型：设置next.forced；
+         *  string类型：设置next.prompt；
+         *  function类型：设置next.ai；
          * @param args 
          */
         chooseDrawRecover(...args): Event;
         /**
          * 选将目标玩家的牌（1张）
          * 注：选择手牌时，时随机的
+         * 
+         * 参数列表：
+         *  itemtype为“player”：设置next.target;
+         *  number类型/itemtype为"select"类型：设置next.selectButton；
+         *  boolean类型的参数：设置next.forced；
+         *  itemtype为“position”：设置next.position，默认手牌和装备；
+         *  特殊string类型：
+         *      "visible":设置next.visible为true，可以直接看到手牌;
+         *  function类型的参数:依次设置next.filterButton，或者设置next.ai;
+         *  object类型的参数：设置next.filterButton为get.filter(object参数)；
+         *  string类型的参数：设置next.prompt；
          * @param args 
          */
         choosePlayerCard(...args): Event;
         /**
          * 弃置目标玩家的牌
+         * 
+         * 参数列表：(与上面一致)
+         *  itemtype为“player”：设置next.target;
+         *  number类型/itemtype为"select"类型：设置next.selectButton；
+         *  boolean类型的参数：设置next.forced；
+         *  itemtype为“position”：设置next.position，默认手牌和装备；
+         *  特殊string类型：
+         *      "visible":设置next.visible为true，可以直接看到手牌;
+         *  function类型的参数:依次设置next.filterButton，或者设置next.ai;
+         *  object类型的参数：设置next.filterButton为get.filter(object参数)；
+         *  string类型的参数：设置next.prompt；
+         * 
+         * 特殊的额外设置
+         * choosePlayerCard
+         *  设置chooseonly后，将不执行discardP方法，仅选择；
+         *  设置boolline后，将显示绿色的目标线；
          * @param args 
          */
         discardPlayerCard(...args): Event;
         /**
          * 获得目标玩家的牌
+         * 
+         * 参数列表：(与上面基本一致)
+         *  itemtype为“player”：设置next.target;
+         *  number类型/itemtype为"select"类型：设置next.selectButton；
+         *  boolean类型的参数：设置next.forced；
+         *  itemtype为“position”：设置next.position，默认手牌和装备；
+         *  特殊string类型：
+         *      "visible":设置next.visible为true，可以直接看到手牌;
+         *      "visibleMove":设置next.visibleMove为true,使用give动画，展示卡牌移动;
+         *  function类型的参数:依次设置next.filterButton，或者设置next.ai;
+         *  object类型的参数：设置next.filterButton为get.filter(object参数)；
+         *  string类型的参数：设置next.prompt；
+         * 
+        * 特殊的额外设置
+         * gainPlayerCard
+         *  设置chooseonly后，将不执行gain方法，仅选择；
+         *  设置boolline后，将显示绿色的目标线；
          * @param args 
          */
         gainPlayerCard(...args): Event;
         /**
          * 展示玩家的手牌
-         * @param str 
+         * 
+         * 展示自己的所有手牌给大家看
+         * @param str 设置next.prompt
          * @param args 
          */
-        showHandcards(str: string, ...args): Event;
+        showHandcards(str: string): Event;
         /**
          * 玩家展示的牌
-         * @param cards 
-         * @param str 
+         * 
+         * 展示给所有玩家看
+         * 注：两个参数的顺序可以反着设，但是感觉没必要，在这里就按这个顺序就行了
+         * @param str 设置next.str，就是dialog的提示文本
+         * @param cards 设置next.cards，要展示的卡
          * @param args 
          */
-        showCards(cards: Card[], str: string, ...args): Event;
+        showCards(str: string,cards:Card|Array<Card>): Event;
         /**
          * 展示卡牌（带一个确认按钮）
-         * @param str 
-         * @param cards 
+         * 
+         * 单纯展示给自己看
+         * @param str 设置next.str，就是dialog的提示文本
+         * @param cards 设置next.cards，要展示的卡
          * @param args 
          */
-        viewCards(str: string, cards: Card[], ...args): Event;
+        viewCards(str: string, cards: Card[]): Event;
         /**
          * 展示目标的手牌
-         * 注：通过调用player.viewCards实现
+         * 
+         * 注：通过调用player.viewCards实现（相当于查看目标手牌）
          * @param target 
          * @param args 
          */
-        viewHandcards(target: Player, ...args): Event;
+        viewHandcards(target: Player): Event;
         /**
          * 是否有可移动牌的玩家（目标）
          * 注：包括判定去和装备区的牌
@@ -549,10 +681,17 @@ declare namespace Lib.element {
         canMoveCard(withatt?: boolean): boolean;
         /**
          * 移动场上的卡牌（判定区和装备区）
+         * 
+         * 参数列表：
+         *  boolean类型的参数：设置next.forced；
+         *  string类型的参数：调用get.evtprompt设置；
+         *  array类型的参数：该数组是字符串数组，设置next.targetprompt,设置目标所要显示的文本；
          */
         moveCard(...args): Event;
         /**
          * 处理使用event.result,根据结果决定是否useCard或者useSkill
+         * 
+         * 内部逻辑方法，根据event.result内容，处理；
          * @param result 
          * @param event 
          */
@@ -584,6 +723,23 @@ declare namespace Lib.element {
          * customArgs
          * 
          * 关于该事件非常复杂，还需要另外详细讨论（之前有一版旧版该方法的讨论，需要更新 by2020-2-23）
+         * 
+         * 参数列表：
+         *  itemtype为“cards”：设置next.cards，是指所使用的card;
+         *  itemtype为“card”/拥有name属性的object：设置next.card，设置使用的卡牌，若为视为使用该卡牌，此时cards就是视为使用该卡牌的时所使用的卡牌；
+         *  itemtype为“players”/“player”：设置next.targets，设置目标;
+         *  string类型：
+         *      特殊的string类型：
+         *          "noai"：设置next.noai为true;
+         *          "nowuxie"：设置next.nowuxie为true，既可不被无懈;
+         *      否则，设置next.skill；
+         *  boolean类型：设置next.addCount，是否计入使用，若为false，则不会缓存进player.stat(从而不计入使用次数)；
+         * 
+         * 注：真正开始触发card的事件时，才设置next.type='card';
+         *  在game.loop，非完成时，处于阶段0额外触发“useCardToBefore”，处于阶段1额外触发“useCardToBegin”；
+         *  事件完成finshed，处于阶段1额外触发“useCardToOmitted”，处于阶段2（执行中转完成）额外触发“useCardToEnd”，处于阶段3额外触发“useCardToAfter”；
+         *  因此想在card使用后触发事件，一般用“useCardToEnd”；
+         *  还有一些特殊的“useCardTo”事件：useCardToPlayer(指定目标时)，useCardToTarget(成为目标时)，useCardToPlayered(指定目标后)，useCardToTargeted(成为目标后)；解析看上面
          */
         useCard(...args): Event;
         /**
@@ -620,12 +776,34 @@ declare namespace Lib.element {
          */
         randomGain(...args): Card[];
         /**
-         * 弃牌
+         * 弃牌/弃置牌
+         * 
+         * 参数列表：
+         *  itemtype为“player”：设置next.source，源目标；
+         *  itemtype为“card”/"cards":设置next.cards；
+         *  boolean类型：设置next.animate，播放弃置卡牌动画；
+         *  getObject的类型是“div”:设置next.position，指弃置到目标区域；
+         *  特殊字符串：
+         *      "notBySelf":设置next.notBySelf，指弃牌的不是自己（由discardPlayerCard调用时设置）；
+         * 
+         * 调起lose方法，触发“discard”；
          */
         discard(...args): Event;
         /**
          * 响应
          * 触发“respond”阶段
+         * 
+         * 指使用/打出xx卡牌响应，该xx卡牌可以是“视为”牌
+         * 
+         * 参数列表：
+         *  itemtype为“player”：设置next.source，源目标；
+         *  itemtype为"cards":设置next.cards；
+         *  itemtype为“card”/object类型，拥有name属性:设置next.card，应该是用于"视为"；
+         *  boolean类型：设置next.animate；
+         *  特殊字符串：
+         *      "highlight":设置next.highlight，高亮响应的卡牌；
+         *      "noOrdering":设置next.noOrdering；
+         *  其余string类型：设置next.skill，指响应用的技能，执行该技能配置的onrespond；
          */
         respond(...args): Event;
         /**
@@ -644,8 +822,8 @@ declare namespace Lib.element {
         directgain(cards: Card[]): Player;
         /**
          * 获得多个目标的牌
-         * @param targets 
-         * @param position 
+         * @param targets 目标
+         * @param position 牌的位置（hej），默认h手牌
          */
         gainMultiple(targets?: Player[], position?: string): Event;
         /**
@@ -662,7 +840,7 @@ declare namespace Lib.element {
          *      “log”：设置next.log=true；
          *      “fromStorage”：设置next.fromStorage=true，标记是否来自游戏外（从游戏外获得牌）；
          *          注1：所谓游戏外，指非玩家手牌，场地，弃牌，牌堆区的牌，常用于某些特殊技能。
-         *      “bySelf”：设置next.bySelf；
+         *      “bySelf”：设置next.bySelf，指自己获得牌（由gainPlayerCard调用时设置）；
          */
         gain(...args): Event;
         /**
@@ -674,6 +852,16 @@ declare namespace Lib.element {
         give(cards: Card|Card[], target: Player, visible: boolean): void;
         /**
          * 失去牌
+         * 
+         * 参数列表：
+         *  itemtype为“player”：设置next.source，源目标；
+         *  itemtype为“card”/"cards":设置next.cards，若为非"hej"的牌，则会移除出列表；
+         *  boolean类型：设置next.animate；
+         *  getObject的类型是“div”:设置next.position，指弃置到目标区域，默认ui.discardPile(弃牌区)；
+         *  特殊字符串：
+         *      "notBySelf":设置next.notBySelf，不参与游戏逻辑,字面意思说明失去牌的不是自己；
+         *      "toStorage":设置next.toStorage，不参与游戏逻辑，标明失去的牌是来自游戏区外（指类似用于标记的牌）；
+         *      "visible":设置next.visible；
          */
         lose(...args): Event;
         /**
@@ -715,15 +903,19 @@ declare namespace Lib.element {
         doubleDraw(...args): Event;
         /**
          * 失去体力
-         * @param num 
+         * @param num 默认1
          */
         loseHp(num: number): Event;
         /**
          * 失去体力上限
+         * @param num 设置next.num，默认1
+         * @param forced 设置next.forced
          */
         loseMaxHp(num?: number, forced?: boolean): Event;
         /**
          * 增加体力上限
+         * @param num 设置next.num，默认1
+         * @param forced 设置next.forced
          */
         gainMaxHp(num?:number,forced?:boolean): Event;
         /**
@@ -734,29 +926,29 @@ declare namespace Lib.element {
         changeHp(num: number, popup?: boolean): Event;
         /**
          * 护甲改变
-         * （不是三国杀常规模式下相关的）
+         * （不是三国杀常规模式下相关的，但是可以使用，抵消伤害）
          * @param num 改变的护甲数，默认为1
-         * @param type 护甲类型
+         * @param type 护甲类型（暂时来看不参与逻辑）
          */
         changeHujia(num?: number, type?: any): Event;
         /**
          * 濒死阶段
-         * @param reason 
+         * @param reason 造成死亡的事件,字符串“nosource”，标明无来源，不设置next.sorce
          */
-        dying(reason: any,...args): Event;
+        dying(reason?: Event|string): Event;
         /**
          * 死亡阶段
          * 
          * “die”时机（马里奥大佬的解释）：是死亡结算流程中明置身份牌之后 弃置区域内的牌和结算奖惩之前
-         * @param reason 
+         * @param reason 造成死亡的事件(濒死时会把自身event.reason传递进来),字符串“nosource”，标明无来源，不设置next.sorce
          */
-        die(reason: any,...args): Event;
+        die(reason?: Event|string): Event;
         /**
          * 复活
-         * @param hp 
-         * @param log 
+         * @param hp 复活时的血量，默认1
+         * @param log 是否输出日志
          */
-        revive(hp: number, log: boolean,...args): Event;
+        revive(hp: number, log: boolean,...args): void;
 
         /**
          * 是否是“混乱”状态
@@ -832,7 +1024,7 @@ declare namespace Lib.element {
 
         /**
          * 铁锁连环
-         * @param bool 
+         * @param bool true，解锁；false连锁，若当前处于该状态就不执行
          */
         link(bool: boolean): Event;
         /**
@@ -857,7 +1049,7 @@ declare namespace Lib.element {
         //弹出信息相关
         /** 清除弹出信息 */
         unprompt(): void;
-        /** 弹出信息（似乎没用到） */
+        /** 弹出信息,用于ui.click.target中 */
         prompt(str: string, nature?: string): void;
         prompt_old(name2: number|string[], className: any): void;//无用，废弃
         /**
@@ -1056,7 +1248,7 @@ declare namespace Lib.element {
          * @param expire 持续到某时机
          * @param checkConflict 额外检测方法(检测冲突)
          */
-        addTempSkill(skill: string, expire: string|string[], checkConflict: NoneParmFum<void>): string;
+        addTempSkill(skill: string, expire?: string|string[], checkConflict?: NoneParmFum<void>): string;
         /**
          * 清除技能
          * @param all 是否清除所有的额外技能，临时技能（temp），若是true则清除
@@ -1432,7 +1624,7 @@ declare namespace Lib.element {
         tryCardAnimate(card,name,nature,popname):void;
         
 
-        //动画,UI相关的方法（前置$符）[不过也有些内部混如一些操作逻辑，没分离彻底]
+        //动画,UI相关的方法（前置$符）
         $drawAuto(cards: any, target: any): any;
         $draw(num: any, init: any, config: any): any;
         $compareMultiple(card1: any, targets: any, cards: any): any;

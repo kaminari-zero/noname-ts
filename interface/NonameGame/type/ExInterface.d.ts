@@ -8,6 +8,8 @@ interface CheckEventData {
      * 选择的牌需要满足的条件
      * 可以使用键值对的简便写法
      * 也可以使用函数返回值（推荐）
+     * 
+     * 用于参数时，某些特殊choose类方法，可以根据你传入得object，采用get.filter生成过滤方法；
      */
     filterCard?: boolean | SMap<string> | OneParmFun<Card, boolean>;
     /**
@@ -90,9 +92,71 @@ interface VideoData {
  */
 type JudgeFun = (jResult: JudgeResultData) => number;
 
+
+
+
 //result的结构：
+/**
+ * 基础result结构
+ * 
+ * （基本通用，应该也有例外，暂无视）
+ *  修订：将改成涉及主逻辑相关操作都会记录在这里。(暂时还是分离开，在代码中声明类型)
+ */
+interface BaseResultData {
+    /**
+     * 最终结果
+     * 
+     * 大多代表该事件到达这一步骤过程中的结果;
+     * 一般用来标记当前事件是否按预定执行的，即执行成功
+     * 
+     * 大部分事件间接接触game.check，一般最终结果不变，大多数是这种
+     */
+    bool:boolean;
+    
+    [key:string]:any;
+}
+
+/**
+ * 一般用于带操作的事件的最终结果:
+ * choose系列基本架构，数据大多在game.check，的ui.click.ok进行设置；
+ * 
+ * 为了方便，将control系，ok系的结果结构放进去
+ * 
+ * 大部分事件间接接触game.check，一般最终结果不变，大多数是这种
+ */
+interface BaseCommonResultData extends BaseResultData {
+    //choose系
+    /** 记录返回当前事件操作过程中的卡牌 */
+    cards:Card[];
+    /** 记录返回当前事件操作过程中的目标 */
+    targets:Player[];
+    /** 记录返回当前事件操作过程中的按钮 */
+    buttons:Button[];
+    /** 记录buttons内所有button.link(即该按钮的类型，link的类型很多，参考按钮的item) */
+    links:any[];
+
+    //control系
+    /** control操作面板的选中结果，即该按钮的link，即名字 */
+    control:string;
+
+    //ok系
+    /** 记录返回当前事件操作过程中，面板按钮的确定ok取消cancel */
+    confirm:string;
+    /** 一般为触发的“视为”技能 */
+    skill:string;
+    /**
+     *  当前事件操作的“视为”牌，
+     * 当前有“视为”操作，该card参数特供给视为牌，不需要cards[0]获取视为牌 ；
+     * 判断是否为视为牌：card.isCard，false为视为牌
+     */
+    card:Card;
+}
+
+
 /** 判断阶段的事件reslut */
 interface JudgeResultData extends BaseResultData {
+    /** 成功为true,失败为false */
+    bool:boolean;
     /**
      * 用于该次判定结果的牌
      */
@@ -123,13 +187,6 @@ interface JudgeResultData extends BaseResultData {
      * 注：在获得最终结果之前有一个“judge”的mod检测。
      */
     judge: number;
-
-    /** 
-     * 新版本的judge事件中 可以通过设置callback事件 在judgeEnd和judgeAfter时机之前对判定牌进行操作
-     * 
-     * 在判断结果出来后，若事件event.callback存在，则发送“judgeCallback”事件
-     */
-    callback:TwoParmFun<Player,any,void>|ContentFunc;
 }
 
 /** 
@@ -145,6 +202,8 @@ interface JudgeResultData extends BaseResultData {
     result.num2==1   //目标的点数为1
  */
 interface PingDianResultData extends BaseResultData {
+    /** 赢为true,平手/输为false */
+    bool:boolean;
     /** 是否平局 */
     tie:boolean;
     /** 你的拼点牌 */
@@ -155,6 +214,10 @@ interface PingDianResultData extends BaseResultData {
     num1:number;
     /** 目标的点数 */
     num2:number;
+
+    /** 当前拼点的胜利者，赢了是player,输了是target,平则没有 */
+    winner:Player
+
 }
 
 /**
@@ -163,6 +226,7 @@ interface PingDianResultData extends BaseResultData {
  * 用于chooseToCompareMultiple
  */
 interface PingDianMultipleResultData extends BaseResultData {
+    //这个可能没有bool，有点迷
     /** 你的拼点牌 */
     player:Card;
     /** 目标的拼点牌 */
@@ -171,4 +235,5 @@ interface PingDianMultipleResultData extends BaseResultData {
     num1:number[];
     /** 目标的点数 */
     num2:number[];
+
 }

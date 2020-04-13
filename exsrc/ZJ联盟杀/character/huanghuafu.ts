@@ -1,6 +1,6 @@
 module ZJNGEx {
     (function(){
-        NG.Utils.importCurContent(this.ZJNGEx,"Huanghuafu",NG.ImportFumType.hero,
+        NG.Utils.importCurContent(this.ZJNGEx,"Huanghuafu",NG.ImportFumType.none,
         
         function(lib: Lib, game: Game, ui: UI, get: Get, ai: AI, _status: Status) {
             let Huanghuafu: DevCharacterData = {
@@ -29,6 +29,7 @@ module ZJNGEx {
                             //当你受到1点伤害后，你可以进行一次判定
                             player.judge((jResult:JudgeResultData)=>{
                                 // window.gameTestLog("肛裂判定结果",jResult);
+                                //判定结果为黑色牌通过
                                 return jResult.color == NG.CardColor.Black?1:0;
                             });
                             "step 2"
@@ -85,7 +86,7 @@ module ZJNGEx {
                             if(shoupaiCount>=10){
                                 discardCount = shoupaiCount-10;
                             }
-        
+                            
                         },
                         //通过主动技跳过弃牌阶段的解决方案：
                         //1.在使用技能时，增加一个标记在玩家身上，在弃牌阶段之前触发一个子技能，根据标记跳过trigger.cancel();

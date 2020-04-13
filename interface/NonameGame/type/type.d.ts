@@ -32,41 +32,6 @@ type SkillOrCard = string|NameType|Card;
 type CCards = SAAType<Card>;
 
 /**
- * 基础result结构
- * 
- * （基本通用，应该也有例外，暂无视）
- *  修订：将改成涉及主逻辑相关操作都会记录在这里。(暂时还是分离开，在代码中声明类型)
- */
-interface BaseResultData {
-    /**
-     * 最终结果
-     * 
-     * 大多代表该事件到达这一步骤过程中的结果;
-     * 一般用来标记当前事件是否按预定执行的，即执行成功
-     */
-    bool:boolean;
-    
-    links:any[];
-
-    [key:string]:any;
-}
-
-/**
- * 一般用于带操作的事件的最终结果
- * 例如：choose系列
- */
-interface BaseCommonResultData extends BaseResultData {
-    /** 记录返回当前事件操作过程中的卡牌 */
-    cards:Card[];
-    /** 记录返回当前事件操作过程中的目标 */
-    targets:Player[];
-    /** 记录返回当前事件操作过程中的按钮 */
-    buttons:Button[];
-    /** 记录返回当前事件操作过程中，面板按钮的确定取消 */
-    confirm:string;
-}
-
-/**
  * content触发内容：
  * 经过game.createEvent创建事件，设置setContent，
  * 经过lib.init.parse转换，

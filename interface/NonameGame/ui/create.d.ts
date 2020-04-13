@@ -14,44 +14,87 @@ declare namespace UI {
         div(...args): HTMLDivElement;
         filediv(): any;
         node(): any;
-        iframe(src): any;
-        identitycircle(list, target): any;
-        chat(): any;
-        exit(): any;
-        connecting(bool): any;
-        roomInfo(): any;
-        templayer(time): any;
-        selectlist(list, init, position, onchange): any;
+        /** 创建iframe */
+        iframe(src:string): void;
+        identitycircle(list, target): void;
+        //联机相关（联机房间）
+        chat(): void;
+        exit(): void;
+        connecting(bool): void;
+        roomInfo(): void;
+        templayer(time): void;
+        /** 创建select */
+        selectlist(list, init, position, onchange): HTMLSelectElement;
         /**
          * 【核心】创建游戏菜单
          * （内部过于复杂，似乎时8000多行代码的一个方法，暂时UI方面看不懂）
          * @param connectMenu 
          */
         menu(connectMenu:SelectConfigData): void;
-        table(): any;
-        giveup(): any;
-        groupControl(dialog): any;
-        cardDialog(): any;
-        characterDialog2(filter): any;
-        characterDialog(): any;
-        dialog(): any;
-        line2(): any;
-        line(): any;
-        switcher(name, current, current2): any;
+        /** 创建table */
+        table(): HTMLTableElement;
+        /** 投降的system选项 */
+        giveup(): void;
+        /** 势力选择控制面板（配合武将选择面板使用） */
+        groupControl(dialog:Lib.element.Dialog): Lib.element.Control;
+        //卡牌选则面板（stone玩法里面有使用）
+        cardDialog(): Lib.element.Dialog;
+        //武将选则面板（就是游戏开始的那个选将面板）
+        characterDialog2(filter): Lib.element.Dialog;
+        characterDialog(): Lib.element.Dialog;
+        /**
+         * 创建弹出面板
+         * 
+         * item参数列表：
+         *  boolean类型：设置dialog.static；
+         *  特殊string类型：
+         *      'hidden'：设置创建该面板不open，而是隐藏起来，默认是直接执行open；
+         *      'notouchscroll'：设置该面板不可拖动（现在面板默认是可以随意拖动的）；
+         *      'forcebutton'：非常核心的一个设置，暂时不清楚具体作用，字面上是强制选项？
+         *  非以上类型，则参考Dialog的add方法的item参数列表：有string，div,cards,players,和自由配置的混合数组生成按钮；
+         */
+        dialog(...item): Lib.element.Dialog;
+        //应该是和config配置相关的
+        line2(): HTMLDivElement;
+        line(): HTMLDivElement;
+        switcher(name, current, current2): HTMLDivElement;
         /**
          * 生成一个显示html文档的div（html文档格式的说明文本）
          * @param str 
          * @param position 要添加进去的目标位置
          */
         caption(str:string, position:HTMLElement): HTMLDivElement;
-        control(): any;
-        confirm(str, func): any;
-        skills(skills): any;
-        skills2(skills): any;
-        skills3(skills): any;
-        arena(): any;
-        system(str, func, right, before): any;
-        pause(): any;
+        /**
+         * 创建控制面板
+         * 
+         * 创建一个新的控制面板，保存在ui.controls；
+         * 其中，item参数列表：可以是任意参数，可以是一个数组（其实就是把任意参数用数组包起来）
+         *  function类型：设置control.custom，设置选项点击后的方法；
+         *  特定的string类型：
+         *      'nozoom'：暂时没有
+         *      'stayleft'：显示到左边，否则，默认显示在中间；
+         *  其他类型（目前来看选项只有string类型）：
+         *      使用control.add，设置面板的选项；
+         */
+        control(...item): Lib.element.Control;
+        /**
+         * 创建确认/取消控制面板
+         * 
+         * 重设或者创建ui.confirm
+         * @param str 设置按钮：'o'：只有“ok”选项，'oc'/'co'：有“ok”和“cancel”选项，'c'：只有“cancel”选项
+         * @param func 设置按钮设置点击后的方法
+         */
+        confirm(str:string, func:(link:any,node:Lib.element.Control)=>void): void;
+        //创建技能的控制面板
+        skills(skills):  Lib.element.Control;
+        skills2(skills): Lib.element.Control;
+        skills3(skills):  Lib.element.Control;
+        /** 创建游戏场景arena （核心UI）*/
+        arena(): void;
+        /** 创建游戏的system区域 */
+        system(str, func, right, before): HTMLDivElement;
+        /** 创建显示“已暂停”背景区域 */
+        pause(): HTMLDivElement;
         /**
          * 创建预加载按钮（还没完全确定）
          * 先预先创建好node节点，将其保存在_status.prebutton中，保存到lib.onfree,在后面activate激活按钮

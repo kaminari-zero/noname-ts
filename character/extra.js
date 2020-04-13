@@ -1838,7 +1838,6 @@ game.import('character',function(lib,game,ui,get,ai,_status){
 					game.broadcastAll('closeDialog',event.videoId);
 					var cards2=event.cards2;
 					player.gain(cards2,'log','gain2');
-					game.delay();
 				},
 				ai:{
 					threaten:1.2
@@ -2431,14 +2430,13 @@ game.import('character',function(lib,game,ui,get,ai,_status){
 							};
 						};
 						if(event.list1.length&&event.list2.length){
-							target.discard(event.list2).delay=false;
 							player.discard(event.list1).delay=false;
-							game.delay();
-						}
-						else{
 							target.discard(event.list2);
-							player.discard(event.list1);
 						}
+						else if(event.list2.length){
+							target.discard(event.list2);
+						}
+						else player.discard(event.list1);
 					};
 					'step 2'
 					if(event.list1.length+event.list2.length==4){
@@ -2498,7 +2496,7 @@ game.import('character',function(lib,game,ui,get,ai,_status){
 				},
 				forced:true,
 				filter:function(event,player){
-					return player.hasMark('drlt_jieying_mark')&&game.hasPlayer(function(current){
+					return !event.numFixed&&player.hasMark('drlt_jieying_mark')&&game.hasPlayer(function(current){
 						return current.hasSkill('drlt_jieying');
 					});
 				},

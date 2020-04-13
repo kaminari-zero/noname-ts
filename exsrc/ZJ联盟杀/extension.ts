@@ -1,5 +1,6 @@
 /// <reference path="../Utils/Utils.ts" />
 /// <reference path="../Utils/GameUtil.ts" />
+/// <reference path="./outputTranslate.ts" />
 /// <reference path="./skillRef.ts" />
 /// <reference path="./characterRef.ts" />
 /// <reference path="./cardRef.ts" />
@@ -16,8 +17,10 @@ module ZJNGEx {
     // let loadCardDatas:DevCardData[] = [];
     // /** 加载的技能数据(自定义公共技能) */
     // let skillDatas:SMap<ExSkillData>[] = [SkipPhaseSkill];
-    
     export function extensionFun(lib: Lib, game: Game, ui: UI, get: Get, ai: AI, _status: Status): ExtensionInfoConfigData {
+        //每次都预备初始化一下环境
+        NG.initContent(lib,_status,game,ui,get,ai);
+        
         //武将
         //zjm01
         let heros: CharacterConfigData = {
@@ -124,8 +127,21 @@ module ZJNGEx {
                     "先测试下4",
                     ["先测试下4.1", "先测试下4.2"]
                 ])
-            }
-            
+            },
+            get:{
+                /** 检索场上拥有当前模式的指定势力标记 */
+                getZJShaShiliCount:function(flag:string) {                    
+                    return game.countPlayer(function(current){
+                        let info = get.character(current.name) as HeroData;
+                        if(info && info[HeroDataFields.exInfo].indexOf(ZJNGEx.ZJShaFlag) > -1) {
+                            let _info = info[HeroDataFields.zjshaInfo];
+                            if(_info && _info[0] == flag) {
+                                return true;
+                            } 
+                        }
+                    });
+                }
+            },
         };
 
         //选项得方法实现
@@ -173,3 +189,14 @@ module ZJNGEx {
 
 //执行导入扩展
 game.import(ZJNGEx.type, ZJNGEx.extensionFun);
+
+
+
+/** 扩展定义先咱暂时放再这里 */
+interface Get {
+    /**
+     * 检索场上拥有当前模式的指定势力标记
+     * @param flag zjsha的势力
+     */
+    getZJShaShiliCount(flag:string):number;
+}

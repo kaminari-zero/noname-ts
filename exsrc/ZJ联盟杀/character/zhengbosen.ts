@@ -1,6 +1,6 @@
 module ZJNGEx {
     (function(){
-        NG.Utils.importCurContent(this.ZJNGEx,"Zhengbosen",NG.ImportFumType.hero,
+        NG.Utils.importCurContent(this.ZJNGEx,"Zhengbosen",NG.ImportFumType.none,
         
         function(lib: Lib, game: Game, ui: UI, get: Get, ai: AI, _status: Status) {
             

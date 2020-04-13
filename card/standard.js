@@ -157,15 +157,17 @@ game.import('card',function(lib,game,ui,get,ai,_status){
 						useful:[5,1],
 						value:[5,1],
 					},
-					order:function(){
+					order:function(item){
 						if(_status.event.player.hasSkillTag('presha',true,null,true)) return 10;
+						if(lib.linked.contains(get.nature(item))) return 3.1;
 						return 3;
 					},
 					result:{
-						target:function(player,target){
-							if(player.hasSkill('jiu')&&!target.hasSkillTag('filterDamage',null,{
+						target:function(player,target,card,isLink){
+							if(!isLink&&player.hasSkill('jiu')&&!target.hasSkillTag('filterDamage',null,{
 								player:player,
-								card:{name:'sha'},
+								card:card,
+								jiu:true,
 							})){
 								if(get.attitude(player,target)>0){
 									return -7;
@@ -609,7 +611,7 @@ game.import('card',function(lib,game,ui,get,ai,_status){
 					}
 					var capt=get.translation(target)+'选择了'+get.translation(button.link);
 					if(card){
-						target.gain(card);
+						target.gain(card,'visible');
 						target.$gain2(card);
 						game.broadcast(function(card,id,name,capt){
 							var dialog=get.idDialog(id);
@@ -701,7 +703,9 @@ game.import('card',function(lib,game,ui,get,ai,_status){
 				},
 				ai:{
 					basic:{
-						order:1,
+						order:function(){
+							return get.order({name:'tao'})+0.1;
+						},
 						useful:[3,1],
 						value:0
 					},

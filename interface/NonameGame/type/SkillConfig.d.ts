@@ -482,10 +482,14 @@ interface ExSkillData {
      */
     filter?(event: Trigger, player: Player): boolean;
     /**
-     * 选择的目标武将牌上出现什么字，
-     * 数组第几元素对应第几个目标
+     * 选择的目标武将牌上出现什么字。
+     * 使用地方：ui.click.target/player，....
+     * 
+     * 如果是数组第几元素对应第几个目标；
+     * 
+     * 如果是方法，则直接更具入参target，判断返回的文本；
      */
-    targetprompt?: string[];
+    targetprompt?: string|string[]|OneParmFun<Target,string>;
     /**
      * 是否每个目标都结算一次(多个目标)
      * true为否
@@ -510,6 +514,7 @@ interface ExSkillData {
 
     /**
      * 选中该技能使用时,进行处理
+     * 
      * 在chooseToUse 的content中调用，
      * 目前参考的例子中，大多数多是用于添加一些牌到待选择到event.set(key，收集的牌)中，
      * 用于使用前先选牌的效果
@@ -792,7 +797,7 @@ interface ExModData {
      * @param player:Player 源玩家（使用牌的角色）
      * @param target:Target 目标玩家
      */
-    playerEnabled(card: Card, player: Player, target: Target): boolean;
+    playerEnabled?(card: Card, player: Player, target: Target): boolean;
     /** 
      * 是否能成为目标 
      * card：牌；
@@ -842,7 +847,7 @@ interface ExModData {
      * 新版本的judge事件中 可以通过设置callback事件 在judgeEnd和judgeAfter时机之前对判定牌进行操作
      * 在判断结果出来后，若事件event.callback存在，则发送“judgeCallback”事件
      * 
-     * 同理拼点,在拼点结果出来后，发送“compare”/“compareMultiple”事件
+     * 同理拼点,在拼点结果出来后，发送“compareMultiple”事件（“compare”暂时没有）
      * 
      * callback就是作为以上事件的content使用
      */

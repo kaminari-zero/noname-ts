@@ -121,6 +121,9 @@ game.import('card',function(lib,game,ui,get,ai,_status){
 							if(shas.length>1&&(player.getCardUsable('sha')>1||player.countCards('h','zhuge'))){
 								return 0;
 							}
+							shas.sort(function(a,b){
+								return get.order(b)-get.order(a);
+							})
 							var card;
 							if(shas.length){
 								for(var i=0;i<shas.length;i++){
@@ -141,6 +144,7 @@ game.import('card',function(lib,game,ui,get,ai,_status){
 										!current.hasSkillTag('filterDamage',null,{
 											player:player,
 											card:card,
+											jiu:true,
 										})&&
 										get.effect(current,card,target)>0);
 								})){
@@ -397,12 +401,20 @@ game.import('card',function(lib,game,ui,get,ai,_status){
 				fullskin:true,
 				type:'equip',
 				subtype:'equip2',
+				loseDelay:false,
 				onLose:function(){
-					player.recover();
+					if(player.isDamaged()) player.logSkill('baiyin_skill');
+					var next=game.createEvent('baiyin_recover');
+					event.next.remove(next);
+					event.getParent().after.push(next);
+					next.player=player;
+					next.setContent(function(){
+						player.recover();
+					});
 				},
 				filterLose:function(card,player){
 					if(player.hasSkillTag('unequip2')) return false;
-					return player.hp<player.maxHp;
+					return true;
 				},
 				skills:['baiyin_skill'],
 				tag:{

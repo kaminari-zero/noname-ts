@@ -358,7 +358,7 @@ namespace NG {
     /**
      * 字符串工具
      */
-    class StringUtil {
+    export class StringUtil {
         /**
          * 多级分割字符串
          * @str 目标字符串

@@ -78,6 +78,8 @@ namespace NG {
          * content:当前的命名空间的环境
          * extensionData：扩展信息，其实可以直接从content中获取
          * 增加环境变量的绑定
+         * 
+         * 有可能后期翻译独立翻译出来，所以技能里不写，就不随便覆盖（或者同名不覆盖？还没实现）
          * */
         public static loadDevData(content: any, extensionData: ExtensionInfoConfigData, lib: Lib, game: Game, ui: UI, get: Get, ai: AI, _status: Status) {
             let loadHeroDatas: DevCharacterData[] = [];
@@ -94,6 +96,8 @@ namespace NG {
                         loadCardDatas.push(element(lib, game, ui, get, ai, _status));
                     } else if (key.indexOf("outputSkill_") > -1) {
                         skillDatas.push(element(lib, game, ui, get, ai, _status));
+                    } else if (key.indexOf("onlyRun_") > -1) {
+                        element(lib, game, ui, get, ai, _status);
                     }
                 }
             }
@@ -106,17 +110,17 @@ namespace NG {
             //解析武将
             for (let i = 0; i < loadHeroDatas.length; i++) {
                 const element = loadHeroDatas[i];
-                let cfgName = `${packName}_${element.name}`;
+                let cfgName = `${packName}_${element.name}`;//name不够唯一
                 heros.character[cfgName] = element.character;
                 heros.characterTitle[cfgName] = element.characterTitle;
                 heros.characterIntro[cfgName] = element.characterIntro;
-                heros.translate[cfgName] = element.nickName;
+                element.nickName && (heros.translate[cfgName] = element.nickName);
                 let heroSkills = element.skill;
                 for (const skillname in heroSkills) {
                     const skill = heroSkills[skillname];
                     skills.skill[skillname] = skill;
-                    skills.translate[skillname] = skill.name;
-                    skills.translate[`${skillname}_info`] = skill.description;
+                    skill.name && (skills.translate[skillname] = skill.name);
+                    skill.description && (skills.translate[`${skillname}_info`] = skill.description);
                 }
             }
             //解析卡牌
@@ -124,8 +128,8 @@ namespace NG {
                 const element = loadCardDatas[i];
                 let cfgName = `${packName}_${element.name}`;
                 cards.card[cfgName] = element.card;
-                cards.translate[cfgName] = element.cardName;
-                cards.translate[`${cfgName}_info`] = element.description;
+                element.cardName && (cards.translate[cfgName] = element.cardName);
+                element.description && (cards.translate[`${cfgName}_info`] = element.description);
                 if (element.bgName) {
                     cards.translate[`${cfgName}_bg`] = element.bgName;
                 }
@@ -133,8 +137,8 @@ namespace NG {
                 for (const skillname in cardSkills) {
                     const skill = cardSkills[skillname];
                     skills.skill[skillname] = skill;
-                    skills.translate[`${skillname}_skill`] = skill.name;
-                    skills.translate[`${skillname}_skill_info`] = skill.description;
+                    skill.name && (skills.translate[`${skillname}_skill`] = skill.name);
+                    skill.description && (skills.translate[`${skillname}_skill_info`] = skill.description);
                 }
             }
             //解析技能
@@ -143,8 +147,8 @@ namespace NG {
                 for (const skillname in element) {
                     const skill = element[skillname];
                     skills.skill[skillname] = skill;
-                    skills.translate[skillname] = skill.name;
-                    skills.translate[`${skillname}_info`] = skill.description;
+                    skill.name && (skills.translate[skillname] = skill.name);
+                    skill.description && (skills.translate[`${skillname}_info`] = skill.description);
                 }
             }
         }
@@ -161,6 +165,9 @@ namespace NG {
                     break;
                 case ImportFumType.skill:
                     printHead = "outputSkill_";
+                    break;
+                case ImportFumType.run:
+                    printHead = "onlyRun_";
                     break;
                 case ImportFumType.none:
                     console.warn("暂不导入，已忽略key:", key);
@@ -236,6 +243,54 @@ namespace NG {
         // }
 
 
+        //翻译用方法
+
+        /** 解析技能描述(只保留这个方法就行了) */
+        public static translateDescTxt(str: string) {
+            //将描述里的某些特殊符号，翻译是直接阅读的模式：
+            let context = str;
+            for (let i = 0; i < this.DescTags.length; i++) {
+                const element = this.DescTags[i];
+                context = this.replaceTxtUtil(context, element[0], element[1]);
+            }
+
+            return context;
+        };
+
+        public static replaceTxtUtil(context: string, tag: string, replaceTxt: string) {
+            let regexp: RegExp = new RegExp(`${tag}`, "g");
+            return context.replace(regexp, replaceTxt);
+        };
+
+        private static DescTags = [
+            //技能规范描述
+            ["\\[自\\]", "你自己"],
+            ["\\[他\\]", "其他一名角色"],
+            ["\\[任一\\]", "任意一名角色"],
+            ["\\[其他\\]", "除你自己以外任意一名角色"],
+            ["\\[全\\]", "全部所有角色"],
+            ["\\[他们\\]", "全部所有其他角色"],
+            ["\\[判定\\]", "进行一次判定"],
+            ["\\[正面\\]", "角色牌正面朝上时"],
+            ["\\[反面\\]", "角色牌反面朝上时"],
+            ["\\[翻面\\]", "将角色牌翻面"],
+            ["\\[受伤\\]", "血量不满的角色"],
+            ["\\[叠置\\]", "将牌置于角色牌下"],
+            ["\\[结果\\]", "判定牌的判定结果为"],
+            ["\\[D\\]", "置于角色牌下的牌"],
+
+            //阶段描述
+            ["<准备>", "准备阶段"],
+            ["<判定>", "判定阶段"],
+            ["<摸牌>", "摸牌阶段"],
+            ["<出牌>", "出牌阶段"],
+            ["<弃牌>", "弃牌阶段"],
+            ["<结束>", "结束阶段"],
+
+            //性别：
+            ["(男)", "男性角色"],
+            ["(女)", "女性角色"]
+        ];
     }
 
     /** 导入环境的方法 */
@@ -247,6 +302,8 @@ namespace NG {
         hero,
         card,
         skill,
+        /** 只执行，不返回数据处理 */
+        run,
     }
 }
 
