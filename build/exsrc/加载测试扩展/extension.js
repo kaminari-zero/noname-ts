@@ -529,6 +529,10 @@ var Km0TestEx;
             content: function (config, pack) {
                 var download = game.download;
                 lib.updateURL = NG.DevUtil.updateUrl;
+                lib.updateURLs = {
+                    coding: lib.updateURL,
+			        github:'https://raw.githubusercontent.com/libccy/noname',
+                };
                 if (lib.device) {
                     if (lib.init.cordovaReady) {
                         game.download = function (url, folder, onsuccess, onerror, dev, onprogress) {

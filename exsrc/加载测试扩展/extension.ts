@@ -66,6 +66,11 @@ module Km0TestEx {
 
                 //大佬的更新地址
                 lib.updateURL = NG.DevUtil.updateUrl;
+                // @ts-ignore
+                lib.updateURLs = {
+                    coding: lib.updateURL,
+			        github:'https://raw.githubusercontent.com/libccy/noname',
+                };
 
                 if (lib.device) {
                     //指移动端，使用的是：lib.init.cordovaReady
