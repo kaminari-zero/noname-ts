@@ -471,4 +471,91 @@ namespace NG {
         }
     }
 
+    /** 数组工具 */
+    export class ArrayUtil {
+        /**
+        * 从数组里面找出满足条件的元素，找到第一个立即即返回
+        */
+        static find<T>(arr: Object, param: string, value: any): any
+        static find<T>(arr: Array<T>, key: string, value: any): any
+        static find<T>(arr: Array<T>, every: (item: T) => boolean): any
+        static find<T>(arr: Array<T>, param: any, value?: any): any {
+            if (arr instanceof Array == false) {
+                if (arr[param] == value) {
+                    return arr;
+                } else {
+                    return null;
+                }
+            }
+
+            let every: (item: T) => boolean;
+            if (typeof param == "string") {
+                every = function (item: T): boolean { return item[param] == value };
+            } else {
+                every = param;
+            }
+            for (var key in arr) {
+                if (every.call(null, arr[key]) == true) {
+                    return arr[key];
+                }
+            }
+            return null;
+        }
+
+        /**
+         * 从数组里面找出所有满足条件的元素
+         */
+        static findAll<T>(arr: Array<T>, key: string, value: any): any
+        static findAll<T>(arr: Array<T>, every: (item: T) => boolean): Array<T>
+        static findAll<T>(arr: Array<T>, param: any, value?: any): any {
+            let every: (item: T) => boolean;
+            if (typeof param == "string") {
+                every = function (item: T): boolean { return item[param] == value };
+            } else {
+                every = param;
+            }
+            let a: Array<T> = [];
+            for (var key in arr) {
+                if (every.call(null, arr[key]) == true) {
+                    a.push(arr[key]);
+                }
+            }
+            return a;
+        }
+
+    }
+
+    /** 正则工具 */
+    export class RegExpUtil {
+        /**
+         * 替换
+         * callback:可以是字符串,也可以是一个方法,该方法的参数时匹配出来的字符串,通过,return回一个字符串就可以替换掉匹配的字符串
+         */
+        static replace(regex: RegExp, str: string, callback: (substring: string, ...args: any[]) => string) {
+            //  console.log( "MyRegexUtils replce" );
+            return str.replace(regex, callback);
+        }
+
+        /**
+         * 返回正则匹配的所有结果
+         * 注:字符串的match方法,只能返回字符串结果,不能返回分组和index,input等参数
+         * @param {正则表达式} regex 
+         * @param {源字符串} str 
+         * @param {对匹配结果的处理} callback 
+         */
+        static matchAll(regex: RegExp, str: string, callback: Function) {
+            let allResult = [];
+            let result;
+            //不知为啥lastIndex为1(.....知道原因了,因为之前执行了test,导致lastIndex提前1位了)
+            regex.lastIndex = 0;
+            while ((result = regex.exec(str)) != null) {
+                // console.log(result);  
+                if (callback) {
+                    callback.call(null, result);
+                }
+                allResult.push(result);
+            }
+            return allResult;
+        }
+    }
 }

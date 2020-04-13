@@ -1,8 +1,8 @@
-/// <reference path="../../interface/Utils/Utils.ts" />
-/// <reference path="../../interface/Utils/GameUtil.ts" />
+/// <reference path="../Utils/Utils.ts" />
+/// <reference path="../Utils/GameUtil.ts" />
+/// <reference path="./skillRef.ts" />
 /// <reference path="./characterRef.ts" />
 /// <reference path="./cardRef.ts" />
-/// <reference path="./skillRef.ts" />
 
 
 /**
@@ -10,12 +10,12 @@
  */
 module ZJNGEx {
     export let type = NG.ImportType.Extension;
-    /** 加载的武将数据 */
-    let loadHeroDatas:DevCharacterData[] = [Huanghuafu,Yangjuebo,Zhengbosen];
-    /** 加载的卡牌数据 */
-    let loadCardDatas:DevCardData[] = [];
-    /** 加载的技能数据(自定义公共技能) */
-    let skillDatas:SMap<ExSkillData>[] = [SkipPhaseSkill];
+    // /** 加载的武将数据 */
+    // let loadHeroDatas:DevCharacterData[] = [Huanghuafu,Yangjuebo,Zhengbosen];
+    // /** 加载的卡牌数据 */
+    // let loadCardDatas:DevCardData[] = [];
+    // /** 加载的技能数据(自定义公共技能) */
+    // let skillDatas:SMap<ExSkillData>[] = [SkipPhaseSkill];
     
     export function extensionFun(lib: Lib, game: Game, ui: UI, get: Get, ai: AI, _status: Status): ExtensionInfoConfigData {
         //武将
@@ -128,9 +128,6 @@ module ZJNGEx {
             
         };
 
-        //解析加载数据：
-        NG.Utils.loadDevData(extensionData,loadHeroDatas,loadCardDatas,skillDatas);
-
         //选项得方法实现
         /**
          * 将”魏蜀吴群神“变为”水火木土金“
@@ -163,6 +160,10 @@ module ZJNGEx {
         function updateWuxingSkill(bool:boolean){
     
         }
+
+        //解析加载数据：
+        // NG.Utils.loadDevData(extensionData,loadHeroDatas,loadCardDatas,skillDatas);
+        NG.Utils.loadDevData(this.ZJNGEx,extensionData,lib, game, ui, get, ai, _status);
 
         return extensionData;
     }

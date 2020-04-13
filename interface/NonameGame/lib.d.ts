@@ -5,10 +5,14 @@ declare var lib: Lib;
 interface Lib {
     /** 当前版本的配置前缀（多用于本地缓存的标签名） */
     configprefix: string;
+    /** 当前版本 */
+    version:string;
     /** 联机版本 */
     versionOL: number;
     /** 更新地址 */
     updateURL: string;
+    /** 更新地址列表 */
+    updateURLS:SMap<String>;
     /** 更新的镜像地址 */
     mirrorURL: string;
     /** 联机地址 */
@@ -366,6 +370,14 @@ interface Lib {
         https: any;
 
     };
+
+    //【v1.9.98.3】
+    /** 特效接口（存放自定义某种名称的卡牌/技能的特效） */
+    animate:{
+        skill:SMap<SkillAnimateType>;
+        card:SMap<CardAnimateType>;
+    },
+
 
     /** 貌似是所有的那些配置的那些选项的状态都保存在这里了 */
     config: LibConfigData;

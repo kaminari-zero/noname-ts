@@ -45,6 +45,8 @@ module Km0TestEx {
             }
         };
 
+        NG.DevUtil.version = lib.version;
+
         //extension扩展数据
         let extensionData: ExtensionInfoConfigData = {
             name: "优化下载测试",
@@ -63,9 +65,17 @@ module Km0TestEx {
                 //重新修复下载
                 //记录当前的下载方法
                 let download = game.download;
+                
+                //重新设置地址(懒得改，直接覆盖coding地址)
+                lib.updateURLS ={
+                    coding:'https://nakamurayuri.coding.net/p/noname/d/noname/git/raw',
+                    github:'https://raw.githubusercontent.com/libccy/noname',
+                };
+                lib.updateURL ='https://raw.githubusercontent.com/libccy/noname';
+                lib.mirrorURL='https://nakamurayuri.coding.net/p/noname/d/noname/git/raw';
 
                 //大佬的更新地址
-                lib.updateURL = NG.DevUtil.updateUrl;
+                NG.DevUtil.updateUrl = lib.updateURL;
 
                 if (lib.device) {
                     //指移动端，使用的是：lib.init.cordovaReady

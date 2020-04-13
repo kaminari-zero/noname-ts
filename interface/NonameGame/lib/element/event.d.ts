@@ -116,6 +116,17 @@ declare namespace Lib.element {
          */
         untrigger(all: any, player: any): void;
 
+
+        //【1.9.98.3】版本
+        /** 
+         * 摸牌阶段「取消摸牌」:
+         * 将数量变化变成0；
+         * 
+         * （理论上也可用于其他数值相关的事件）
+         * 
+         * 避免使用event.cancel导致后面的摸牌阶段结束时等时机直接无法生成的方案；
+         */
+        changeToZero():void;
     }
 
     //event的属性，不过大部分都是动态获取的
@@ -218,7 +229,11 @@ declare namespace Lib.element {
         /** 判定的名字 ,在judge事件中，记录了判定的名字*/
         judgestr:string;
 
+        //【v1.9.98.3】
+        /** 判断一个出牌阶段「有没有被放弃摸牌」 */
+        numFixed:boolean;
 
+        
         //game.check 一些核心过滤参数，目前都额外存放在CheckEventData定义中
         // filterButton:any;
         // selectButton:any;

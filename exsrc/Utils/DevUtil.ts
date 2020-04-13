@@ -7,7 +7,7 @@ namespace NG {
         var isUseVersion = false;
         var DEBUG = true;
         var ALERT_DEBUG = false;
-        // var version = window.noname_update.version;//老早就被删除了
+        export var version = "";//在外面赋值
 
         /** 大佬的更新地址 */
         export var updateUrl = "http://ctos1197457256.asuscomm.com:30000/eve/noname-ts/raw/";
@@ -44,7 +44,7 @@ namespace NG {
         export function getVersionUrl(isV, versionStr) {
             if (isV) {
                 if (versionStr) return "v" + versionStr + "/";
-                // return "v" + version + "/";
+                return "v" + version + "/";
             }
 
             return "master/";

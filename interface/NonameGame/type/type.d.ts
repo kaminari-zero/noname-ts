@@ -122,3 +122,23 @@ type Select = [number,number];
  */
 type DivPosition = [number,number,number,number];
 
+
+/** 
+ * 技能动画方法
+ * 
+ * 该方法的this绑定的player,为技能的使用者
+ * @param name 为技能名称 
+ * @param popname 为原先发动技能时弹出的文字（绝大多数情况下与name相同） 
+ * @param checkShow 为双将模式下技能的来源（vice为主将 其他情况下为副将）
+ */
+type SkillAnimateType = (name:string,popname:string,checkShow) => void;
+/**
+ * 卡牌动画方法
+ * 
+ * this为卡牌的使用/打出者 
+ * @param card 为卡牌 
+ * @param name  
+ * @param nature 为不使用特效的情况下卡牌的文字颜色(metal-使用-黄色，wood-打出-绿色)，可以用来判断卡牌是因使用还是因打出而播放特效
+ * @param popname
+ */
+type CardAnimateType = (card:SkillOrCard,name:string,nature:string,popname:boolean) => void;

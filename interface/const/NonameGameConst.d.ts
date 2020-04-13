@@ -477,6 +477,61 @@ declare namespace NG {
         zeroplayertarget="zeroplayertarget"
     }
 
+
+    export const enum CardNameConst {
+        sha = "sha",
+        杀 = "sha",
+        shan = "shan",
+        闪 = "shan",
+        tao = "tao",
+        桃 = "tao",
+        血 = "tao",
+        jiu = "jiu",
+        酒 = "jiu",
+        魔 = "jiu",
+        du = "du",
+        毒 = "du",
+
+        wugu = "wugu",
+        五谷丰登 = "wugu",
+        taoyuan = "taoyuan",
+        桃园结义 = "taoyuan",
+        nanman = "nanman",
+        南蛮入侵 = "nanman",
+        wanjian = "wanjian",
+        万箭齐发 = "wanjian",
+        wuzhong = "wuzhong",
+        无中生有 = "wuzhong",
+        juedou = "juedou",
+        决斗 = "juedou",
+        shunshou = "shunshou",
+        顺手牵羊 = "shunshou",
+        guohe = "guohe",
+        过河拆桥 = "guohe",
+        jiedao = "jiedao",
+        借刀杀人 = "jiedao",
+        wuxie = "wuxie",
+        无懈可击 = "wuxie",
+        lebu = "lebu",
+        乐不思蜀 = "lebu",
+        shandian = "shandian",
+        闪电 = "shandian",
+        huogong = "huogong",
+        火攻 = "huogong",
+        tiesuo = "tiesuo",
+        铁索连环 = "tiesuo",
+        bingliang = "bingliang",
+        兵粮寸断 = "bingliang",
+
+
+        // bagua = "bagua",
+        // 八卦 = "bagua",
+        // jueying = "jueying",
+        // 绝影 = "jueying",
+        // dilu = "dilu"
+    }
+
+
     // subCardType 卡牌子类型
     // food: 0.3
     // gwmaoxian: 0.5

@@ -443,6 +443,23 @@ declare namespace Lib.element {
         chooseCard(...args): Event;
         /**
          * 选择使用的目标
+         * 
+         * 参数列表：
+         *  itemtype为
+         *  card/cards/带name属性的对象类型：分别设置next.card/cards/card，其中card是指使用的卡牌，cards是指多张卡牌视作一张卡牌使用;
+         *  player/players类型：设置next.targets;
+         *  string类型：
+         *      "nopopup":设置nopopup为true;
+         *      "noanimate":设置noanimate为false;
+         *      "nodistance":设置nodistance为true，是否过滤距离，设置事件的filterTarget，
+         *                      默认采用filterTarget(会计算目标的距离),true则使用targetEnabled;
+         *      "noTargetDelay":设置noTargetDelay为true；
+         *      "nodelayx":设置nodelayx为true;
+         *      lib.card所保存的卡牌名：设置next.card
+         *      都不是则，为get.evtprompt的参数；
+         *  boolean类型：
+         *      true:设置next.forced为true,是否强制发动；
+         *      false:设置next.addCount为false;
          */
         chooseUseTarget(...args): Event;
         /**
@@ -1409,6 +1426,10 @@ declare namespace Lib.element {
          * @param source 
          */
         inRangeOf(source:Source):boolean;
+
+        //【v1.9.98.3】
+        trySkillAnimate(name,popname,checkShow):void;
+        tryCardAnimate(card,name,nature,popname):void;
         
 
         //动画,UI相关的方法（前置$符）[不过也有些内部混如一些操作逻辑，没分离彻底]

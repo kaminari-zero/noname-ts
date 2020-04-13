@@ -402,3 +402,22 @@ interface PackageData {
         skill: string[];
     }
 }
+
+
+/** 下载的扩展的基本结构 */
+interface ExtensionItemData {
+    /** 扩展描述 */
+    intro: string;
+    /** 扩展作者 */
+    author: string;
+    /** 网盘地址 */
+    netdisk: string;
+    /** 来源地址/反馈地址 */
+    forum:string;
+    /** 版本 */
+    version: string;
+    /** 文件列表（下载的文件列表） */
+    files: string[];
+    /** 扩展大小（仅显示用） */
+    size: string;
+  }

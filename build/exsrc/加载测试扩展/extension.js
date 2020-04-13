@@ -5,6 +5,7 @@ var NG;
         var isUseVersion = false;
         var DEBUG = true;
         var ALERT_DEBUG = false;
+        DevUtil.version = "";
         DevUtil.updateUrl = "http://ctos1197457256.asuscomm.com:30000/eve/noname-ts/raw/";
         Date.prototype.format = function (format) {
             if (!format) {
@@ -30,6 +31,7 @@ var NG;
             if (isV) {
                 if (versionStr)
                     return "v" + versionStr + "/";
+                return "v" + DevUtil.version + "/";
             }
             return "master/";
         }
@@ -519,11 +521,14 @@ var Km0TestEx;
             list: [],
             translate: {}
         };
+        NG.DevUtil.version = lib.version;
         var extensionData = {
             name: "优化下载测试",
             key: "Km0TestEx",
             editable: true,
-            config: {},
+            config: {
+                //增加扩展一个替换扩展包下载地址的
+            },
             precontent: function (data) {
             },
             content: function (config, pack) {
