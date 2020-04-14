@@ -47,7 +47,7 @@ module Km0TestEx {
 
         //extension扩展数据
         let extensionData: ExtensionInfoConfigData = {
-            name: "优化下载测试",
+            name: "优化下载",
             key: "Km0TestEx",
             editable: true,
             //选项
@@ -64,13 +64,13 @@ module Km0TestEx {
                 //记录当前的下载方法
                 let download = game.download;
 
-                //大佬的更新地址
-                lib.updateURL = NG.DevUtil.updateUrl;
-                // @ts-ignore
-                lib.updateURLs = {
-                    coding: lib.updateURL,
-			        github:'https://raw.githubusercontent.com/libccy/noname',
-                };
+                //只修改下载
+                // lib.updateURL = NG.DevUtil.updateUrl;
+                // // @ts-ignore
+                // lib.updateURLs = {
+                //     coding: lib.updateURL,
+			    //     github:'https://raw.githubusercontent.com/libccy/noname',
+                // };
 
                 if (lib.device) {
                     //指移动端，使用的是：lib.init.cordovaReady
@@ -183,7 +183,7 @@ module Km0TestEx {
             },
             package: {
                 author: "神雷zero",
-                intro: "优化下载测试，修改game.download的bug",
+                intro: "优化下载测试，修改game.download的bug（主要提供nodejs环境PC端使用）",
                 version: "1.0.0",
 
                 character: heros,
@@ -191,17 +191,10 @@ module Km0TestEx {
                 card: cards,
             },
             translate: {
-                ZJSha: "优化下载测试",
+                
             },
             help: {
-                ZJ联盟杀: NG.Utils.createHelp([
-                    "先测试下1",
-                    "先测试下2",
-                    ["先测试下2.1", "先测试下2.2"],
-                    "先测试下3",
-                    "先测试下4",
-                    ["先测试下4.1", "先测试下4.2"]
-                ])
+               
             }
         };
 

@@ -5,7 +5,7 @@ var NG;
         var isUseVersion = false;
         var DEBUG = true;
         var ALERT_DEBUG = false;
-        DevUtil.updateUrl = "http://ctos1197457256.asuscomm.com:30000/eve/noname-ts/raw/";
+        DevUtil.updateUrl = "http://ctos1197457256.asuscomm.com:30000/eve/noname-ts/raw";
         Date.prototype.format = function (format) {
             if (!format) {
                 format = 'yyyy-MM-dd HH:mm:ss';
@@ -528,11 +528,6 @@ var Km0TestEx;
             },
             content: function (config, pack) {
                 var download = game.download;
-                lib.updateURL = NG.DevUtil.updateUrl;
-                lib.updateURLs = {
-                    coding: lib.updateURL,
-			        github:'https://raw.githubusercontent.com/libccy/noname',
-                };
                 if (lib.device) {
                     if (lib.init.cordovaReady) {
                         game.download = function (url, folder, onsuccess, onerror, dev, onprogress) {
@@ -640,7 +635,7 @@ var Km0TestEx;
             },
             package: {
                 author: "神雷zero",
-                intro: "优化下载测试，修改game.download的bug",
+                intro: "优化下载测试，修改game.download的bug（主要提供nodejs环境PC端使用）",
                 version: "1.0.0",
                 character: heros,
                 skill: skills,
